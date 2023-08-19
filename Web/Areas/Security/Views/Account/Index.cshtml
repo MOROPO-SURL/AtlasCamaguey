@@ -1,0 +1,95 @@
+﻿@model MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.UserProfileViewModel
+
+@{
+    const string HEADING = "Perfil de Usuario";
+
+    ViewData["Heading"] = HEADING;
+
+    ViewData["Title"] = HEADING;
+
+    ViewData[BreadcrumbViewModel.BREADCRUMBS_MAP_KEY] = new List<BreadcrumbViewModel>
+    {
+        new BreadcrumbViewModel
+        {
+            Caption = "<span class=\"mdi mdi-cogs\" style=\"margin-right: 4px;\"></span>" + GlobalViewLocalizationHelper.Localize("Dashboard", ViewLocalizer),
+            Url = Url.Action("Index", "Dashboard", new { Area = "management" })
+        },
+        new BreadcrumbViewModel
+        {
+            Caption = HEADING
+        }
+    };
+
+    Layout = "_BackendLayout";
+}
+
+<h3>@HEADING</h3>
+<hr class="mb-4" />
+
+<div class="row">
+    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-4">
+        <div class="card">
+            @if (Model.ImageId == null)
+            {
+                <img src="~/img/default-person-picture.jpg" class="card-img-top" id="ImageFilePreview" />
+            }
+            else
+            {
+                var imageSource = string.Format("/media/images/{0}.{1}", Model.ImageId, Model.ImageExtension);
+
+                <img src="@imageSource" class="card-img-top" id="ImageFilePreview" />
+            }
+        </div>
+    </div>
+    <div class="col-xl-10 col-lg-9 col-md-8 col-sm-8">
+        <dl>
+            <dt>@GlobalViewLocalizationHelper.Localize("Login")</dt>
+            <dd>@User.Identity.Name</dd>
+        </dl>
+        <div class="row">
+            <dl class="col-md-6">                
+                <dt>@GlobalViewLocalizationHelper.Localize("Name")</dt>
+                <dd>@Model.Name</dd>
+            </dl>
+            <dl class="col-md-6">
+                <dt>@GlobalViewLocalizationHelper.Localize("LastName")</dt>
+                <dd>
+                    @if (string.IsNullOrEmpty(Model.LastName))
+                    {
+                        <span>-</span>
+                    }
+                    else
+                    {
+                        <span>@Model.LastName</span>
+                    }
+                </dd>
+            </dl>
+        </div>
+        <div class="row">
+            <dl class="col-md-6">
+                <dt>@GlobalViewLocalizationHelper.Localize("Sex")</dt>
+                <dd>@GlobalViewLocalizationHelper.Localize(Model.Sex.ToString())</dd>
+            </dl>
+        </div>
+        <dl class="mb-0">
+            <dt>@GlobalViewLocalizationHelper.Localize("About")</dt>
+            <dd>
+                @if (Model.About == null)
+                {
+                    <span>-</span>
+                }
+                else
+                {
+                    <span>@Model.About</span>
+                }
+            </dd>
+        </dl>
+    </div>
+</div>
+
+<hr />
+
+<div class="actions">
+    <a asp-action="edit" class="btn btn-light"><span class="mdi mdi-square-edit-outline"></span> Modificar</a>
+    <a asp-action="password" class="btn btn-light"><span class="mdi mdi-key-change"></span> Cambiar Contraseña</a>
+</div>

@@ -1,0 +1,72 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Atlas Camagüey > @ViewData["Title"]</title>
+
+    <!-- Favicons -->
+    <link href="~/images/favicon.png" rel="icon">
+    <link href="~/images/apple-touch-icon.png" rel="apple-touch-icon">
+
+    <link rel="stylesheet" href="~/lib/twitter-bootstrap/css/bootstrap.min.css" />
+
+    <link rel="stylesheet" href="~/lib/MaterialDesign-Webfont/css/materialdesignicons.min.css" />
+
+    <style type="text/css">
+        th.fit, td.fit {
+            width: 1px;
+            white-space: nowrap;
+        }
+    </style>
+
+    @RenderSection("styles", false)
+</head>
+<body>
+    @RenderBody()
+
+    <script src="~/lib/jquery/jquery.min.js"></script>
+    <script src="~/lib/popper.js/umd/popper.min.js"></script>
+    <script src="~/lib/twitter-bootstrap/js/bootstrap.min.js"></script>        
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(document).on("click", "button.filter-form-reseter", function (e) {
+                $(e.target.form).find("select option").prop("selected", false);
+
+                $(e.target.form).find("input[type=text]").prop("value", '');
+
+                e.target.form.submit();
+            });
+
+            $(document).on("click", "input[type='submit']", function (e) {
+                if (!e.target.form) return;
+
+                e.preventDefault();
+
+                $(e.target.form).find("input").addClass('readonly', 'readonly');
+                $(e.target.form).find("select").attr('readonly', 'readonly');
+                $(e.target.form).find("button").attr('disabled', 'disabled');
+                $(e.target.form).find("a.btn").attr('disabled', 'disabled');
+
+                e.target.form.submit();
+            });
+
+            $(document).on("click", "button[type='submit']", function (e) {
+                if (!e.target.form) return;
+
+                e.preventDefault();
+
+                $(e.target.form).find("input").addClass('readonly', 'readonly');
+                $(e.target.form).find("select").attr('readonly', 'readonly');
+                $(e.target.form).find("button").attr('disabled', 'disabled');
+                $(e.target.form).find("a.btn").attr('disabled', 'disabled');
+
+                e.target.form.submit();
+            });
+        });
+    </script>
+
+    @RenderSection("scripts", false)
+</body>
+</html>

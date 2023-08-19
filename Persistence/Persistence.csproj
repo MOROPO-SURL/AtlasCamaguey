@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<AssemblyName>MOROPO.CIMAC.Atlas.Camaguey.Persistence</AssemblyName>
+		<RootNamespace>MOROPO.CIMAC.Atlas.Camaguey.Persistence</RootNamespace>
+		<Product>AtlasCamaguey</Product>
+		<Authors>MOROPO DotNet DevTeam</Authors>
+		<Company>MOROPO S.U.R.L.</Company>
+		<Copyright>© CIMAC - MOROPO 2023, Todos los derechos reservados.</Copyright>
+		<Version>0.1.0</Version>
+		<PackageProjectUrl>https://www.moropo.cu/</PackageProjectUrl>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="GuamaFramework.Identity.Persistence" Version="6.0.0.13" />
+	</ItemGroup>
+
+</Project>

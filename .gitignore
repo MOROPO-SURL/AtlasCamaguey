@@ -396,3 +396,8 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+/Web/wwwroot/media
+/Web/dpkeys
+/Web/Migrations
+/Web/appsettings.Development.json
+/Web/appsettings.Staging.json
