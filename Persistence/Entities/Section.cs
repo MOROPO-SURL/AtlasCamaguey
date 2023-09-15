@@ -2,6 +2,11 @@
 {
     public class Section : Framework.Guama.Core.Persistence.Entities.Contract.INamedEntity<System.Guid>
     {
+        public Section()
+        {
+            Id = System.Guid.NewGuid();
+        }
+
         [System.ComponentModel.DataAnnotations.Key]
         public System.Guid Id { get; set; }
 

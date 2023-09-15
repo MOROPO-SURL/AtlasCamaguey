@@ -1,8 +1,20 @@
-﻿@{ 
+﻿@{
     Layout = "_Layout";
 }
 
 @section styles {
+    <style type="text/css">
+        footer {
+            position: fixed;
+            left: 0px;
+            bottom: 0px;
+            height: auto;
+            width: 100%;
+            background: #999;
+            text-align: center;
+        }
+    </style>
+
     @RenderSection("styles", false)
 }
 
@@ -13,7 +25,6 @@
 <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light shadow">
     <a class="navbar-brand" href="#">Atlas de Camagüey</a>
 </nav>
-
 <div class="container-fluid">
     <div role="main" class="" style="padding-top: 56px;">
         @if (ViewData[BreadcrumbViewModel.BREADCRUMBS_MAP_KEY] != null)
@@ -32,11 +43,11 @@
                             {
                                 if (count < total)
                                 {
-                                        <li class="breadcrumb-item"><a href="@breadcrumb.Url">@Html.Raw(breadcrumb.Caption)</a></li>
+                                    <li class="breadcrumb-item"><a href="@breadcrumb.Url">@Html.Raw(breadcrumb.Caption)</a></li>
                                 }
                                 else
                                 {
-                                        <li class="breadcrumb-item active">@Html.Raw(breadcrumb.Caption)</li>
+                                    <li class="breadcrumb-item active">@Html.Raw(breadcrumb.Caption)</li>
                                 }
 
                                 count++;
@@ -54,33 +65,38 @@
             {
                 var notification = JsonConvert.DeserializeObject<NotificationViewModel>(extraNotificationEntry.Value.ToString());
 
-                    <div class="alert alert-dismissible fade show alert-@Html.Raw(notification.Type.ToString().ToLower())">
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                        @if (notification.Title != null)
+                <div class="alert alert-dismissible fade show alert-@Html.Raw(notification.Type.ToString().ToLower())">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    @if (notification.Title != null)
                     {
-                            <h4>@GlobalViewLocalizationHelper.Localize(notification.Title, ViewLocalizer)</h4>
+                        <h4>@GlobalViewLocalizationHelper.Localize(notification.Title, ViewLocalizer)</h4>
                     }
 
-                        @if (notification.Message != null)
+                    @if (notification.Message != null)
                     {
-                            @Html.Raw(GlobalViewLocalizationHelper.Localize(notification.Message, ViewLocalizer));
+                        @Html.Raw(GlobalViewLocalizationHelper.Localize(notification.Message, ViewLocalizer));
                     }
 
-                        @if (notification.Messages != null)
+                    @if (notification.Messages != null)
                     {
-                            <ul>
-                                @foreach (var item in notification.Messages)
+                        <ul>
+                            @foreach (var item in notification.Messages)
                             {
-                                    <li>@GlobalViewLocalizationHelper.Localize(item, ViewLocalizer)</li>
+                                <li>@GlobalViewLocalizationHelper.Localize(item, ViewLocalizer)</li>
                             }
-                            </ul>
+                        </ul>
                     }
-                    </div>
+                </div>
             }
         }
 
         @RenderBody()
     </div>
+    <footer class="p-3">
+        <a asp-controller="Dashboard" asp-action="Index" asp-area="management">Administrar</a>
+        <hr class="mt-2 mb-2" />
+        <p class="mb-0">Copyright 2023</p>
+    </footer>
 </div>

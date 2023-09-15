@@ -12,6 +12,8 @@
 		<PackageProjectUrl>https://www.moropo.cu/</PackageProjectUrl>
 	</PropertyGroup>
 
+	<PropertyGroup Condition=" '$(RunConfiguration)' == 'Web' " />
+	<PropertyGroup Condition=" '$(RunConfiguration)' == 'Staging' " />
 	<ItemGroup>
 		<Compile Remove="dpkeys\**" />
 		<Compile Remove="logs\**" />
@@ -21,13 +23,14 @@
 		<EmbeddedResource Remove="logs\**" />
 		<None Remove="dpkeys\**" />
 		<None Remove="logs\**" />
+		<None Remove="Controllers\Backend\Complements\" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="GuamaFramework.Core.Presentation.Web.API" Version="6.0.0.12" />
-		<PackageReference Include="GuamaFramework.Core.Security.Common.Presentation.Web.Frontend" Version="6.0.0.12" />
-		<PackageReference Include="GuamaFramework.Media.Presentation.Web.Common" Version="6.0.0.14" />
-		<PackageReference Include="GuamaFramework.Security.Personal.Presentation.Web.Backend" Version="6.0.0.14" />
+		<PackageReference Include="GuamaFramework.Core.Presentation.Web.API" Version="6.0.0.16" />
+		<PackageReference Include="GuamaFramework.Core.Security.Common.Presentation.Web.Frontend" Version="6.0.0.15" />
+		<PackageReference Include="GuamaFramework.Media.Presentation.Web.Common" Version="6.0.0.15" />
+		<PackageReference Include="GuamaFramework.Security.Personal.Presentation.Web.Backend" Version="6.0.0.15" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.10">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -46,4 +49,7 @@
 	  <ProjectReference Include="..\Persistence\Persistence.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Controllers\Backend\Complements\" />
+	</ItemGroup>
 </Project>

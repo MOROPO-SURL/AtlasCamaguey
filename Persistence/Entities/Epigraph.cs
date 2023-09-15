@@ -40,6 +40,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Persistence.Entities
 
         public Epigraph()
         {
+            Id = System.Guid.NewGuid();
             KeyWordBridges = new List<EpigraphKeyWordBridge>();
             ImageBridges = new List<EpigraphImageBridge>();
             VideoBridges = new List<EpigraphVideoBridge>();
