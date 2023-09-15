@@ -9,7 +9,6 @@ using MOROPO.Framework.Guama.Core.Presentation.Web.Security.Attributes;
 
 namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Complements
 {
-
     [Microsoft.AspNetCore.Authorization.Authorize]
     [RequirePermissions(Framework.Guama.Core.Security.Presentation.Constants.Permissions.ShellManager)]
     [Area("complements")]
