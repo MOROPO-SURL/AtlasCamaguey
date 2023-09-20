@@ -6,14 +6,6 @@
 @{
     ViewData["Title"] = GlobalViewLocalizationHelper.Localize("Dashboard", ViewLocalizer);
 
-    ViewData[BreadcrumbViewModel.BREADCRUMBS_MAP_KEY] = new List<BreadcrumbViewModel>
-    {
-        new BreadcrumbViewModel
-        {
-            Caption = "<span class=\"mdi mdi-cogs\"></span> " + ViewData["Title"].ToString()
-        }
-    };
-
     Layout = "_BackendLayout";
 }
 
@@ -29,36 +21,100 @@
     </style>
 }
 
-<div class="row">
-    @foreach (var group in Model.Sections)
+<div id="management-sections" class="row">
+    <div class="col-sm-6">
+    @for (int i = 0; i < Model.Sections.Count; i += 2)
     {
-        <div class="col-sm-6 mb-4">
-            <div class="card">
-                <div class="card-header"><h5 class="mb-0">@group.Key</h5></div>
-                <div class="card-body">
+        var group = Model.Sections.ElementAt(i);
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title text-dark">@group.Key</h5>
+                <hr />
+                @{
+                    var total = group.Value.Count;
+                    var count = 0;
+                }
+                @while (count < total)
+                {
+                    var subList = group.Value.Skip(count).Take(3);
+
                     <div class="row">
-                        @foreach (var item in group.Value)
-                        {
-                            <div class="col-sm-4" style="text-align: center; padding-bottom: 15px; padding-top: 15px;">
-                                @if (User.IsAuthorized(item.Role))
-                                {
+                    @foreach (var item in subList)
+                    {
+                        <div class="col-sm-4" style="text-align: center; padding-bottom: 15px; padding-top: 15px;">
+                            @if (User.IsAuthorized(item.Role))
+                            {
+                                <a href="@Url.Action(item.Action, item.Controller, new { item.Area })">
+                                    @item.ToIconographyHtmlString()
+                                    <div>@GlobalViewLocalizationHelper.Localize(item.Title, ViewLocalizer)</div>
+                                </a>
+                            }
+                            else
+                            {
+                                <div class="text-muted">
+                                    @item.ToIconographyHtmlString()
+                                    <div>@GlobalViewLocalizationHelper.Localize(item.Title, ViewLocalizer)</div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    </div>
+                    {
+                        count += 3;
+                    }
+                }
+            </div>
+        </div>
+    }
+    </div>
+    <div class="col-sm-6">
+    @if (Model.Sections.Count > 1)
+    {
+        for (int i = 1; i < Model.Sections.Count; i += 2)
+        {
+            var group = Model.Sections.ElementAt(i);
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title text-dark">@group.Key</h5>
+                    <hr />
+                    @{
+                        var total = group.Value.Count;
+                        var count = 0;
+                    }
+                    @while (count < total)
+                    {
+                        var subList = group.Value.Skip(count).Take(3);
+
+                        <div class="row">
+                            @foreach (var item in subList)
+                            {
+                                <div class="col-sm-4" style="text-align: center; padding-bottom: 15px; padding-top: 15px;">
+                                    @if (User.IsAuthorized(item.Role))
+                                    {
                                     <a href="@Url.Action(item.Action, item.Controller, new { item.Area })">
                                         @item.ToIconographyHtmlString()
                                         <div>@GlobalViewLocalizationHelper.Localize(item.Title, ViewLocalizer)</div>
                                     </a>
-                                }
-                                else
-                                {
+                                    }
+                                    else
+                                    {
                                     <div class="text-muted">
                                         @item.ToIconographyHtmlString()
                                         <div>@GlobalViewLocalizationHelper.Localize(item.Title, ViewLocalizer)</div>
                                     </div>
-                                }
-                            </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                        {
+                            count += 3;
                         }
-                    </div>
+                    }
                 </div>
             </div>
-        </div>
+        }
     }
+    </div>
 </div>

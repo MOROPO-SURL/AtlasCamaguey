@@ -6,6 +6,8 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend
     {
         public System.Guid Id { get; set; }
 
+        [System.ComponentModel.DataAnnotations.Required(ErrorMessage = "RequiredValidationErrorMessage")]
+        [System.ComponentModel.DataAnnotations.Display(Name = "Name")]
         public string Name { get; set; }
 
         public KeyWord Export()

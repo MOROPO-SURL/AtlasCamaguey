@@ -62,13 +62,21 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Persistence.ORM.EF
         public DbSet<OrganizationSocialContactItemBridge> OrganizationSocialContactItemBridges { get; set; }
         public DbSet<OrganizationWebSiteContactItemBridge> OrganizationWebSiteContactItemBridges { get; set; }
 
+        public DbSet<Institution> Institutions { get; set; }
+        public DbSet<Author> Authors { get; set; }
         public DbSet<KeyWord> KeyWords { get; set; }
         public DbSet<Map> Maps { get; set; }
+        public DbSet<MapKeyWordBridge> MapKeyWordBridges { get; set; }
+        public DbSet<MapImageBridge> MapImageBridges { get; set; }
+        public DbSet<MapVideoBridge> MapVideoBridges { get; set; }
+        public DbSet<MapDocumentBridge> MapDocumentBridges { get; set; }
+        public DbSet<MapAuthorBridge> MapAuthorBridges { get; set; }
         public DbSet<Section> Sections { get; set; }
         public DbSet<Epigraph> Epigraphs { get; set; }
         public DbSet<EpigraphKeyWordBridge> EpigraphKeyWordBridges { get; set; }
         public DbSet<EpigraphImageBridge> EpigraphImageBridges { get; set; }
         public DbSet<EpigraphVideoBridge> EpigraphVideoBridges { get; set; }
         public DbSet<EpigraphDocumentBridge> EpigraphDocumentBridges { get; set; }
+        public DbSet<EpigraphMapBridge> EpigraphMapBridges { get; set; }
     }
 }

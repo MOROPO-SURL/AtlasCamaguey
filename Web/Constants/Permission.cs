@@ -51,5 +51,29 @@
         public const string SectionRemover = "section-remover";
 
         #endregion
+
+        #region Author
+
+        public const string AuthorViewer = "author-viewer";
+
+        public const string AuthorCreator = "author-creator";
+
+        public const string AuthorEditor = "author-editor";
+
+        public const string AuthorRemover = "author-remover";
+
+        #endregion
+
+        #region Institution
+
+        public const string InstitutionViewer = "institution-viewer";
+
+        public const string InstitutionCreator = "institution-creator";
+
+        public const string InstitutionEditor = "institution-editor";
+
+        public const string InstitutionRemover = "institution-remover";
+
+        #endregion
     }
 }

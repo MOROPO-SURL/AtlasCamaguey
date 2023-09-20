@@ -10,5 +10,8 @@
 
         internal const string SectionManagement = "section-management";
 
+        internal const string AuthorManagement = "author-management";
+
+        internal const string InstitutionManagement = "institution-management";
     }
 }

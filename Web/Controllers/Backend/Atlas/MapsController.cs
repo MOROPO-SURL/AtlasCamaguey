@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using MOROPO.CIMAC.Atlas.Camaguey.Persistence.Entities;
@@ -7,15 +6,14 @@ using MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend;
 using MOROPO.Framework.Guama.Core.Persistence.Repositories;
 using MOROPO.Framework.Guama.Core.Presentation.Web.Security.Attributes;
 
-namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Complements
+namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
 {
     [Microsoft.AspNetCore.Authorization.Authorize]
     [RequirePermissions(Framework.Guama.Core.Security.Presentation.Constants.Permissions.ShellManager)]
-    [Area("complements")]
-
+    [Area("atlas")]
     public class MapsController : Framework.Guama.Core.Presentation.Web.Backend.Controllers.AbstractEntityManagementController<Map, System.Guid, MapInputViewModel, MapDisplayViewModel>
     {
-        public MapsController(IEntityRepository<Map, Guid> repository, IStringLocalizer<MapsController> localizer, ILogger<MapsController> logger) : base(repository, localizer, logger)
+        public MapsController(IEntityRepository<Map, System.Guid> repository, IStringLocalizer<MapsController> localizer, ILogger<MapsController> logger) : base(repository, localizer, logger)
         {
         }
 
@@ -59,6 +57,36 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Complements
         public override IActionResult Delete(MapDisplayViewModel displayModel)
         {
             return base.Delete(displayModel);
+        }
+
+        [RequirePermissions(Constants.Permission.MapEditor)]
+        public IActionResult EditAuthors(System.Guid key)
+        {
+            return View();
+        }
+
+        [RequirePermissions(Constants.Permission.MapEditor)]
+        public IActionResult EditKeyWords(System.Guid key)
+        {
+            return View();
+        }
+
+        [RequirePermissions(Constants.Permission.MapEditor)]
+        public IActionResult EditImages(System.Guid key)
+        {
+            return View();
+        }
+
+        [RequirePermissions(Constants.Permission.MapEditor)]
+        public IActionResult EditVideos(System.Guid key)
+        {
+            return View();
+        }
+
+        [RequirePermissions(Constants.Permission.MapEditor)]
+        public IActionResult EditDocuments(System.Guid key)
+        {
+            return View();
         }
     }
 }

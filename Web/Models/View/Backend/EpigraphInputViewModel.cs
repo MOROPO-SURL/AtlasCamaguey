@@ -1,35 +1,36 @@
-﻿using System;
-using System.Linq;
-using MOROPO.CIMAC.Atlas.Camaguey.Persistence.Entities;
-using MOROPO.CIMAC.Atlas.Camaguey.Persistence.Enumerations;
+﻿using MOROPO.CIMAC.Atlas.Camaguey.Persistence.Entities;
+using MOROPO.Framework.Guama.Core.Presentation.Web.Common.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend
 {
     public class EpigraphInputViewModel : Framework.Guama.Core.Persistence.Presentation.Models.Contract.IEntityInputModel<Epigraph, System.Guid>
     {
-        public Guid Id { get; set; }
+        public System.Guid Id { get; set; }
 
+        [Required(ErrorMessage = "RequiredValidationErrorMessage")]
+        [Display(Name = "Name")]
         public string Name { get; set; }
 
+        [Required(ErrorMessage = "RequiredValidationErrorMessage")]
+        [Display(Name = "Description")]
         public string Description { get; set; }
+
+        [FormFileContentTypes(ContentTypes = new string[] { "image/png", "image/jpeg" }, ErrorMessage = "PNG_JPEG_FileAllowedOnlyMessage")]
+        [FormFileMaxLength(Length = 3145728, ErrorMessage = "FileLimitSizeExcededMessage")]
+        [Display(Name = "ImageFile")]
+        public Microsoft.AspNetCore.Http.IFormFile ImageFile { get; set; }
+
+        public bool ResetImage { get; set; }
 
         public System.Guid? ImageId { get; set; }
         public string ImageExtension { get; set; }
 
-        public EpigraphLayout Layout { get; set; }
+        [Required(ErrorMessage = "RequiredValidationErrorMessage")]
+        [Display(Name = "Section")]
+        public System.Guid? SectionId { get; set; }
 
-        public SectionDisplayViewModel Section { get; set; }
-
-        public MapDisplayViewModel Map { get; set; }
-
-        public KeyWordDisplayViewModel[] KeyWords { get; set; }
-
-        public ImageDisplayViewModel[] Images { get; set; }
-
-        public VideoDisplayViewModel[] Videos { get; set; }
-
-        public DocumentDisplayViewModel[] Documents { get; set; }
-
+        public Microsoft.AspNetCore.Mvc.Rendering.SelectListItem[] SectionSelectListItems { get; set; }
 
         public Epigraph Export()
         {
@@ -47,57 +48,13 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend
             Description = entity.Description;
             ImageId = entity.ImageId;
             ImageExtension = entity.Image == null ? null : MimeTypes.MimeTypeMap.GetExtension(entity.Image.ContentType);
-            Layout = entity.Layout;
-
-            Section = new SectionDisplayViewModel();
-            Section.Import(entity.Section);
-
-            Map = new MapDisplayViewModel();
-            Map.Import(entity.Map);
-
-
-            KeyWords = entity.KeyWordBridges.Select(bridge =>
-            {
-                var model = new KeyWordDisplayViewModel();
-
-                model.Import(bridge.Stern);
-
-                return model;
-            }).ToArray();
-
-            Images = entity.ImageBridges.Select(bridge =>
-            {
-                var model = new ImageDisplayViewModel();
-
-                model.Import(bridge.Stern);
-
-                return model;
-            }).ToArray();
-
-            Videos = entity.VideoBridges.Select(bridge =>
-            {
-                var model = new VideoDisplayViewModel();
-
-                model.Import(bridge.Stern);
-
-                return model;
-            }).ToArray();
-
-            Documents = entity.DocumentBridges.Select(bridge =>
-            {
-                var model = new DocumentDisplayViewModel();
-
-                model.Import(bridge.Stern);
-
-                return model;
-            }).ToArray();
+            SectionId = entity.SectionId;
         }
 
         public void Mergue(Epigraph entity)
         {
             entity.Name = Name;
             entity.Description = Description;
-            entity.Layout = Layout;
         }
     }
 }

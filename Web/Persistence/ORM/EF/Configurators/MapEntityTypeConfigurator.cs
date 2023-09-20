@@ -6,7 +6,7 @@
         {
             base.ApplayRules(entityTypeBuilder);
 
-            entityTypeBuilder.HasIndex(entity => entity.Project).IsUnique();
+            entityTypeBuilder.HasIndex(entity => entity.QgisProjectPath).IsUnique();
         }
     }
 }

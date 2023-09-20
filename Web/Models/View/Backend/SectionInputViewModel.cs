@@ -1,15 +1,28 @@
-﻿using System;
-using MOROPO.CIMAC.Atlas.Camaguey.Persistence.Entities;
+﻿using MOROPO.CIMAC.Atlas.Camaguey.Persistence.Entities;
+using MOROPO.Framework.Guama.Core.Presentation.Web.Common.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend
 {
     public class SectionInputViewModel : Framework.Guama.Core.Persistence.Presentation.Models.Contract.IEntityInputModel<Section, System.Guid>
     {
-        public Guid Id { get; set; }
+        public System.Guid Id { get; set; }
 
+        [Required(ErrorMessage = "RequiredValidationErrorMessage")]
+        [Display(Name = "Name")]
         public string Name { get; set; }
 
+        [Required(ErrorMessage = "RequiredValidationErrorMessage")]
+        [Display(Name = "Description")]
         public string Description { get; set; }
+
+        [Required(ErrorMessage = "RequiredValidationErrorMessage")]
+        [FormFileContentTypes(ContentTypes = new string[] { "image/png", "image/jpeg" }, ErrorMessage = "PNG_JPEG_FileAllowedOnlyMessage")]
+        [FormFileMaxLength(Length = 3145728, ErrorMessage = "FileLimitSizeExcededMessage")]
+        [Display(Name = "ImageFile")]
+        public Microsoft.AspNetCore.Http.IFormFile ImageFile { get; set; }
+
+        public bool ResetImage { get; set; }
 
         public System.Guid? ImageId { get; set; }
 
@@ -37,7 +50,6 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend
         {
             entity.Name = Name;
             entity.Description = Description;
-
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using MOROPO.CIMAC.Atlas.Camaguey.Persistence.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend
 {
@@ -6,7 +7,15 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend
     {
         public System.Guid Id { get; set; }
 
-        public string Project { get; set; }
+        [Required(ErrorMessage = "RequiredValidationErrorMessage")]
+        [Display(Name = "Name")]
+        public string Name { get; set; }
+
+        [Display(Name = "QgisProjectPath")]
+        public string QgisProjectPath { get; set; }
+
+        [Display(Name = "Description")]
+        public string Description { get; set; }
 
         public Map Export()
         {
@@ -20,12 +29,16 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend
         public void Import(Map entity)
         {
             Id = entity.Id;
-            Project = entity.Project;
+            Name = entity.Name;
+            QgisProjectPath = entity.QgisProjectPath;
+            Description = entity.Description;
         }
 
         public void Mergue(Map entity)
         {
-            entity.Project = Project;
+            entity.Name = Name;
+            entity.QgisProjectPath = QgisProjectPath;
+            entity.Description = Description;
         }
     }
 }

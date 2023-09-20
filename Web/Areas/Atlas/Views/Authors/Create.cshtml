@@ -1,0 +1,118 @@
+﻿@model MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend.AuthorInputViewModel
+
+@{
+    const string HEADER = "Agregar Autor(a)";
+
+    ViewData["Title"] = HEADER;
+
+    ViewData[BreadcrumbViewModel.BREADCRUMBS_MAP_KEY] = new List<BreadcrumbViewModel>
+    {
+        new BreadcrumbViewModel
+        {
+            Caption = "<span class=\"mdi mdi-desktop-mac-dashboard\" style=\"margin-right: 4px;\"></span>" + GlobalViewLocalizationHelper.Localize("Dashboard", ViewLocalizer),
+            Url = "/"
+        },
+        new BreadcrumbViewModel
+        {
+            Caption = "Gestionar Autores",
+            Url = Url.Action("index")
+        },
+        new BreadcrumbViewModel
+        {
+            Caption = ViewData["Title"].ToString()
+        }
+    };
+
+    Layout = "_BackendLayout";
+}
+
+@section styles{
+    <style type="text/css">
+        #ImageFile {
+            width: 0;
+            height: 0;
+            overflow: hidden;
+        }
+    </style>
+}
+
+@section scripts {
+    <script type="text/javascript">
+        $(function () {
+            $(document).on("change", "#ImageFile", function () {
+                var files = !!this.files ? this.files : [];
+
+                if (!files.length || !window.FileReader) return; // no file selected, or no FileReader support
+
+                if (/^image/.test(files[0].type)) {
+                    var reader = new FileReader();
+
+                    reader.readAsDataURL(files[0]);
+
+                    reader.onloadend = function () {
+                        $('#ImageFilePreview').attr('src', this.result);
+                    }
+                }
+
+            });
+        });
+    </script>
+}
+
+@using (Html.BeginForm("create", "authors", new { Area = "atlas" }, FormMethod.Post, true, new { enctype = "multipart/form-data" }))
+{
+    @Html.ValidationSummary(true)
+    <div class="card mb-3 mt-4">
+        <div class="card-header"><h4 class="mb-0">@HEADER</h4></div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-3 col-md-4 col-sm-4 mb-3">
+                    <div class="card">
+                        <img src="~/img/default-person-picture.jpg" class="card-img-top" id="ImageFilePreview" />
+                        <label class="btn btn-light" style="border-top-left-radius: 0; border-top-right-radius: 0; margin-bottom: 0;">
+                            @GlobalViewLocalizationHelper.Localize("Upload", ViewLocalizer) ...
+                            @Html.EditorFor(model => model.ImageFile)
+                        </label>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ImageFile, null, new { @class = "text-danger" })
+                </div>
+                <div class="col-lg-9 col-md-8">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            @Html.LabelFor(model => model.Name, new { @class = "control-label" })
+                            @Html.TextBoxFor(model => model.Name, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.Name, null, new { @class = "text-danger" })
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            @Html.LabelFor(model => model.LastName, new { @class = "control-label" }) <span class="small text-muted">(opcional)</span>
+                            @Html.TextBoxFor(model => model.LastName, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.LastName, null, new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-auto mb-3">
+                            @Html.LabelFor(model => model.NamePrefix, new { @class = "control-label" }) <span class="small text-muted">(opcional)</span>
+                            @Html.TextBoxFor(model => model.NamePrefix, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.NamePrefix, null, new { @class = "text-danger" })
+                        </div>
+                        <div class="col mb-3">
+                            @Html.LabelFor(model => model.InstitutionId, new { @class = "control-label" }) <span class="small text-muted">(opcional)</span>
+                            @Html.DropDownListFor(model => model.InstitutionId, Model.InstitutionSelectListItems, "-- Ninguna --", new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.InstitutionId, null, new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div>
+                        @Html.LabelFor(model => model.About, new { @class = "control-label" }) <span class="small text-muted">(opcional)</span>
+                        @Html.TextAreaFor(model => model.About, 6, 0, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.About, null, new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <button type="submit" class="btn btn-primary">Agregar</button>
+            <a class="btn btn-light" href="@Url.Action("index")">Cancelar</a>
+        </div>
+    </div>
+}
+

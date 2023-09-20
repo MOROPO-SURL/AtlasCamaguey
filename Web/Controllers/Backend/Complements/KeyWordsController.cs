@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using MOROPO.CIMAC.Atlas.Camaguey.Persistence.Entities;
@@ -12,10 +11,9 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Complements
     [Microsoft.AspNetCore.Authorization.Authorize]
     [RequirePermissions(Framework.Guama.Core.Security.Presentation.Constants.Permissions.ShellManager)]
     [Area("complements")]
-
     public class KeyWordsController : Framework.Guama.Core.Presentation.Web.Backend.Controllers.AbstractEntityManagementController<KeyWord, System.Guid, KeyWordInputViewModel, KeyWordDisplayViewModel>
 	{
-        public KeyWordsController(IEntityRepository<KeyWord, Guid> repository, IStringLocalizer<KeyWordsController> localizer, ILogger<KeyWordsController> logger) : base(repository, localizer, logger)
+        public KeyWordsController(IEntityRepository<KeyWord, System.Guid> repository, IStringLocalizer<KeyWordsController> localizer, ILogger<KeyWordsController> logger) : base(repository, localizer, logger)
         {
         }
 

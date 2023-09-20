@@ -4,8 +4,20 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Persistence.Entities
 {
     public class Epigraph : Framework.Guama.Core.Persistence.Entities.Contract.INamedEntity<System.Guid>
     {
+        public Epigraph()
+        {
+            Id = System.Guid.NewGuid();
+            KeyWordBridges = new List<EpigraphKeyWordBridge>();
+            ImageBridges = new List<EpigraphImageBridge>();
+            VideoBridges = new List<EpigraphVideoBridge>();
+            DocumentBridges = new List<EpigraphDocumentBridge>();
+            MapBridges = new List<EpigraphMapBridge>();
+        }
+
         [System.ComponentModel.DataAnnotations.Key]
         public System.Guid Id { get; set; }
+
+        public int Priority { get; set; } = 1;
 
         [System.ComponentModel.DataAnnotations.Required]
         public string Name { get; set; }
@@ -15,7 +27,6 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Persistence.Entities
 
         [System.ComponentModel.DataAnnotations.Schema.ForeignKey("ImageId")]
         public Framework.Guama.Media.Persistence.Entities.Image Image { get; set; }
-        [System.ComponentModel.DataAnnotations.Required]
         public System.Guid? ImageId { get; set; }
 
         public Enumerations.EpigraphLayout Layout { get; set; }
@@ -25,11 +36,6 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Persistence.Entities
         [System.ComponentModel.DataAnnotations.Required]
         public System.Guid? SectionId { get; set; }
 
-        [System.ComponentModel.DataAnnotations.Schema.ForeignKey("MapId")]
-        public Map Map { get; set; }
-        [System.ComponentModel.DataAnnotations.Required]
-        public System.Guid? MapId { get; set; }
-
         public List<EpigraphKeyWordBridge> KeyWordBridges { get; set; }
         
         public List<EpigraphImageBridge> ImageBridges { get; set; }
@@ -38,13 +44,6 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Persistence.Entities
 
         public List<EpigraphDocumentBridge> DocumentBridges { get; set; }
 
-        public Epigraph()
-        {
-            Id = System.Guid.NewGuid();
-            KeyWordBridges = new List<EpigraphKeyWordBridge>();
-            ImageBridges = new List<EpigraphImageBridge>();
-            VideoBridges = new List<EpigraphVideoBridge>();
-            DocumentBridges = new List<EpigraphDocumentBridge>();
-        }
+        public List<EpigraphMapBridge> MapBridges { get; set; }
     }
 }

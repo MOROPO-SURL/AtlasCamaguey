@@ -74,6 +74,64 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Helpers
             }
             #endregion
 
+            #region Epigraph
+
+            if (!permissionDbSet.Any(role => role.Code.Equals(Constants.Permission.EpigraphViewer)))
+            {
+                permissionDbSet.Add(Constants.Permission.EpigraphViewer.ToPermissionEntity(Constants.PermissionsFamily.EpigraphManagement));
+            }
+            if (!permissionDbSet.Any(role => role.Code.Equals(Constants.Permission.EpigraphCreator)))
+            {
+                permissionDbSet.Add(Constants.Permission.EpigraphCreator.ToPermissionEntity(Constants.PermissionsFamily.EpigraphManagement));
+            }
+            if (!permissionDbSet.Any(role => role.Code.Equals(Constants.Permission.EpigraphEditor)))
+            {
+                permissionDbSet.Add(Constants.Permission.EpigraphEditor.ToPermissionEntity(Constants.PermissionsFamily.EpigraphManagement));
+            }
+            if (!permissionDbSet.Any(role => role.Code.Equals(Constants.Permission.EpigraphRemover)))
+            {
+                permissionDbSet.Add(Constants.Permission.EpigraphRemover.ToPermissionEntity(Constants.PermissionsFamily.EpigraphManagement));
+            }
+            #endregion
+
+            #region Author
+
+            if (!permissionDbSet.Any(role => role.Code.Equals(Constants.Permission.AuthorViewer)))
+            {
+                permissionDbSet.Add(Constants.Permission.AuthorViewer.ToPermissionEntity(Constants.PermissionsFamily.AuthorManagement));
+            }
+            if (!permissionDbSet.Any(role => role.Code.Equals(Constants.Permission.AuthorCreator)))
+            {
+                permissionDbSet.Add(Constants.Permission.AuthorCreator.ToPermissionEntity(Constants.PermissionsFamily.AuthorManagement));
+            }
+            if (!permissionDbSet.Any(role => role.Code.Equals(Constants.Permission.AuthorEditor)))
+            {
+                permissionDbSet.Add(Constants.Permission.AuthorEditor.ToPermissionEntity(Constants.PermissionsFamily.AuthorManagement));
+            }
+            if (!permissionDbSet.Any(role => role.Code.Equals(Constants.Permission.AuthorRemover)))
+            {
+                permissionDbSet.Add(Constants.Permission.AuthorRemover.ToPermissionEntity(Constants.PermissionsFamily.AuthorManagement));
+            }
+            #endregion
+
+            #region Institution
+            if (!permissionDbSet.Any(role => role.Code.Equals(Constants.Permission.InstitutionViewer)))
+            {
+                permissionDbSet.Add(Constants.Permission.InstitutionViewer.ToPermissionEntity(Constants.PermissionsFamily.InstitutionManagement));
+            }
+            if (!permissionDbSet.Any(role => role.Code.Equals(Constants.Permission.InstitutionCreator)))
+            {
+                permissionDbSet.Add(Constants.Permission.InstitutionCreator.ToPermissionEntity(Constants.PermissionsFamily.InstitutionManagement));
+            }
+            if (!permissionDbSet.Any(role => role.Code.Equals(Constants.Permission.InstitutionEditor)))
+            {
+                permissionDbSet.Add(Constants.Permission.InstitutionEditor.ToPermissionEntity(Constants.PermissionsFamily.InstitutionManagement));
+            }
+            if (!permissionDbSet.Any(role => role.Code.Equals(Constants.Permission.InstitutionViewer)))
+            {
+                permissionDbSet.Add(Constants.Permission.InstitutionViewer.ToPermissionEntity(Constants.PermissionsFamily.InstitutionManagement));
+            }
+            #endregion
 
             if (dbContext is Framework.Guama.Core.Persistence.ORM.EF.Context.Contract.ITraceableDbContext)
             {

@@ -6,12 +6,18 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend
     {
         public System.Guid Id { get; set; }
 
-        public string Project { get; set; }
+        public string Name { get; set; }
+
+        public string QgisProjectPath { get; set; }
+
+        public string Description { get; set; }
 
         public void Import(Map entity)
         {
             Id = entity.Id;
-            Project = entity.Project;
+            Name = entity.Name;
+            QgisProjectPath = entity.QgisProjectPath;
+            Description = entity.Description;
         }
     }
 }

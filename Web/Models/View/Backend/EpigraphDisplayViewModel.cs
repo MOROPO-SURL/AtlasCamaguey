@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using MOROPO.CIMAC.Atlas.Camaguey.Persistence.Entities;
 using MOROPO.CIMAC.Atlas.Camaguey.Persistence.Enumerations;
 
@@ -8,7 +6,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend
 {
     public class EpigraphDisplayViewModel : Framework.Guama.Core.Persistence.Presentation.Models.Contract.IEntityDisplayModel<Epigraph, System.Guid>
     {
-        public Guid Id { get; set; }
+        public System.Guid Id { get; set; }
 
         public string Name { get; set; }
 
@@ -21,8 +19,6 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend
 
         public SectionDisplayViewModel Section { get; set; }
 
-        public MapDisplayViewModel Map { get; set; }
-
         public KeyWordDisplayViewModel[] KeyWords { get; set; }
 
         public ImageDisplayViewModel[] Images { get; set; }
@@ -31,6 +27,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend
 
         public DocumentDisplayViewModel[] Documents { get; set; }
 
+        public MapDisplayViewModel[] Maps { get; set; }
 
         public void Import(Epigraph entity)
         {
@@ -43,10 +40,6 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend
 
             Section = new SectionDisplayViewModel();
             Section.Import(entity.Section);
-
-            Map = new MapDisplayViewModel();
-            Map.Import(entity.Map);
-
 
             KeyWords = entity.KeyWordBridges.Select(bridge =>
             {
@@ -78,6 +71,15 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend
             Documents = entity.DocumentBridges.Select(bridge =>
             {
                 var model = new DocumentDisplayViewModel();
+
+                model.Import(bridge.Stern);
+
+                return model;
+            }).ToArray();
+
+            Maps = entity.MapBridges.Select(bridge =>
+            {
+                var model = new MapDisplayViewModel();
 
                 model.Import(bridge.Stern);
 

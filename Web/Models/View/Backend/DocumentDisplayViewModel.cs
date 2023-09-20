@@ -1,9 +1,9 @@
 ﻿using System;
 using MOROPO.Framework.Guama.Media.Persistence.Entities;
 
-namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View
+namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend
 {
-    public class DocumentDisplayViewModel : Framework.Guama.Core.Persistence.Presentation.Models.Contract.IEntityDisplayModel<Document, System.Guid>
+    public class DocumentDisplayViewModel : Framework.Guama.Core.Persistence.Presentation.Models.Contract.IEntityDisplayModel<Document, Guid>
     {
         public Guid Id { get; set; }
 

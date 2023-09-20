@@ -1,0 +1,99 @@
+﻿@model MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend.SectionInputViewModel
+
+@{
+    const string HEADER = "Agregar Sección";
+    
+    ViewData["Title"] = HEADER;
+
+    ViewData[BreadcrumbViewModel.BREADCRUMBS_MAP_KEY] = new List<BreadcrumbViewModel>
+    {
+        new BreadcrumbViewModel
+        {
+            Caption = "<span class=\"mdi mdi-desktop-mac-dashboard\" style=\"margin-right: 4px;\"></span>" + GlobalViewLocalizationHelper.Localize("Dashboard", ViewLocalizer),
+            Url = Url.Action("index", "dashboard", new { area = "management" })
+        },
+        new BreadcrumbViewModel
+        {
+            Caption = "Gestionar Secciones",
+            Url = Url.Action("index")
+        },
+        new BreadcrumbViewModel
+        {
+            Caption = HEADER
+        }
+    };
+
+    Layout = "_BackendLayout";
+}
+
+@section scripts
+{
+    <script type="text/javascript" src="/lib/ckeditor/ckeditor.js"></script>
+    <script>
+        ClassicEditor
+            .create( document.querySelector( '#Description' ) )
+            .then( editor => {
+                editor.editing.view.change(writer=>{
+                    writer.setStyle('height', '600px', editor.editing.view.document.getRoot());
+                });
+            } )
+            .catch( error => {
+                console.error( error );
+            } );
+
+        $(function() {
+            $(document).on("change", "#ImageFile", function() {
+                var files = !!this.files ? this.files : [];
+
+                if (!files.length || !window.FileReader) return; // no file selected, or no FileReader support
+
+                if (/^image/.test(files[0].type)) {
+                    var reader = new FileReader();
+
+                    reader.readAsDataURL(files[0]);
+
+                    reader.onloadend = function() {
+                        $('#ImageFilePreview').attr('src', this.result);
+                        $('#ImageFilePreview').show();
+                    }
+                }
+
+            });
+        });
+    </script>
+}
+
+@using (Html.BeginForm("create", "sections", new { Area = "atlas" }, FormMethod.Post, true, new { enctype = "multipart/form-data" }))
+{
+    @Html.ValidationSummary(true)
+    <div class="card mb-3 mt-4">
+        <div class="card-header"><h4 class="mb-0">@ViewData["Title"]</h4></div>
+        <div class="card-body">
+            <div class="mb-3">
+                @Html.LabelFor(model => model.Name, new { @class = "control-label" })
+                @Html.TextBoxFor(model => model.Name, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Name, null, new { @class = "text-danger" })
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-1 mb-md-3">
+                    @Html.LabelFor(model => model.ImageFile, new { @class = "control-label" })
+                    <input type="file" class="form-control" id="ImageFile" name="ImageFile" />
+                    @Html.ValidationMessageFor(model => model.ImageFile, null, new { @class = "text-danger" })
+                </div>
+                <div class="col-md-6 mb-3">                    
+                    <img class="img-thumbnail" id="ImageFilePreview" style="display: none;" />
+                </div>
+            </div>
+            <div>
+                @Html.LabelFor(model => model.Description, new { @class = "control-label" })
+                @Html.TextAreaFor(model => model.Description, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Description, null, new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="card-footer">
+            <button type="submit" class="btn btn-primary">Agregar</button>
+            <a class="btn btn-light" href="@Url.Action("index")">Cancelar</a>
+        </div>
+    </div>
+}
+

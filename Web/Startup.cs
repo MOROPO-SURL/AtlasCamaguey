@@ -47,6 +47,8 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web
             services.AddScoped<IEntityRepository<Map, System.Guid>, Persistence.ORM.EF.Repositories.MapRepository>();
             services.AddScoped<IEntityRepository<Section, System.Guid>, Persistence.ORM.EF.Repositories.SectionRepository>();
             services.AddScoped<IEntityRepository<Epigraph, System.Guid>, Persistence.ORM.EF.Repositories.EpigraphRepository>();
+            services.AddScoped<IEntityRepository<Author, System.Guid>, Persistence.ORM.EF.Repositories.AuthorRepository>();
+            services.AddScoped<IEntityRepository<Institution, System.Guid>, Persistence.ORM.EF.Repositories.InstitutionRepository>();
 
             services.AddSingleton<Framework.Guama.Core.Persistence.ORM.EF.Providers.Facade.IDbSchemaConfigurationProviderFacade, Persistence.ORM.EF.Providers.DbSchemaConfigurationProvider>();
 

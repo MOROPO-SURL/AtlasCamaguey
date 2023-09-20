@@ -10,6 +10,8 @@
         [System.ComponentModel.DataAnnotations.Key]
         public System.Guid Id { get; set; }
 
+        public int Priority { get; set; } = 1;
+
         [System.ComponentModel.DataAnnotations.Required]
         public string Name { get; set; }
 

@@ -26,9 +26,67 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Extensions
                 Role = Constants.Permission.TraceViewer
             });
 
+            var atlasSections = new List<ManagementDashboardSectionViewModel>
+            {
+                new ManagementDashboardSectionViewModel
+                {
+                    Title = "Secciones",
+                    Controller = "sections",
+                    Action = "index",
+                    Area = "atlas",
+                    Role = Constants.Permission.SectionViewer
+                },
+                new ManagementDashboardSectionViewModel
+                {
+                    Title = "Epígrafes",
+                    Controller = "epigraphs",
+                    Action = "index",
+                    Area = "atlas",
+                    Role = Constants.Permission.EpigraphViewer
+                },
+                new ManagementDashboardSectionViewModel
+                {
+                    Title = "Mapas",
+                    Controller = "maps",
+                    Action = "index",
+                    Area = "atlas",
+                    Role = Constants.Permission.MapViewer
+                },
+                new ManagementDashboardSectionViewModel
+                {
+                    Title = "Autores",
+                    Controller = "authors",
+                    Action = "index",
+                    Area = "atlas",
+                    Role = Constants.Permission.AuthorViewer
+                }
+            };
+
+            var complementarySections = new List<ManagementDashboardSectionViewModel>
+            {
+                new ManagementDashboardSectionViewModel
+                {
+                    Title = "Instituciones",
+                    Controller = "institutions",
+                    Action = "index",
+                    Area = "complements",
+                    Role = Constants.Permission.InstitutionViewer
+                },
+                new ManagementDashboardSectionViewModel
+                {
+                    Title = "Palabras Claves",
+                    Controller = "keywords",
+                    Action = "index",
+                    Area = "complements",
+                    Role = Constants.Permission.KeyWordViewer
+                }
+            };
+
             return new Dictionary<string, ICollection<ManagementDashboardSectionViewModel>>
             {
-                { "Seguridad", securitySections }
+                { "Seguridad", securitySections },
+                { "Contenido del Atlas", atlasSections },
+                { "Complementarios", complementarySections }
             };
         }
     }

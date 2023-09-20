@@ -2,11 +2,11 @@
 using System.Xml.Linq;
 using MOROPO.Framework.Guama.Media.Persistence.Entities;
 
-namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View
+namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend
 {
-    public class ImageDisplayViewModel : Framework.Guama.Core.Persistence.Presentation.Models.Contract.IEntityDisplayModel<Image, System.Guid>
+    public class ImageDisplayViewModel : Framework.Guama.Core.Persistence.Presentation.Models.Contract.IEntityDisplayModel<Image, Guid>
     {
-        public Guid Id { get; set ; }
+        public Guid Id { get; set; }
 
         public string Extension { get; set; }
 

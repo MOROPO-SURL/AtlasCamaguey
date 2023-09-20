@@ -2,9 +2,9 @@
 using System.Xml.Linq;
 using MOROPO.Framework.Guama.Media.Persistence.Entities;
 
-namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View
+namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend
 {
-    public class VideoDisplayViewModel : Framework.Guama.Core.Persistence.Presentation.Models.Contract.IEntityDisplayModel<Video, System.Guid>
+    public class VideoDisplayViewModel : Framework.Guama.Core.Persistence.Presentation.Models.Contract.IEntityDisplayModel<Video, Guid>
     {
         public Guid Id { get; set; }
 
