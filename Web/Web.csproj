@@ -28,6 +28,9 @@
 		<None Remove="logs\**" />
 		<None Remove="wwwroot\media\**" />
 		<None Remove="Controllers\Backend\Complements\" />
+		<None Remove="Components\" />
+		<None Remove="Views\Shared\Components\" />
+		<None Remove="Views\Shared\Components\BackendNavbar\" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -55,5 +58,8 @@
 
 	<ItemGroup>
 	  <Folder Include="wwwroot\lib\ckeditor\" />
+	  <Folder Include="Components\" />
+	  <Folder Include="Views\Shared\Components\" />
+	  <Folder Include="Views\Shared\Components\BackendNavbar\" />
 	</ItemGroup>
 </Project>

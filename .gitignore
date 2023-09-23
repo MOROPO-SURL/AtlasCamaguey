@@ -396,6 +396,10 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+#MacOS
+.DS_Store
+
 /Web/wwwroot/media
 /Web/dpkeys
 /Web/Migrations

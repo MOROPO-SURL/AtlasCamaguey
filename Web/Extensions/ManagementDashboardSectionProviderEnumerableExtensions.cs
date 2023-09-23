@@ -84,9 +84,9 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Extensions
 
             return new Dictionary<string, ICollection<ManagementDashboardSectionViewModel>>
             {
-                { "Seguridad", securitySections },
-                { "Contenido del Atlas", atlasSections },
-                { "Complementarios", complementarySections }
+                { "security", securitySections },
+                { "atlas", atlasSections },
+                { "complements", complementarySections }
             };
         }
     }

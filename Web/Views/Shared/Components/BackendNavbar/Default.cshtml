@@ -1,0 +1,99 @@
+﻿@using MOROPO.Framework.Guama.Core.Security.Common.Presentation.Web.Frontend.Extensions;
+@using MOROPO.CIMAC.Atlas.Camaguey.Web.Extensions;
+
+@model Dictionary<string, ICollection<MOROPO.Framework.Guama.Core.Presentation.Web.Backend.Models.View.ManagementDashboardSectionViewModel>>
+
+@{
+    var isDashboard = Context.Request.Path.Value.StartsWith("/management/dashboard");
+}
+
+<ul class="nav nav-tabs justify-content-center" role="tablist">
+    @if (isDashboard)
+    {
+        <li class="nav-item">
+            <a class="nav-link active" id="tab-dashboard" data-toggle="tab" href="#tab-content-dashboard" role="tab" aria-controls="tab-content-dashboard" aria-selected="@isDashboard"><h4 class="mb-0">Inicio</h4></a>
+        </li>
+    }
+    else
+    {
+        <li class="nav-item">
+            <a class="nav-link" id="tab-dashboard" data-toggle="tab" href="#tab-content-dashboard" role="tab" aria-controls="tab-content-dashboard" aria-selected="@isDashboard"><h4 class="mb-0">Inicio</h4></a>
+        </li>
+    }
+
+    @foreach (var group in Model)
+    {
+        @if (Context.Request.Path.Value.StartsWith("/management/" + group.Key))
+        {
+            <li class="nav-item">
+                <a class="nav-link active" id="tab-@group.Key" data-toggle="tab" href="#tab-content-@group.Key"><h4 class="mb-0">@GlobalViewLocalizationHelper.Localize(group.Key)</h4></a>
+            </li>
+        }
+        else
+        {
+            <li class="nav-item">
+                <a class="nav-link" id="tab-@group.Key" data-toggle="tab" href="#tab-content-@group.Key"><h4 class="mb-0">@GlobalViewLocalizationHelper.Localize(group.Key)</h4></a>
+            </li>
+        }
+    }
+</ul>
+
+<div class="tab-content m-3">
+    @{
+        var tapContentCssClass = isDashboard ? "fade show active" : "fade";
+
+        <div class="tab-pane @tapContentCssClass" id="tab-content-dashboard" role="tabpanel" aria-labelledby="tab-dashboard">
+            <ul class="nav nav-pills justify-content-center">
+                @if (isDashboard)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#"><span class="mdi mdi-desktop-mac-dashboard"></span> @GlobalViewLocalizationHelper.Localize("Dashboard")</a>
+                    </li>
+                }
+                else
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" href="@Url.Action("index", "dashboard", new { area = "management", key = string.Empty })"><span class="mdi mdi-desktop-mac-dashboard"></span> @GlobalViewLocalizationHelper.Localize("Dashboard")</a>
+                    </li>
+                }
+            </ul>
+        </div>
+    }
+
+    @foreach (var group in Model)
+    {
+        var _tapContentCssClass = Context.Request.Path.Value.StartsWith("/management/" + group.Key) ? "fade show active" : "fade";
+
+        <div class="tab-pane @_tapContentCssClass" id="tab-content-@group.Key" role="tabpanel" aria-labelledby="tab-@group.Key">
+            <ul class="nav nav-pills justify-content-center">
+                @foreach (var item in group.Value)
+                {
+                    var isCurrent = Context.Request.Path.Value.StartsWith("/management/" + item.Area + "/" + item.Controller) || (string.IsNullOrEmpty(item.Area) && Context.Request.Path.Value.StartsWith("/management/" + item.Controller));
+
+                    if (User.IsAuthorized(item.Role))
+                    {
+                        if (isCurrent)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link active" href="@Url.Action(item.Action, item.Controller, new { area = item.Area, sheet = string.Empty })">@item.ToIconographyHtmlString() <span>@GlobalViewLocalizationHelper.Localize(item.Title, ViewLocalizer)</span></a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" href="@Url.Action(item.Action, item.Controller, new { area = item.Area, sheet = string.Empty })">@item.ToIconographyHtmlString() <span>@GlobalViewLocalizationHelper.Localize(item.Title, ViewLocalizer)</span></a>
+                            </li>
+                        }
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link disabled">@item.ToIconographyHtmlString() <span>@GlobalViewLocalizationHelper.Localize(item.Title, ViewLocalizer)</span></a>
+                        </li>
+                    }
+                }
+            </ul>
+        </div>
+    }
+</div>
+<hr class="mt-0 mb-3" />

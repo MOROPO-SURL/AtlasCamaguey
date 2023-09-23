@@ -56,20 +56,8 @@
     </nav>
 
     <div class="container-fluid pl-0 pr-0" style="margin-top: 7rem!important;">
-        <ul class="nav nav-tabs justify-content-center mb-3">
-            <li class="nav-item">
-                <a class="nav-link active" href="#">@GlobalViewLocalizationHelper.Localize("Dashboard")</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Seguridad</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Atlas de Contenidos</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link disabled">Complementarios</a>
-            </li>
-        </ul>
+        @await Component.InvokeAsync("BackendNavbar")
+
         <div class="m-4">
             @if (ViewData[BreadcrumbViewModel.BREADCRUMBS_MAP_KEY] != null)
             {
@@ -87,11 +75,11 @@
                                 {
                                     if (count < total)
                                     {
-                                            <li class="breadcrumb-item"><a href="@breadcrumb.Url">@Html.Raw(breadcrumb.Caption)</a></li>
+                                        <li class="breadcrumb-item"><a href="@breadcrumb.Url">@Html.Raw(breadcrumb.Caption)</a></li>
                                     }
                                     else
                                     {
-                                            <li class="breadcrumb-item active">@Html.Raw(breadcrumb.Caption)</li>
+                                        <li class="breadcrumb-item active">@Html.Raw(breadcrumb.Caption)</li>
                                     }
 
                                     count++;
@@ -109,30 +97,30 @@
                 {
                     var notification = JsonConvert.DeserializeObject<NotificationViewModel>(extraNotificationEntry.Value.ToString());
 
-                        <div class="alert alert-dismissible fade show alert-@Html.Raw(notification.Type.ToString().ToLower())">
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                            @if (notification.Title != null)
+                    <div class="alert alert-dismissible fade show alert-@Html.Raw(notification.Type.ToString().ToLower())">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        @if (notification.Title != null)
                         {
-                                <h4>@GlobalViewLocalizationHelper.Localize(notification.Title, ViewLocalizer)</h4>
+                            <h4>@GlobalViewLocalizationHelper.Localize(notification.Title, ViewLocalizer)</h4>
                         }
 
-                            @if (notification.Message != null)
+                        @if (notification.Message != null)
                         {
-                                @Html.Raw(GlobalViewLocalizationHelper.Localize(notification.Message, ViewLocalizer));
+                            @Html.Raw(GlobalViewLocalizationHelper.Localize(notification.Message, ViewLocalizer));
                         }
 
-                            @if (notification.Messages != null)
+                        @if (notification.Messages != null)
                         {
-                                <ul>
-                                    @foreach (var item in notification.Messages)
-                            {
-                                        <li>@GlobalViewLocalizationHelper.Localize(item, ViewLocalizer)</li>
-                            }
-                                </ul>
+                            <ul>
+                                @foreach (var item in notification.Messages)
+                                {
+                                    <li>@GlobalViewLocalizationHelper.Localize(item, ViewLocalizer)</li>
+                                }
+                            </ul>
                         }
-                        </div>
+                    </div>
                 }
             }
 
