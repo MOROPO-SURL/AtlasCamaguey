@@ -1,0 +1,165 @@
+﻿@using MOROPO.CIMAC.Atlas.Camaguey.Web.Extensions;
+
+@model MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend.MapDocumentsManagementViewModel
+
+@{
+    const string HEADER = "Modificar Mapa";
+
+    var title = string.Format("{0} (Documentos)", HEADER);
+
+    ViewData["Title"] = title;
+
+    ViewData[BreadcrumbViewModel.BREADCRUMBS_MAP_KEY] = new List<BreadcrumbViewModel>
+    {
+        new BreadcrumbViewModel
+        {
+            Caption = "<span class=\"mdi mdi-desktop-mac-dashboard\" style=\"margin-right: 4px;\"></span>" + GlobalViewLocalizationHelper.Localize("Dashboard", ViewLocalizer),
+            Url = Url.Action("index", "dashboard", new { area = "management" })
+        },
+        new BreadcrumbViewModel
+        {
+            Caption = "Gestionar Mapas",
+            Url = Url.Action("index")
+        },
+        new BreadcrumbViewModel
+        {
+            Caption = title
+        }
+    };
+
+    Layout = "_BackendLayout";
+}
+
+<div class="card mb-3 mt-4">
+    <div class="card-header">
+        <h4>@HEADER</h4>
+        <ul class="nav nav-tabs card-header-tabs">
+            <li class="nav-item">
+                <a class="nav-link" href="@Url.Action("Edit", Model.Map.Id)">Generales</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="@Url.Action("EditAuthors", Model.Map.Id)">Autores</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="@Url.Action("EditImages", Model.Map.Id)">Imágenes</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="@Url.Action("EditVideos", Model.Map.Id)">Videos</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="#">Documentos</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="@Url.Action("EditKeyWords", Model.Map.Id)">Palabras Claves</a>
+            </li>
+        </ul>
+    </div>
+    <div class="card-body">
+        @await Html.PartialAsync("_SummaryPartial", Model.Map)
+
+        <div class="modal fade" id="add-document" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="add-document-title">Agregar Archivo</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    @using (Html.BeginForm("adddocument", "maps", new { key = Model.Map.Id }, FormMethod.Post, true, new { enctype = "multipart/form-data" }))
+                    {
+                        @await Html.PartialAsync("_DocumentCreationModalBodyPartial", new MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend.DocumentInputViewModel())
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Agregar</button>
+                            <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        @if (Model.Documents.Length <= 0)
+        {
+            <p class="text-muted mb-0">Sin elementos que mostrar</p>
+        }
+        else
+        {
+            <div class="row">
+                @foreach (var item in Model.Documents)
+                {
+                    <div class="col-lg-3 col-md-4 col-sm-6">
+                        <div class="modal fade" id="delete-document-@item.Id" tabindex="-1" role="dialog" aria-labelledby="delete-document-@item.Id-lable" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    @using (Html.BeginForm("removedocument", "maps", new { key = Model.Map.Id }, FormMethod.Post, true, new { @class = "modal-content" }))
+                                    {
+                                        @Html.Hidden("documentId", item.Id)
+
+                                        <div class="modal-header">
+                                            <h4 class="modal-title" id="delete-document-@item.Id-lable">Eliminar Documento</h4>
+                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>Esta seguro que desea eliminar el documento seleccionado?</p>
+                                        </div>
+                                        <div class="modal-footer" style="margin-top: 0;">
+                                            <button type="submit" class="btn btn-danger">Eliminar</button>
+                                            <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center mt-2">
+                            <span class="mdi @item.Extension.AsExtensionToMDICssClass()" style="font-size: 114px"></span>
+                            <h5>@item.Name</h5>
+                            @if (item.Description == null)
+                            {
+                                <span class="text-muted italic">Sin descripción</span>
+                            }
+                            else
+                            {
+                                <p style="color: #6c757d; word-wrap: break-word;">@item.Description</p>
+                            }
+                            <div class="mt-3">
+                                <div class="btn-group btn-group-sm">
+                                    <a class="btn btn-light" asp-action="document" asp-controller="download" asp-area="" asp-route-key="@item.Id">Descargar</a>
+                                    <a class="btn btn-light" href="#" data-toggle="modal" data-target="#edit-document-@item.Id">Modificar</a>
+                                    <a class="btn btn-danger" href="#" data-toggle="modal" data-target="#delete-document-@item.Id">Eliminar</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal fade" id="edit-document-@item.Id" tabindex="-1" role="dialog" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="edit-document-title">Modificar Datos de Documento</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                @using (Html.BeginForm("editdocument", "maps", new { key = Model.Map.Id }, FormMethod.Post, true, null))
+                                {
+                                    @await Html.PartialAsync("_DocumentEditionModalBodyPartial", new MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend.DocumentInputViewModel
+                                    {
+                                        Id = item.Id,
+                                        Name = item.Name,
+                                        Description = item.Description
+                                    })
+                                    <div class="modal-footer">
+                                        <button type="submit" class="btn btn-primary">Modificar</button>
+                                        <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+    <div class="card-footer">
+        <a class="btn btn-primary" href="#" data-toggle="modal" data-target="#add-document">Agregar</a>
+        <a class="btn btn-light" href="@Url.Action("index")">Regresar al listado</a>
+    </div>
+</div>

@@ -1,0 +1,153 @@
+﻿@model MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend.EpigraphImagesManagementViewModel
+
+@{
+    const string HEADER = "Modificar Epígrafe";
+
+    var title = string.Format("{0} (Imágenes)", HEADER);
+
+    ViewData["Title"] = title;
+
+    ViewData[BreadcrumbViewModel.BREADCRUMBS_MAP_KEY] = new List<BreadcrumbViewModel>
+    {
+        new BreadcrumbViewModel
+        {
+            Caption = "<span class=\"mdi mdi-desktop-mac-dashboard\" style=\"margin-right: 4px;\"></span>" + GlobalViewLocalizationHelper.Localize("Dashboard", ViewLocalizer),
+            Url = Url.Action("index", "dashboard", new { area = "management" })
+        },
+        new BreadcrumbViewModel
+        {
+            Caption = "Gestionar Epígrafes",
+            Url = Url.Action("index")
+        },
+        new BreadcrumbViewModel
+        {
+            Caption = title
+        }
+    };
+
+    Layout = "_BackendLayout";
+}
+
+@section scripts
+{
+    <script>
+        $(function() {
+            $(document).on("change", "#imageFile", function() {
+                var files = !!this.files ? this.files : [];
+
+                if (!files.length || !window.FileReader) return; // no file selected, or no FileReader support
+
+                if (/^image/.test(files[0].type)) {
+                    var reader = new FileReader();
+
+                    reader.readAsDataURL(files[0]);
+
+                    reader.onloadend = function() {
+                        $('#ImageFilePreview').attr('src', this.result);
+                        $('#ImageFilePreview').show();
+                    }
+                }
+
+            });
+        });
+    </script>
+}
+
+<div class="card mb-3 mt-4">
+    <div class="card-header">
+        <h4>@HEADER</h4>
+        <ul class="nav nav-tabs card-header-tabs">
+            <li class="nav-item">
+                <a class="nav-link" href="@Url.Action("Edit", Model.Epigraph.Id)">Generales</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="@Url.Action("EditMaps", Model.Epigraph.Id)">Mapas</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="#">Imágenes</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="@Url.Action("EditVideos", Model.Epigraph.Id)">Videos</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="@Url.Action("EditDocuments", Model.Epigraph.Id)">Documentos</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="@Url.Action("EditKeyWords", Model.Epigraph.Id)">Palabras Claves</a>
+            </li>
+        </ul>
+    </div>
+    <div class="card-body pb-0">
+        @await Html.PartialAsync("_SummaryPartial", Model.Epigraph)
+
+        <div class="modal fade" id="add-image" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="add-image-title">Agregar Imagen</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    @using (Html.BeginForm("addimage", "epigraphs", new { key = Model.Epigraph.Id }, FormMethod.Post, true, new { enctype = "multipart/form-data" }))
+                    {
+                        <div class="modal-body">
+                            <input type="file" class="form-control" id="imageFile" name="imageFile" />
+                            <img class="img-thumbnail mt-2" id="ImageFilePreview" style="display: none;" />
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Agregar</button>
+                            <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        @if (Model.Images.Length <= 0)
+        {
+            <p class="text-muted mb-3">Sin elementos que mostrar</p>
+        }
+        else
+        {
+            <div class="card-columns">
+                @foreach (var item in Model.Images)
+                {
+                    <div class="card" style="margin-bottom: 1.25rem !important;">
+                        <img class="card-img" src="~/media/images/@item.Id.@item.Extension" />
+                        <div class="card-img-overlay">                        
+                            <div class="btn-group btn-group-sm float-right">
+                                <a class="btn btn-danger" href="#" data-toggle="modal" data-target="#delete-image-@item.Id"><span class="mdi mdi-trash-can"></span></a>
+                            </div>
+                        </div>
+                        <div class="modal fade" id="delete-image-@item.Id" tabindex="-1" role="dialog" aria-labelledby="delete-image-@item.Id-lable" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    @using (Html.BeginForm("deleteimage", "epigraphs", new { key = Model.Epigraph.Id }, FormMethod.Post, true, new { @class = "modal-content" }))
+                                    {
+                                        @Html.Hidden("imageId", item.Id)
+
+                                        <div class="modal-header">
+                                            <h4 class="modal-title" id="delete-image-@item.Id-lable">Eliminar Imagen</h4>
+                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p class="mb-0">Esta seguro que desea eliminar la imagen seleccionada?</p>
+                                        </div>
+                                        <div class="modal-footer" style="margin-top: 0;">
+                                            <button type="submit" class="btn btn-danger">Eliminar</button>
+                                            <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+    <div class="card-footer">
+        <a class="btn btn-primary" href="#" data-toggle="modal" data-target="#add-image">Agregar</a>
+        <a class="btn btn-light" href="@Url.Action("index")">Regresar al listado</a>
+    </div>
+</div>

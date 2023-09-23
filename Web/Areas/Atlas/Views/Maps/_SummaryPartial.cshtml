@@ -1,0 +1,19 @@
+﻿@model MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend.MapDisplayViewModel
+
+<div class="alert alert-dark mb-4">
+    <details>
+        <summary class="h4 mb-0">@Model.Name</summary>
+        <hr />
+        <dl class="mb-0">
+            <dt>Descripción</dt>
+            @if (string.IsNullOrEmpty(Model.Description))
+            {
+                <dd>---</dd>
+            }
+            else
+            {
+                <dd>@Html.Raw(Model.Description)</dd>
+            }
+        </dl>
+    </details>
+</div>

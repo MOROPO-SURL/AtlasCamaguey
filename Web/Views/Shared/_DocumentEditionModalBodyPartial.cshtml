@@ -1,0 +1,14 @@
+﻿@model MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend.DocumentInputViewModel
+
+<div class="modal-body">
+    @Html.HiddenFor(model => model.Id)
+
+    <div class="mb-3">
+        @Html.LabelFor(model => model.Name, new { @class = "control-label" })
+        @Html.TextBoxFor(model => model.Name, new { @class = "form-control" })
+    </div>
+    <div>
+        @Html.LabelFor(model => model.Description, new { @class = "control-label" })
+        @Html.TextAreaFor(model => model.Description, 4, 0, new { @class = "form-control" })
+    </div>
+</div>

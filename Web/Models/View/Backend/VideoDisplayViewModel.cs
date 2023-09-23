@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Xml.Linq;
 using MOROPO.Framework.Guama.Media.Persistence.Entities;
 
 namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend
@@ -18,6 +17,8 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend
 
         public string FrameSize { get; set; }
 
+        public string About { get; set; }
+
         public void Import(Video entity)
         {
             Id = entity.Id;
@@ -26,6 +27,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend
             Duration = entity.Duration;
             Format = entity.Format;
             FrameSize = entity.FrameSize;
+            About = entity.About;
         }
     }
 }
