@@ -1,0 +1,185 @@
+﻿@model MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend.MapAuthorsManagementViewModel
+
+@{
+    const string HEADER = "Modificar Mapa";
+
+    var title = string.Format("{0} (Autores)", HEADER);
+
+    ViewData["Title"] = title;
+
+    ViewData[BreadcrumbViewModel.BREADCRUMBS_MAP_KEY] = new List<BreadcrumbViewModel>
+    {
+        new BreadcrumbViewModel
+        {
+            Caption = "<span class=\"mdi mdi-desktop-mac-dashboard\" style=\"margin-right: 4px;\"></span>" + GlobalViewLocalizationHelper.Localize("Dashboard", ViewLocalizer),
+            Url = Url.Action("index", "dashboard", new { area = "management" })
+        },
+        new BreadcrumbViewModel
+        {
+            Caption = "Gestionar Autores",
+            Url = Url.Action("index")
+        },
+        new BreadcrumbViewModel
+        {
+            Caption = title
+        }
+    };
+
+    Layout = "_BackendLayout";
+}
+
+@section styles {
+    <link rel="stylesheet" href="~/lib/bootstrap-combobox/css/bootstrap-combobox.css" />
+    <style type="text/css">
+        .dropdown-toggle {
+            border-radius: 0.25rem;
+            border: 1px solid #ced4da;
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+            margin-left: -1px;
+            line-height: 36px;
+        }
+
+        .dropdown-toggle::after {
+            margin: 0 5px;
+        }
+
+        ul.dropdown-menu{
+            width: 100%;
+        }
+    </style>
+}
+
+@section scripts {
+    <script src="~/lib/bootstrap-combobox/js/bootstrap-combobox.js"></script>
+    <script type="text/javascript">
+        $('select#authorId').combobox();
+    </script>
+}
+
+<div class="card mb-3 mt-4">
+    <div class="card-header">
+        <h4>@HEADER</h4>
+        <ul class="nav nav-tabs card-header-tabs">
+            <li class="nav-item">
+                <a class="nav-link" href="@Url.Action("Edit", Model.Map.Id)">Generales</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="#">Autores</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="@Url.Action("EditImages", Model.Map.Id)">Imágenes</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="@Url.Action("EditVideos", Model.Map.Id)">Videos</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="@Url.Action("EditDocuments", Model.Map.Id)">Documentos</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="@Url.Action("EditKeyWords", Model.Map.Id)">Palabras Claves</a>
+            </li>
+        </ul>
+    </div>
+    <div class="card-body">
+        @await Html.PartialAsync("_SummaryPartial", Model.Map)
+
+        <div class="modal fade" id="add-item" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="add-collaborator-title">Agregar Colaborador</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    @using (Html.BeginForm("addauthor", "maps", new { key = Model.Map.Id }, FormMethod.Post, true, null))
+                    {
+                        <div class="modal-body">
+                            @if (Model.AvailableAuthorSelectListItems.Length > 0)
+                            {
+                                @Html.DropDownList("authorId", Model.AvailableAuthorSelectListItems, "Seleccione o búsque aquí ...", new { @class = "form-control" })
+                            }else{
+                                <div class="text-muted font-italic mb-0">No hay otras autores disponibles para agregar</div>
+                            }
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Agregar</button>
+                            <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        @if (Model.Authors.Length <= 0)
+        {
+            <p class="text-muted mb-0">Sin elementos que mostrar</p>
+        }
+        else
+        {
+            <div class="row">
+                @foreach (var item in Model.Authors)
+                {
+                    <div class="col-lg-2 col-md-3 col-sm-4 text-center mt-1 mb-3">
+                        @if (item.ImageId != null)
+                        {
+                            <img title="@item.Name" class="img-thumbnail rounded-circle w-75" src="~/media/images/@item.ImageId.@item.ImageExtension" />
+                        }
+                        else
+                        {
+                            <img title="@item.Name" class="img-thumbnail rounded-circle w-75" src="~/img/default-person-picture.jpg" />
+                        }
+                        <div class="mt-2">
+                            <div>@item.Name</div>
+                            @if (!string.IsNullOrEmpty(item.LastName))
+                            {
+                                <div>@item.LastName</div>
+                            }
+                            @if (item.Institution != null)
+                            {
+                                if (string.IsNullOrEmpty(item.Institution.Alias))
+                                {
+                                    <div class="italic">@item.Institution.Name</div>
+                                }
+                                else
+                                {
+                                    <div class="italic">@item.Institution.Name (@item.Institution.Alias)</div>
+                                }
+                            }
+                            <div class="mt-2">
+                                <button role="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#delete-@item.Id"><span class="mdi mdi-trash-can-outline"></span>Eliminar</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="modal fade" id="delete-@item.Id" tabindex="-1" role="dialog" aria-labelledby="delete-@item.Id-lable" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                @using (Html.BeginForm("deleteauthor", "maps", new { key = Model.Map.Id }, FormMethod.Post, true, new { @class = "modal-content" }))
+                                {
+                                    @Html.Hidden("authorId", item.Id)
+
+                                    <div class="modal-header">
+                                        <h4 class="modal-title" id="delete-@item.Id-lable">Eliminar Autor</h4>
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p class="mb-0">Esta seguro que desea eliminar el autor seleccionado?</p>
+                                    </div>
+                                    <div class="modal-footer" style="margin-top: 0;">
+                                        <button type="submit" class="btn btn-danger">Eliminar</button>
+                                        <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+    <div class="card-footer">
+        <a class="btn btn-primary" href="#" data-toggle="modal" data-target="#add-item">Agregar</a>
+        <a class="btn btn-light" href="@Url.Action("index")">Regresar al listado</a>
+    </div>
+</div>
