@@ -8,7 +8,7 @@
 }
 
 <ul id="backend-navbar" class="nav nav-tabs justify-content-center" role="tablist">
-    @if (isDashboard)
+    @if (isDashboard || Context.Request.Path.Value.StartsWith("/security"))
     {
         <li class="nav-item">
             <a class="nav-link p-3 pl-4 pr-4 active" id="tab-dashboard" data-toggle="tab" href="#tab-content-dashboard" role="tab" aria-controls="tab-content-dashboard" aria-selected="@isDashboard">
@@ -48,7 +48,7 @@
 
 <div id="backend-navigation-tab-content" class="tab-content m-3">
     @{
-        var tapContentCssClass = isDashboard ? "fade show active" : "fade";
+        var tapContentCssClass = isDashboard || Context.Request.Path.Value.StartsWith("/security") ? "fade show active" : "fade";
 
         <div class="tab-pane @tapContentCssClass" id="tab-content-dashboard" role="tabpanel" aria-labelledby="tab-dashboard">
             <ul class="nav nav-pills justify-content-center">
