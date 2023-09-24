@@ -7,17 +7,21 @@
     var isDashboard = Context.Request.Path.Value.StartsWith("/management/dashboard");
 }
 
-<ul class="nav nav-tabs justify-content-center" role="tablist">
+<ul id="backend-navbar" class="nav nav-tabs justify-content-center" role="tablist">
     @if (isDashboard)
     {
         <li class="nav-item">
-            <a class="nav-link active" id="tab-dashboard" data-toggle="tab" href="#tab-content-dashboard" role="tab" aria-controls="tab-content-dashboard" aria-selected="@isDashboard"><h4 class="mb-0">Inicio</h4></a>
+            <a class="nav-link p-3 pl-4 pr-4 active" id="tab-dashboard" data-toggle="tab" href="#tab-content-dashboard" role="tab" aria-controls="tab-content-dashboard" aria-selected="@isDashboard">
+                <h5 class="mb-0">Inicio</h5>
+            </a>
         </li>
     }
     else
     {
         <li class="nav-item">
-            <a class="nav-link" id="tab-dashboard" data-toggle="tab" href="#tab-content-dashboard" role="tab" aria-controls="tab-content-dashboard" aria-selected="@isDashboard"><h4 class="mb-0">Inicio</h4></a>
+            <a class="nav-link p-3 pl-4 pr-4" id="tab-dashboard" data-toggle="tab" href="#tab-content-dashboard" role="tab" aria-controls="tab-content-dashboard" aria-selected="@isDashboard">
+                <h5 class="mb-0">Inicio</h5>
+            </a>
         </li>
     }
 
@@ -26,19 +30,23 @@
         @if (Context.Request.Path.Value.StartsWith("/management/" + group.Key))
         {
             <li class="nav-item">
-                <a class="nav-link active" id="tab-@group.Key" data-toggle="tab" href="#tab-content-@group.Key"><h4 class="mb-0">@GlobalViewLocalizationHelper.Localize(group.Key)</h4></a>
+                <a class="nav-link p-3 pl-4 pr-4 active" id="tab-@group.Key" data-toggle="tab" href="#tab-content-@group.Key">
+                    <h5 class="mb-0">@GlobalViewLocalizationHelper.Localize(group.Key)</h5>
+                </a>
             </li>
         }
         else
         {
             <li class="nav-item">
-                <a class="nav-link" id="tab-@group.Key" data-toggle="tab" href="#tab-content-@group.Key"><h4 class="mb-0">@GlobalViewLocalizationHelper.Localize(group.Key)</h4></a>
+                <a class="nav-link p-3 pl-4 pr-4" id="tab-@group.Key" data-toggle="tab" href="#tab-content-@group.Key">
+                    <h5 class="mb-0">@GlobalViewLocalizationHelper.Localize(group.Key)</h5>
+                </a>
             </li>
         }
     }
 </ul>
 
-<div class="tab-content m-3">
+<div id="backend-navigation-tab-content" class="tab-content m-3">
     @{
         var tapContentCssClass = isDashboard ? "fade show active" : "fade";
 
@@ -47,13 +55,13 @@
                 @if (isDashboard)
                 {
                     <li class="nav-item">
-                        <a class="nav-link active" href="#"><span class="mdi mdi-desktop-mac-dashboard"></span> @GlobalViewLocalizationHelper.Localize("Dashboard")</a>
+                        <a class="nav-link active" href="#"><span class="mdi mdi-desktop-mac-dashboard"></span> <span>@GlobalViewLocalizationHelper.Localize("Dashboard")</span></a>
                     </li>
                 }
                 else
                 {
                     <li class="nav-item">
-                        <a class="nav-link" href="@Url.Action("index", "dashboard", new { area = "management", key = string.Empty })"><span class="mdi mdi-desktop-mac-dashboard"></span> @GlobalViewLocalizationHelper.Localize("Dashboard")</a>
+                        <a class="nav-link" href="@Url.Action("index", "dashboard", new { area = "management", key = string.Empty })"><span class="mdi mdi-desktop-mac-dashboard"></span> <span>@GlobalViewLocalizationHelper.Localize("Dashboard")</span></a>
                     </li>
                 }
             </ul>

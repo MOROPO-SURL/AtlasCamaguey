@@ -1,4 +1,4 @@
-﻿@using MOROPO.Framework.Guama.Core.Security.Common.Presentation.Web.Frontend.Extensions
+﻿@using MOROPO.Framework.Guama.Core.Security.Common.Presentation.Web.Frontend.Extensions;
 @using MOROPO.CIMAC.Atlas.Camaguey.Web.Extensions;
 
 @model MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend.HomeViewModel
@@ -20,6 +20,162 @@
         }
     </style>
 }
+
+@section scripts {
+    <script type="text/javascript" src="~/lib/chartjs/chart.min.js"></script>
+
+    <script type="text/javascript">
+        const userActityDataLabels = JSON.parse(@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Newtonsoft.Json.JsonConvert.SerializeObject(Model.UserActivityMap.Keys))));
+        const userActityDataValues = JSON.parse(@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Newtonsoft.Json.JsonConvert.SerializeObject(Model.UserActivityMap.Values))));
+
+        const userActityData = {
+            labels: userActityDataLabels,
+            datasets: [{
+                data: userActityDataValues,
+                backgroundColor: [
+                    '#4dc9f6',
+                    '#f67019',
+                    '#528078',
+                    '#537bc4',
+                    '#63e792',
+                    '#acc236',
+                    '#166a8f',
+                    '#00a950',
+                    '#f53794',
+                    '#58595b'
+                ]
+            }]
+        };
+
+        const userActityChartConfig = {
+            type: 'polarArea',
+            data: userActityData,
+            options: {}
+        };
+
+        const userActityChart = new Chart(
+            document.getElementById('user-activity-chart'),
+            userActityChartConfig
+        );
+
+        const weekTracesDataLabels = JSON.parse(@Html.Raw(@Newtonsoft.Json.JsonConvert.SerializeObject(Newtonsoft.Json.JsonConvert.SerializeObject(Model.WeekTracesMap.Keys))));
+        const weekTracesDataValues = JSON.parse(@Html.Raw(@Newtonsoft.Json.JsonConvert.SerializeObject(Newtonsoft.Json.JsonConvert.SerializeObject(Model.WeekTracesMap.Values))));
+
+        const weekTracesData = {
+            labels: weekTracesDataLabels,
+            datasets: [{
+                label: 'registros por día',
+                data: weekTracesDataValues,
+                fill: true,
+                borderColor: '#17a2b8',
+                backgroundColor: '#17a2b88f',
+                tension: 0.2
+            }]
+        };
+
+        const weekTracesChartConfig = {
+            type: 'line',
+            data: weekTracesData,
+            options: {}
+        };
+
+        const weekStatisticsChart = new Chart(
+            document.getElementById('week-traces-chart'),
+            weekTracesChartConfig
+        );
+    </script>
+}
+
+<div class="row">
+    <div class="col-md-6 col-sm-12 mb-4">
+        <div class="card bg-light">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-auto pr-0">
+                        <span class="mdi mdi-timeline-clock" style="font-size: 32px;"></span>
+                    </div>
+                    <div class="col pl-2" style="align-self: center;">
+                        <h5 class="mb-0">Registros</h5>
+                    </div>
+                    <div class="col-auto" style="align-self: center;">
+                        <table class="table table-borderless table-sm mb-0">
+                            <tr>
+                                <th class="pt-0 pb-0 text-right">Total:</th>
+                                <td class="pt-0 pb-0" style="width: 1px;">@Model.TraceTotalCount</td>
+                            </tr>
+                            <tr>
+                                <th class="pt-0 pb-0 text-right">Esta Semana:</th>
+                                <td class="pt-0 pb-0" style="width: 1px;">@Model.TraceWeekCount</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <hr class="mt-1" />
+                <canvas id="week-traces-chart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-4">
+        <div class="card bg-light">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-auto pr-0">
+                        <span class="mdi mdi-account" style="font-size: 32px;"></span>
+                    </div>
+                    <div class="col pl-2" style="align-self: center;"> 
+                        <h5 class="mb-0">Usuarios</h5>
+                    </div>
+                    <div class="col-auto" style="align-self: center;">
+                        <table class="table table-borderless table-sm mb-0">
+                            <tr>
+                                <th class="pt-0 pb-0 text-right">Total:</th>
+                                <td class="pt-0 pb-0" style="width: 1px;">@Model.UserTotalCount</td>
+                            </tr>
+                            <tr>
+                                <th class="pt-0 pb-0 text-right">Desabilitados:</th>
+                                <td class="pt-0 pb-0" style="width: 1px;">@Model.UserDisabledCount</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <hr class="mt-1" />
+                <canvas id="user-activity-chart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="card bg-light mb-4">
+            <div class="card-body pt-2 pb-2">
+                <div class="float-left">
+                    <span class="mdi mdi-48px mdi-bookmark"></span>
+                    <h5>Secciones</h5>
+                </div>
+                <div class="display-2 float-right">@Model.SectionCount</div>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+        <div class="card bg-light mb-4">
+            <div class="card-body pt-2 pb-2">
+                <div class="float-left">
+                    <span class="mdi mdi-48px mdi-label"></span>
+                    <h5>Epígrafes</h5>
+                </div>
+                <div class="display-2 float-right">@Model.EpigraphCount</div>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+        <div class="card bg-light mb-4">
+            <div class="card-body pt-2 pb-2">
+                <div class="float-left">
+                    <span class="mdi mdi-48px mdi-earth-box"></span>
+                    <h5>Mapas</h5>
+                </div>
+                <div class="display-2 float-right">@Model.MapCount</div>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div id="management-sections" class="row">
     <div class="col-sm-6">

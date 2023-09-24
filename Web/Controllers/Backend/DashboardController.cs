@@ -1,7 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using MOROPO.CIMAC.Atlas.Camaguey.Persistence.Entities;
 using MOROPO.CIMAC.Atlas.Camaguey.Web.Extensions;
+using MOROPO.Framework.Guama.Core.Persistence.ORM.EF.Entities;
+using MOROPO.Framework.Guama.Core.Persistence.Repositories;
+using MOROPO.Framework.Guama.Security.Personal.Persistence.Entities;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend
 {
@@ -13,19 +18,67 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend
     [Area("management")]
     public class DashboardController : Framework.Guama.Core.Presentation.Web.Common.Controllers.BaseWebController
     {
+        private static readonly string[] DAYS_OF_WEEK = new[] { "Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado" };
+
         private readonly IEnumerable<Framework.Guama.Core.Presentation.Web.Backend.Providers.Facade.IManagementDashboardSectionProviderFacade> managementDashboardSectionProviders;
 
-        public DashboardController(IEnumerable<Framework.Guama.Core.Presentation.Web.Backend.Providers.Facade.IManagementDashboardSectionProviderFacade> managementDashboardSectionProviders, Microsoft.Extensions.Localization.IStringLocalizer<DashboardController> localizer, ILogger<DashboardController> logger) : base(localizer, logger)
+        private readonly IEntityRepository<User, string> userRepository;
+        private readonly IEntityRepository<Trace, long> traceRepository;
+        private readonly IEntityRepository<Section, System.Guid> sectionRepository;
+        private readonly IEntityRepository<Epigraph, System.Guid> epigraphRepository;
+        private readonly IEntityRepository<Map, System.Guid> mapRepository;
+
+        public DashboardController(IEntityRepository<Map, System.Guid> mapRepository, IEntityRepository<Epigraph, System.Guid> epigraphRepository, IEntityRepository<Section, System.Guid> sectionRepository, IEntityRepository<Trace, long> traceRepository, IEntityRepository<User, string> userRepository, IEnumerable<Framework.Guama.Core.Presentation.Web.Backend.Providers.Facade.IManagementDashboardSectionProviderFacade> managementDashboardSectionProviders, Microsoft.Extensions.Localization.IStringLocalizer<DashboardController> localizer, ILogger<DashboardController> logger) : base(localizer, logger)
         {
             this.managementDashboardSectionProviders = managementDashboardSectionProviders;
+            this.userRepository = userRepository;
+            this.traceRepository = traceRepository;
+            this.sectionRepository = sectionRepository;
+            this.epigraphRepository = epigraphRepository;
+            this.mapRepository = mapRepository;
         }
 
         public IActionResult Index()
         {
-            return View(new Models.View.Backend.HomeViewModel
+            var model = new Models.View.Backend.HomeViewModel
             {
-                Sections = managementDashboardSectionProviders.ToManagementDashboardSectionGroups()
-            });
+                Sections = managementDashboardSectionProviders.ToManagementDashboardSectionGroups(),
+                SectionCount = sectionRepository.Count(),
+                EpigraphCount = epigraphRepository.Count(),
+                MapCount = mapRepository.Count(),
+                UserDisabledCount = userRepository.Count(entity => !entity.Enabled),
+                TraceTotalCount = traceRepository.Count(),
+                UserActivityMap = new Dictionary<string, long>(),
+                WeekTracesMap = new Dictionary<string, int>()
+            };
+
+            var traces = traceRepository.GetAll().ToArray();
+
+            foreach (var trace in traces)
+            {
+                if (!model.UserActivityMap.ContainsKey(trace.Author))
+                {
+                    model.UserActivityMap.Add(trace.Author, 1);
+                }
+                else
+                {
+                    model.UserActivityMap[trace.Author]++;
+                }
+            }
+
+            var startEdgeDate = System.DateTime.Today;
+            var passWeekEdgeDate = startEdgeDate.AddDays(-6);
+
+            for (System.DateTime currentDate = passWeekEdgeDate; currentDate <= startEdgeDate; currentDate = currentDate.AddDays(1))
+            {
+                var dailyCount = traceRepository.Count(entity => entity.Registered.Date == currentDate);
+
+                model.TraceWeekCount += dailyCount;
+
+                model.WeekTracesMap.Add(DAYS_OF_WEEK[(int)currentDate.DayOfWeek], dailyCount);
+            }
+
+            return View(model);
         }
     }
 }

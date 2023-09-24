@@ -8,7 +8,19 @@
 
             if (target.Controller == "roles") return new Microsoft.AspNetCore.Html.HtmlString("<span class=\"mdi mdi-account-group\"></span>");
 
-            if (target.Controller == "traces") return new Microsoft.AspNetCore.Html.HtmlString("<span class=\"mdi mdi-shoe-print\"></span>");
+            if (target.Controller == "traces") return new Microsoft.AspNetCore.Html.HtmlString("<span class=\"mdi mdi-timeline-clock\"></span>");
+
+            if (target.Controller == "authors") return new Microsoft.AspNetCore.Html.HtmlString("<span class=\"mdi mdi-account-tie\"></span>");
+
+            if (target.Controller == "institutions") return new Microsoft.AspNetCore.Html.HtmlString("<span class=\"mdi mdi-domain\"></span>");
+
+            if (target.Controller == "sections") return new Microsoft.AspNetCore.Html.HtmlString("<span class=\"mdi mdi-bookmark\"></span>");
+
+            if (target.Controller == "epigraphs") return new Microsoft.AspNetCore.Html.HtmlString("<span class=\"mdi mdi-label\"></span>");
+
+            if (target.Controller == "maps") return new Microsoft.AspNetCore.Html.HtmlString("<span class=\"mdi mdi-earth-box\"></span>");
+
+            if (target.Controller == "keywords") return new Microsoft.AspNetCore.Html.HtmlString("<span class=\"mdi mdi-tag-text\"></span>");
 
             return new Microsoft.AspNetCore.Html.HtmlString("<span class=\"mdi mdi-toy-brick-outline\"></span>");
         }
