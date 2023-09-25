@@ -46,6 +46,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend
                 SectionCount = sectionRepository.Count(),
                 EpigraphCount = epigraphRepository.Count(),
                 MapCount = mapRepository.Count(),
+                UserTotalCount = userRepository.Count(),
                 UserDisabledCount = userRepository.Count(entity => !entity.Enabled),
                 TraceTotalCount = traceRepository.Count(),
                 UserActivityMap = new Dictionary<string, long>(),
