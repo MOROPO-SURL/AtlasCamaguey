@@ -132,7 +132,7 @@
                                 <td class="pt-0 pb-0 pl-0" style="width: 1px;">@Model.UserTotalCount</td>
                             </tr>
                             <tr>
-                                <th class="pt-0 pb-0 text-right">Desabilitados:</th>
+                                <th class="pt-0 pb-0 text-right">Deshabilitados:</th>
                                 <td class="pt-0 pb-0 pl-0" style="width: 1px;">@Model.UserDisabledCount</td>
                             </tr>
                         </table>
@@ -185,7 +185,7 @@
 
         <div class="card mb-4">
             <div class="card-body">
-                <h5 class="card-title text-dark">@group.Key</h5>
+                <h5 class="card-title text-dark">@GlobalViewLocalizationHelper.Localize(group.Key)</h5>
                 <hr />
                 @{
                     var total = group.Value.Count;
@@ -233,7 +233,7 @@
 
             <div class="card mb-4">
                 <div class="card-body">
-                    <h5 class="card-title text-dark">@group.Key</h5>
+                    <h5 class="card-title text-dark">@GlobalViewLocalizationHelper.Localize(group.Key)</h5>
                     <hr />
                     @{
                         var total = group.Value.Count;

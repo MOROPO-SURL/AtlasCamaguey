@@ -1,0 +1,822 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CreationSuccessMessage" xml:space="preserve">
+    <value>Cambios aplicados con éxito.</value>
+  </data>
+  <data name="CurrentUserNotRemovableMessage" xml:space="preserve">
+    <value>El usuario actual no puede ser eliminado</value>
+  </data>
+  <data name="DeletionSuccessMessage" xml:space="preserve">
+    <value>Cambios aplicados con éxito.</value>
+  </data>
+  <data name="DisableSuccessMessage" xml:space="preserve">
+    <value>Elemento deshabilitado con éxito.</value>
+  </data>
+  <data name="EditionSuccessMessage" xml:space="preserve">
+    <value>Cambios aplicados con éxito.</value>
+  </data>
+  <data name="EnableSuccessMessage" xml:space="preserve">
+    <value>Elemento habilitado con éxito.</value>
+  </data>
+  <data name="InvalidAuthenticationDataMessage" xml:space="preserve">
+    <value>Usuario y/o contraseña incorrectos.</value>
+  </data>
+  <data name="InvalidMessage" xml:space="preserve">
+    <value>Los datos introducidos no son válidos.</value>
+  </data>
+  <data name="NotFoundMessage" xml:space="preserve">
+    <value>El elemento especificado no encontrado.</value>
+  </data>
+  <data name="RequiredDataIncompleteMessage" xml:space="preserve">
+    <value>Algunos relacionados no pueden encontrarse.</value>
+  </data>
+  <data name="RequiredDataIncompleteTitle" xml:space="preserve">
+    <value>Datos necesarios para continuar</value>
+  </data>
+  <data name="RequiredValidationErrorMessage" xml:space="preserve">
+    <value>El campo {0} es obligatorio.</value>
+  </data>
+  <data name="MaxLengthValidationErrorMessage" xml:space="preserve">
+    <value>El campo {0} no debe exceder los {1} caracteres.</value>
+  </data>
+  <data name="RangeValidationErrorMessage" xml:space="preserve">
+    <value>El valor del campo {0} de estar entre {1} y {2}.</value>
+  </data>
+  <data name="CompareValidationErrorMessage" xml:space="preserve">
+    <value>Los campos {0} y {1} no coinciden.</value>
+  </data>
+  <data name="ConfirmPassword" xml:space="preserve">
+    <value>Confirmación de la Contraseña</value>
+  </data>
+  <data name="StringLengthMinMaxValidationErrorMessage" xml:space="preserve">
+    <value>El valor del campo {0} debe tener como mínimo {2} y como máximo {1} caracteres.</value>
+  </data>
+  <data name="UniqueValueConvinationValidationErrorMessage" xml:space="preserve">
+    <value>La combinación de valores de los campos {0} y {1} ya existe en el sistema y esta debe ser única.</value>
+  </data>
+  <data name="PasswordChangeRequiredMessage" xml:space="preserve">
+    <value>Cambio de contraseña requerido.</value>
+  </data>
+  <data name="ChangePasswordSuccessMessage" xml:space="preserve">
+    <value>Cambio de contraseña realizado con éxito. Inicie sesión nuevamente.</value>
+  </data>
+  <data name="UserDisabledMessage" xml:space="preserve">
+    <value>Usuario deshabilitado.</value>
+  </data>
+  <data name="system-admin-role" xml:space="preserve">
+    <value>Administrador del Sistema</value>
+  </data>
+  <data name="Administration" xml:space="preserve">
+    <value>Administración</value>
+  </data>
+  <data name="clients" xml:space="preserve">
+    <value>Clientes</value>
+  </data>
+  <data name="collagelayouts" xml:space="preserve">
+    <value>Diseños de Impresión</value>
+  </data>
+  <data name="Dashboard" xml:space="preserve">
+    <value>Panel de Control</value>
+  </data>
+  <data name="events" xml:space="preserve">
+    <value>Eventos</value>
+  </data>
+  <data name="printorders" xml:space="preserve">
+    <value>Órdenes de Impresión</value>
+  </data>
+  <data name="traces" xml:space="preserve">
+    <value>Registros</value>
+  </data>
+  <data name="NewPassword" xml:space="preserve">
+    <value>Nueva Contraseña</value>
+  </data>
+  <data name="OldPassword" xml:space="preserve">
+    <value>Contraseña Anterior</value>
+  </data>
+  <data name="Upload" xml:space="preserve">
+    <value>Cargar archivo</value>
+  </data>
+  <data name="PhotoSessionCaptureCount" xml:space="preserve">
+    <value>Capturas en Sesiones de Fotos</value>
+  </data>
+  <data name="Public" xml:space="preserve">
+    <value>Público</value>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>Título</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Descripción</value>
+  </data>
+  <data name="Attended" xml:space="preserve">
+    <value>Atendido(a)</value>
+  </data>
+  <data name="CompletitionState" xml:space="preserve">
+    <value>Estado de Cumplimiento</value>
+  </data>
+  <data name="Disabled" xml:space="preserve">
+    <value>No Habilitado(a)</value>
+  </data>
+  <data name="Enabled" xml:space="preserve">
+    <value>Habilitado(a)</value>
+  </data>
+  <data name="EnabledState" xml:space="preserve">
+    <value>Estado de Habilitación</value>
+  </data>
+  <data name="Eny" xml:space="preserve">
+    <value>Cualquiera</value>
+  </data>
+  <data name="Unattended" xml:space="preserve">
+    <value>No Atendido(a)</value>
+  </data>
+  <data name="DefaultPhotoSessionContentCollageLayout" xml:space="preserve">
+    <value>Diseño de Impresión de Sesión de Fotos por defecto</value>
+  </data>
+  <data name="DefaultPictureContentCollageLayout" xml:space="preserve">
+    <value>Diseño de Impresión de Foto Única por defecto</value>
+  </data>
+  <data name="About" xml:space="preserve">
+    <value>Acerca de</value>
+  </data>
+  <data name="BornDate" xml:space="preserve">
+    <value>Fecha de Nacimiento</value>
+  </data>
+  <data name="CivilStatus" xml:space="preserve">
+    <value>Estado Civil</value>
+  </data>
+  <data name="Divorced" xml:space="preserve">
+    <value>Divoriciado(a)</value>
+  </data>
+  <data name="Famale" xml:space="preserve">
+    <value>Femenino</value>
+  </data>
+  <data name="LastName" xml:space="preserve">
+    <value>Apellidos</value>
+  </data>
+  <data name="Male" xml:space="preserve">
+    <value>Masculino</value>
+  </data>
+  <data name="Married" xml:space="preserve">
+    <value>Casado(a)</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Nombre</value>
+  </data>
+  <data name="Sex" xml:space="preserve">
+    <value>Sexo</value>
+  </data>
+  <data name="Single" xml:space="preserve">
+    <value>Soltero(a)</value>
+  </data>
+  <data name="Widower" xml:space="preserve">
+    <value>Viudo(a)</value>
+  </data>
+  <data name="Employees" xml:space="preserve">
+    <value>Trabajadores</value>
+  </data>
+  <data name="Employ" xml:space="preserve">
+    <value>Trabajador</value>
+  </data>
+  <data name="AdministrativeRoles" xml:space="preserve">
+    <value>Roles Administrativos</value>
+  </data>
+  <data name="Director" xml:space="preserve">
+    <value>Director</value>
+  </data>
+  <data name="Driver" xml:space="preserve">
+    <value>Chofer</value>
+  </data>
+  <data name="Specialist" xml:space="preserve">
+    <value>Especialista</value>
+  </data>
+  <data name="RegularExpressionValidationErrorMessage" xml:space="preserve">
+    <value>Formato incorrecto</value>
+  </data>
+  <data name="Url" xml:space="preserve">
+    <value>Dirección Web</value>
+  </data>
+  <data name="Authors" xml:space="preserve">
+    <value>Autores</value>
+  </data>
+  <data name="Award" xml:space="preserve">
+    <value>Galardón</value>
+  </data>
+  <data name="Awardeds" xml:space="preserve">
+    <value>Galardonados</value>
+  </data>
+  <data name="Awards" xml:space="preserve">
+    <value>Galardones</value>
+  </data>
+  <data name="Edition" xml:space="preserve">
+    <value>Edición</value>
+  </data>
+  <data name="IsInstitutional" xml:space="preserve">
+    <value>Es Institucional</value>
+  </data>
+  <data name="ProductionTeam" xml:space="preserve">
+    <value>Equipo de Realización</value>
+  </data>
+  <data name="ProductionTeams" xml:space="preserve">
+    <value>Equipos de Realización</value>
+  </data>
+  <data name="Member" xml:space="preserve">
+    <value>Integrante</value>
+  </data>
+  <data name="Members" xml:space="preserve">
+    <value>Integrantes</value>
+  </data>
+  <data name="ProductionRole" xml:space="preserve">
+    <value>Rol de Realización</value>
+  </data>
+  <data name="Presentation" xml:space="preserve">
+    <value>Presentación</value>
+  </data>
+  <data name="Presentations" xml:space="preserve">
+    <value>Presentaciones</value>
+  </data>
+  <data name="DateTime" xml:space="preserve">
+    <value>Fecha y Hora</value>
+  </data>
+  <data name="SelectionRequiredValidationMessage" xml:space="preserve">
+    <value>La selección en el campo {0} es obligatoria</value>
+  </data>
+  <data name="Show" xml:space="preserve">
+    <value>Programa</value>
+  </data>
+  <data name="Shows" xml:space="preserve">
+    <value>Programas</value>
+  </data>
+  <data name="InvalidVerificationCodeMessage" xml:space="preserve">
+    <value>Código de verificación incorrecto.</value>
+  </data>
+  <data name="Verification Code" xml:space="preserve">
+    <value>Código de Verificación</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>Identificador de Usuario</value>
+  </data>
+  <data name="business-award-creator" xml:space="preserve">
+    <value>Crear Galardones</value>
+  </data>
+  <data name="business-award-creator-description" xml:space="preserve">
+    <value>Usuarios que pueden crear galardones</value>
+  </data>
+  <data name="business-award-editor" xml:space="preserve">
+    <value>Modificar Galardones</value>
+  </data>
+  <data name="business-award-editor-description" xml:space="preserve">
+    <value>Usuarios que pueden modificar galardones</value>
+  </data>
+  <data name="business-award-remover" xml:space="preserve">
+    <value>Eliminar Galardones</value>
+  </data>
+  <data name="business-award-remover-description" xml:space="preserve">
+    <value>Usuarios que pueden eliminar galardones</value>
+  </data>
+  <data name="business-award-viewer" xml:space="preserve">
+    <value>Visualizar Galardones</value>
+  </data>
+  <data name="business-award-viewer-description" xml:space="preserve">
+    <value>Usuarios que pueden visualizar galardones</value>
+  </data>
+  <data name="business-employ-creator" xml:space="preserve">
+    <value>Crear Trabajadores</value>
+  </data>
+  <data name="business-employ-creator-description" xml:space="preserve">
+    <value>Usuarios que pueden crear trabajadores</value>
+  </data>
+  <data name="business-employ-editor" xml:space="preserve">
+    <value>Modificar Trabajadores</value>
+  </data>
+  <data name="business-employ-editor-description" xml:space="preserve">
+    <value>Usuarios que pueden modificar trabajadores</value>
+  </data>
+  <data name="business-employ-remover" xml:space="preserve">
+    <value>Eliminar Trabajadores</value>
+  </data>
+  <data name="business-employ-remover-description" xml:space="preserve">
+    <value>Usuarios que pueden eliminar trabajadores</value>
+  </data>
+  <data name="business-employ-viewer" xml:space="preserve">
+    <value>Visualizar Trabajadores</value>
+  </data>
+  <data name="business-employ-viewer-description" xml:space="preserve">
+    <value>Usuarios que pueden visualizar trabajadores</value>
+  </data>
+  <data name="business-presentation-creator" xml:space="preserve">
+    <value>Crear Presentaciones</value>
+  </data>
+  <data name="business-presentation-creator-description" xml:space="preserve">
+    <value>Usuarios que pueden crear presentaciones</value>
+  </data>
+  <data name="business-presentation-editor" xml:space="preserve">
+    <value>Modificar Presentaciones</value>
+  </data>
+  <data name="business-presentation-editor-description" xml:space="preserve">
+    <value>Usuarios que pueden modificar presentaciones</value>
+  </data>
+  <data name="business-presentation-remover" xml:space="preserve">
+    <value>Eliminar Presentaciones</value>
+  </data>
+  <data name="business-presentation-remover-description" xml:space="preserve">
+    <value>Usuarios que pueden eliminar presentaciones</value>
+  </data>
+  <data name="business-presentation-viewer" xml:space="preserve">
+    <value>Visualizar Presentaciones</value>
+  </data>
+  <data name="business-presentation-viewer-description" xml:space="preserve">
+    <value>Usuarios que pueden visualizar presentaciones</value>
+  </data>
+  <data name="business-productionteam-creator" xml:space="preserve">
+    <value>Crear Equipos de Realización</value>
+  </data>
+  <data name="business-productionteam-creator-description" xml:space="preserve">
+    <value>Usuarios que pueden crear equipos de realización</value>
+  </data>
+  <data name="business-productionteam-editor" xml:space="preserve">
+    <value>Modificar Equipos de Realización</value>
+  </data>
+  <data name="business-productionteam-editor-description" xml:space="preserve">
+    <value>Usuarios que pueden modificar equipos de realización</value>
+  </data>
+  <data name="business-productionteam-remover" xml:space="preserve">
+    <value>Elimincar Equipos de Realización</value>
+  </data>
+  <data name="business-productionteam-remover-description" xml:space="preserve">
+    <value>Usuarios que puede eliminar equipos de realización</value>
+  </data>
+  <data name="business-productionteam-viewer" xml:space="preserve">
+    <value>Visualizar Equipos de Realización</value>
+  </data>
+  <data name="business-productionteam-viewer-description" xml:space="preserve">
+    <value>Usuarios que pueden visualizar equipos de realización</value>
+  </data>
+  <data name="business-show-creator" xml:space="preserve">
+    <value>Crear Programas</value>
+  </data>
+  <data name="business-show-creator-description" xml:space="preserve">
+    <value>Usuarios que pueden crear programas</value>
+  </data>
+  <data name="business-show-editor" xml:space="preserve">
+    <value>Modificar Programas</value>
+  </data>
+  <data name="business-show-editor-description" xml:space="preserve">
+    <value>Usuarios que pueden modificar programas</value>
+  </data>
+  <data name="business-show-remover" xml:space="preserve">
+    <value>Eliminar Programas</value>
+  </data>
+  <data name="business-show-remover-description" xml:space="preserve">
+    <value>Usuarios que pueden eliminar programas</value>
+  </data>
+  <data name="business-show-viewer" xml:space="preserve">
+    <value>Visualizar Programas</value>
+  </data>
+  <data name="business-show-viewer-description" xml:space="preserve">
+    <value>Usuarios que pueden visualizar programas</value>
+  </data>
+  <data name="licensing-manager" xml:space="preserve">
+    <value>Licenciar</value>
+  </data>
+  <data name="licensing-manager-description" xml:space="preserve">
+    <value>Usuarios que puede gestionar el licenciamiento</value>
+  </data>
+  <data name="securitylocal-group-creator" xml:space="preserve">
+    <value>Crear Grupos de Usuarios</value>
+  </data>
+  <data name="securitylocal-group-creator-description" xml:space="preserve">
+    <value>Usuarios que pueden crear grupos de usuarios</value>
+  </data>
+  <data name="securitylocal-group-editor" xml:space="preserve">
+    <value>Modificar Grupos de Usuarios</value>
+  </data>
+  <data name="securitylocal-group-editor-description" xml:space="preserve">
+    <value>Usuarios que pueden modificar grupos de usuarios</value>
+  </data>
+  <data name="securitylocal-group-remover" xml:space="preserve">
+    <value>Eliminar Grupos de Usuarios</value>
+  </data>
+  <data name="securitylocal-group-remover-description" xml:space="preserve">
+    <value>Usuarios que pueden eliminar grupos de usuarios</value>
+  </data>
+  <data name="securitylocal-group-viewer" xml:space="preserve">
+    <value>Visualizar Grupos de Usuarios</value>
+  </data>
+  <data name="securitylocal-group-viewer-description" xml:space="preserve">
+    <value>Usuarios que pueden visualizar grupos de usuarios</value>
+  </data>
+  <data name="securitylocal-user-creator" xml:space="preserve">
+    <value>Crear Usuarios</value>
+  </data>
+  <data name="securitylocal-user-creator-description" xml:space="preserve">
+    <value>Usuarios que pueden crear usuarios</value>
+  </data>
+  <data name="securitylocal-user-editor" xml:space="preserve">
+    <value>Modificar Usuarios</value>
+  </data>
+  <data name="securitylocal-user-editor-description" xml:space="preserve">
+    <value>Usuarios que pueden modificar usuarios</value>
+  </data>
+  <data name="securitylocal-user-remover" xml:space="preserve">
+    <value>Eliminar Usuarios</value>
+  </data>
+  <data name="securitylocal-user-remover-description" xml:space="preserve">
+    <value>Usuarios que pueden eliminar usuarios</value>
+  </data>
+  <data name="securitylocal-user-viewer" xml:space="preserve">
+    <value>Visualizar Usuarios</value>
+  </data>
+  <data name="securitylocal-user-viewer-description" xml:space="preserve">
+    <value>Usuarios que pueden visualizar usuarios</value>
+  </data>
+  <data name="shell-manager" xml:space="preserve">
+    <value>Administrar</value>
+  </data>
+  <data name="shell-manager-description" xml:space="preserve">
+    <value>Usuarios con acceso a la administración</value>
+  </data>
+  <data name="social-blog-creator" xml:space="preserve">
+    <value>Crear Blogs</value>
+  </data>
+  <data name="social-blog-creator-description" xml:space="preserve">
+    <value>Usuarios que pueden crear blogs</value>
+  </data>
+  <data name="social-blog-editor" xml:space="preserve">
+    <value>Modificar Blogs</value>
+  </data>
+  <data name="social-blog-editor-description" xml:space="preserve">
+    <value>Usuarios que pueden modificar blogs</value>
+  </data>
+  <data name="social-blog-remover" xml:space="preserve">
+    <value>Eliminar Blogs</value>
+  </data>
+  <data name="social-blog-remover-description" xml:space="preserve">
+    <value>Usuarios que pueden eliminar blogs</value>
+  </data>
+  <data name="social-blog-viewer" xml:space="preserve">
+    <value>Visualizar Blogs</value>
+  </data>
+  <data name="social-blog-viewer-description" xml:space="preserve">
+    <value>Usuarios que pueden visualizar blogs</value>
+  </data>
+  <data name="CharacterGeneration" xml:space="preserve">
+    <value>Generación de Caracteres</value>
+  </data>
+  <data name="Conduction" xml:space="preserve">
+    <value>Conducción</value>
+  </data>
+  <data name="Direction" xml:space="preserve">
+    <value>Dirección</value>
+  </data>
+  <data name="DirectionAssistant" xml:space="preserve">
+    <value>Asistentes de Dirección</value>
+  </data>
+  <data name="Drive" xml:space="preserve">
+    <value>Choferes</value>
+  </data>
+  <data name="HandyMan" xml:space="preserve">
+    <value>Montadores</value>
+  </data>
+  <data name="ImageRealization" xml:space="preserve">
+    <value>Realización de Imagen</value>
+  </data>
+  <data name="ITSpecialist" xml:space="preserve">
+    <value>Informáticos</value>
+  </data>
+  <data name="LightManagement" xml:space="preserve">
+    <value>Luces</value>
+  </data>
+  <data name="LightManamentAssistant" xml:space="preserve">
+    <value>Auxiliares de Luces</value>
+  </data>
+  <data name="Photography" xml:space="preserve">
+    <value>Cámara</value>
+  </data>
+  <data name="Production" xml:space="preserve">
+    <value>Producción</value>
+  </data>
+  <data name="Screenplay" xml:space="preserve">
+    <value>Guión</value>
+  </data>
+  <data name="SocialComunication" xml:space="preserve">
+    <value>Periodistas</value>
+  </data>
+  <data name="SociaMedia" xml:space="preserve">
+    <value>Especialistas de los Medios</value>
+  </data>
+  <data name="SoundManagement" xml:space="preserve">
+    <value>Sonido</value>
+  </data>
+  <data name="SoundManagementAssistant" xml:space="preserve">
+    <value>Auxiliares de Sonido</value>
+  </data>
+  <data name="TechSpecialist" xml:space="preserve">
+    <value>Técnicos</value>
+  </data>
+  <data name="TransmitionEdition" xml:space="preserve">
+    <value>Edición de Transmisión</value>
+  </data>
+  <data name="VideoLibraryManagement" xml:space="preserve">
+    <value>Videoteca</value>
+  </data>
+  <data name="Users" xml:space="preserve">
+    <value>Usuarios</value>
+  </data>
+  <data name="Country" xml:space="preserve">
+    <value>País</value>
+  </data>
+  <data name="Region" xml:space="preserve">
+    <value>Región</value>
+  </data>
+  <data name="State" xml:space="preserve">
+    <value>Provincia</value>
+  </data>
+  <data name="Municipality" xml:space="preserve">
+    <value>Municipio</value>
+  </data>
+  <data name="Reference" xml:space="preserve">
+    <value>Referencia</value>
+  </data>
+  <data name="SchoolLevel" xml:space="preserve">
+    <value>Nivel de Escolaridad</value>
+  </data>
+  <data name="ResearcherCategory" xml:space="preserve">
+    <value>Categoría de Investigador</value>
+  </data>
+  <data name="TeachingCategory" xml:space="preserve">
+    <value>Categoría Docente</value>
+  </data>
+  <data name="Unknown" xml:space="preserve">
+    <value>Desconocido</value>
+  </data>
+  <data name="Primary" xml:space="preserve">
+    <value>Primaria</value>
+  </data>
+  <data name="Medium" xml:space="preserve">
+    <value>Medio</value>
+  </data>
+  <data name="UpperMiddle" xml:space="preserve">
+    <value>Medio Superior</value>
+  </data>
+  <data name="Higher" xml:space="preserve">
+    <value>Superior</value>
+  </data>
+  <data name="Ultimate" xml:space="preserve">
+    <value>Quinto Nivel de Educación</value>
+  </data>
+  <data name="CreatedAt" xml:space="preserve">
+    <value>Fecha de Creación</value>
+  </data>
+  <data name="Representative" xml:space="preserve">
+    <value>Representante</value>
+  </data>
+  <data name="Owner" xml:space="preserve">
+    <value>Entidad Rectora</value>
+  </data>
+  <data name="Label" xml:space="preserve">
+    <value>Etiqueta</value>
+  </data>
+  <data name="Number" xml:space="preserve">
+    <value>Número</value>
+  </data>
+  <data name="ZipCode" xml:space="preserve">
+    <value>Código Postal</value>
+  </data>
+  <data name="Latitude" xml:space="preserve">
+    <value>Latitud</value>
+  </data>
+  <data name="Longitude" xml:space="preserve">
+    <value>Longitud</value>
+  </data>
+  <data name="WebSocial" xml:space="preserve">
+    <value>Web Social</value>
+  </data>
+  <data name="Manager" xml:space="preserve">
+    <value>Gestor</value>
+  </data>
+  <data name="Code" xml:space="preserve">
+    <value>Código</value>
+  </data>
+  <data name="Leader" xml:space="preserve">
+    <value>Jefe</value>
+  </data>
+  <data name="StartDate" xml:space="preserve">
+    <value>Fecha de Inicio</value>
+  </data>
+  <data name="EndAt" xml:space="preserve">
+    <value>Fecha de Terminación</value>
+  </data>
+  <data name="FundingSource" xml:space="preserve">
+    <value>Fuente de Presupuesto</value>
+  </data>
+  <data name="Category" xml:space="preserve">
+    <value>Categoría</value>
+  </data>
+  <data name="Amount" xml:space="preserve">
+    <value>Monto</value>
+  </data>
+  <data name="Select" xml:space="preserve">
+    <value>Selecionar</value>
+  </data>
+  <data name="UserProfileEditSuccessMessage" xml:space="preserve">
+    <value>Cambios aplicados con éxito.</value>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>Dirección</value>
+  </data>
+  <data name="Beneficiary" xml:space="preserve">
+    <value>Beneficiarios</value>
+  </data>
+  <data name="Budget" xml:space="preserve">
+    <value>Presupuesto</value>
+  </data>
+  <data name="Context" xml:space="preserve">
+    <value>Contexto</value>
+  </data>
+  <data name="MainExecutor" xml:space="preserve">
+    <value>Entidad Ejecutora Principal</value>
+  </data>
+  <data name="MainObjetive" xml:space="preserve">
+    <value>Objetivo Principal</value>
+  </data>
+  <data name="Problem" xml:space="preserve">
+    <value>Problema</value>
+  </data>
+  <data name="StartAt" xml:space="preserve">
+    <value>Fecha de Inicio</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Estado</value>
+  </data>
+  <data name="Summary" xml:space="preserve">
+    <value>Resumen</value>
+  </data>
+  <data name="Program" xml:space="preserve">
+    <value>Programa</value>
+  </data>
+  <data name="Participan" xml:space="preserve">
+    <value>Participantes</value>
+  </data>
+  <data name="ImpactIndicators" xml:space="preserve">
+    <value>Indicadores de Impacto</value>
+  </data>
+  <data name="keyWord" xml:space="preserve">
+    <value>Palabra Clave</value>
+  </data>
+  <data name="Objective" xml:space="preserve">
+    <value>Objetivo</value>
+  </data>
+  <data name="Result" xml:space="preserve">
+    <value>Resultado</value>
+  </data>
+  <data name="Goals" xml:space="preserve">
+    <value>Objetivos</value>
+  </data>
+  <data name="security" xml:space="preserve">
+    <value>Seguridad</value>
+  </data>
+  <data name="complements" xml:space="preserve">
+    <value>Complementos</value>
+  </data>
+  <data name="atlas" xml:space="preserve">
+    <value>Atlas</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Contraseña</value>
+  </data>
+  <data name="ImageFile" xml:space="preserve">
+    <value>Archivo de Imagen</value>
+  </data>
+  <data name="Section" xml:space="preserve">
+    <value>Sección</value>
+  </data>
+  <data name="File" xml:space="preserve">
+    <value>Archivo</value>
+  </data>
+  <data name="QgisProjectPath" xml:space="preserve">
+    <value>Ruta del Proyecto Qgis</value>
+  </data>
+  <data name="NamePrefix" xml:space="preserve">
+    <value>Grado Académico</value>
+  </data>
+  <data name="Institution" xml:space="preserve">
+    <value>Institución</value>
+  </data>
+</root>

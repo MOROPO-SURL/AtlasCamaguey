@@ -31,6 +31,7 @@
 		<None Remove="Components\" />
 		<None Remove="Views\Shared\Components\" />
 		<None Remove="Views\Shared\Components\BackendNavbar\" />
+		<None Remove="Resources\" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -61,5 +62,6 @@
 	  <Folder Include="Components\" />
 	  <Folder Include="Views\Shared\Components\" />
 	  <Folder Include="Views\Shared\Components\BackendNavbar\" />
+	  <Folder Include="Resources\" />
 	</ItemGroup>
 </Project>
