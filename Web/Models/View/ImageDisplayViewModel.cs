@@ -2,7 +2,7 @@
 using System.Xml.Linq;
 using MOROPO.Framework.Guama.Media.Persistence.Entities;
 
-namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend
+namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View
 {
     public class ImageDisplayViewModel : Framework.Guama.Core.Persistence.Presentation.Models.Contract.IEntityDisplayModel<Image, Guid>
     {

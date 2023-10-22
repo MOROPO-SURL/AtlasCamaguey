@@ -61,7 +61,7 @@
             </div>
             <div>
                 @Html.LabelFor(model => model.Description, new { @class = "control-label" }) <span class="small text-muted">(opcional)</span>
-                @Html.TextBoxFor(model => model.Description, new { @class = "form-control" })
+                @Html.TextAreaFor(model => model.Description, new { @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.Description, null, new { @class = "text-danger" })
             </div>
         </div>

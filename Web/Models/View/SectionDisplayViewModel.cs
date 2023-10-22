@@ -1,10 +1,9 @@
 ﻿using System;
 using MOROPO.CIMAC.Atlas.Camaguey.Persistence.Entities;
-using MOROPO.Framework.Guama.Media.Presentation.Web.Common.Extensions;
 
-namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend
+namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View
 {
-    public class SectionDisplayViewModel : Framework.Guama.Core.Persistence.Presentation.Models.Contract.IEntityDisplayModel<Section, System.Guid>
+    public class SectionDisplayViewModel : Framework.Guama.Core.Persistence.Presentation.Models.Contract.IEntityDisplayModel<Section, Guid>
     {
         public Guid Id { get; set; }
 
@@ -12,7 +11,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend
 
         public string Description { get; set; }
 
-        public System.Guid? ImageId { get; set; }
+        public Guid? ImageId { get; set; }
         public string ImageExtension { get; set; }
 
         public void Import(Section entity)

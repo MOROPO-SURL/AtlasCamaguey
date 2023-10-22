@@ -1,0 +1,21 @@
+﻿@model MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Frontend.MapIndexViewModel
+
+@{
+    ViewData["Title"] = GlobalViewLocalizationHelper.Localize("Map", ViewLocalizer);
+
+    Layout = "_FrontendLayout";
+}
+
+@section styles
+{
+    
+}
+
+<div style="padding: 2.0rem!important;">
+    <h4 class="mb-0">Mapa</h4>
+    <p class="display-4">@Model.Map.Name</p>
+    <div style="font-size: 1.5rem;">
+        @Html.Raw(Model.Map.Description)
+    </div>
+    <div class="clearfix"></div>
+</div>

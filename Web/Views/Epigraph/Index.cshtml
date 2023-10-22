@@ -1,0 +1,53 @@
+﻿@model MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Frontend.EpigraphIndexViewModel
+
+@{
+    ViewData["Title"] = GlobalViewLocalizationHelper.Localize("Epigraph", ViewLocalizer);
+
+    Layout = "_FrontendLayout";
+}
+
+@section styles
+{
+    <style type="text/css">
+        .epigraph-img {
+            height: 225px;
+            background-repeat: no-repeat;
+            background-color: black;
+            background-size: cover;
+        }
+    </style>
+}
+
+<div style="padding: 2.0rem!important;">
+    <h4 class="mb-0">Epígrafe</h4>
+    <p class="display-4">@Model.Epigraph.Name</p>
+    <div style="font-size: 1.5rem;">
+        @if (Model.Epigraph.ImageId != null)
+        {
+            <img class="img-thumbnail float-left mr-3 w-25" src="~/media/images/@Model.Epigraph.ImageId.@Model.Epigraph.ImageExtension" title="@Model.Epigraph.Name" />
+        }
+        @Html.Raw(Model.Epigraph.Description)
+    </div>
+    <div class="clearfix"></div>
+</div>
+<div class="bg-light" style="padding: 2.0rem!important; padding-bottom: 0!important;">
+    <h2 class="mb-0">Mapas</h2>
+    <small class="text-muted lead">y sus contenidos complementarios</small>
+    <div class="row mt-4">
+        @foreach (var item in Model.Maps)
+        {
+            <div class="col-md-6 col-sm-12">
+                <div class="card shadow-sm" style="margin-bottom: 2.0rem!important;">
+                    <img class="card-img-top" role="img" src="http://qgis.moropo.cu/cgi-bin/qgis_mapserv.fcgi?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&BBOX=-432786,4372992,3358959,7513746&SRS=EPSG:3857&WIDTH=665&HEIGHT=551&LAYERS=countries&FORMAT=image/jpeg" />
+                    <div class="card-body">
+                        <h4 class="card-title">@item.Name</h4>
+                        <div class="text-truncate text-wrap" style="height: 72px;">
+                            @Html.Raw(@item.Description)
+                        </div>
+                        <a class="btn btn-outline-primary mt-3" asp-action="index" asp-controller="map" asp-route-key="@item.Id">Mostrar</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

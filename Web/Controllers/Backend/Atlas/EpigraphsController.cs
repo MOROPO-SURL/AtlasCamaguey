@@ -244,7 +244,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
                 Epigraph = new EpigraphDisplayViewModel(),
                 Maps = entity.MapBridges.Select(bridge =>
                 {
-                    var result = new MapDisplayViewModel();
+                    var result = new Models.View.MapDisplayViewModel();
 
                     result.Import(bridge.Stern);
 
@@ -364,7 +364,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
                 Epigraph = new EpigraphDisplayViewModel(),
                 KeyWords = entity.KeyWordBridges.Select(bridge =>
                 {
-                    var result = new KeyWordDisplayViewModel();
+                    var result = new Models.View.KeyWordDisplayViewModel();
 
                     result.Import(bridge.Stern);
 
@@ -482,7 +482,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
                 Epigraph = new EpigraphDisplayViewModel(),
                 Images = entity.ImageBridges.Select(bridge =>
                 {
-                    var result = new ImageDisplayViewModel();
+                    var result = new Models.View.ImageDisplayViewModel();
 
                     result.Import(bridge.Stern);
 
@@ -614,7 +614,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
                 Epigraph = new EpigraphDisplayViewModel(),
                 Videos = entity.VideoBridges.Select(bridge =>
                 {
-                    var result = new VideoDisplayViewModel();
+                    var result = new Models.View.VideoDisplayViewModel();
 
                     result.Import(bridge.Stern);
 
@@ -794,7 +794,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
                 Epigraph = new EpigraphDisplayViewModel(),
                 Documents = entity.DocumentBridges.Select(item =>
                 {
-                    var result = new DocumentDisplayViewModel();
+                    var result = new Models.View.DocumentDisplayViewModel();
 
                     result.Import(item.Stern);
 

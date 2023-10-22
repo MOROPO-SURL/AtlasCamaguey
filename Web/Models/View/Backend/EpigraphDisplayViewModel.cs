@@ -1,22 +1,10 @@
-﻿using System.Linq;
-using MOROPO.CIMAC.Atlas.Camaguey.Persistence.Entities;
-using MOROPO.CIMAC.Atlas.Camaguey.Persistence.Enumerations;
+﻿using MOROPO.CIMAC.Atlas.Camaguey.Persistence.Entities;
+using System.Linq;
 
 namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend
 {
-    public class EpigraphDisplayViewModel : Framework.Guama.Core.Persistence.Presentation.Models.Contract.IEntityDisplayModel<Epigraph, System.Guid>
+    public class EpigraphDisplayViewModel : View.EpigraphDisplayViewModel
     {
-        public System.Guid Id { get; set; }
-
-        public string Name { get; set; }
-
-        public string Description { get; set; }
-
-        public System.Guid? ImageId { get; set; }
-        public string ImageExtension { get; set; }
-
-        public EpigraphLayout Layout { get; set; }
-
         public SectionDisplayViewModel Section { get; set; }
 
         public KeyWordDisplayViewModel[] KeyWords { get; set; }
@@ -29,14 +17,9 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend
 
         public MapDisplayViewModel[] Maps { get; set; }
 
-        public void Import(Epigraph entity)
+        public override void Import(Epigraph entity)
         {
-            Id = entity.Id;
-            Name = entity.Name;
-            Description = entity.Description;
-            ImageId = entity.ImageId;
-            ImageExtension = entity.Image == null ? null : MimeTypes.MimeTypeMap.GetExtension(entity.Image.ContentType);
-            Layout = entity.Layout;
+            base.Import(entity);
 
             Section = new SectionDisplayViewModel();
             Section.Import(entity.Section);

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MOROPO.CIMAC.Atlas.Camaguey.Persistence.Entities;
+using MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View;
 using MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend;
 using MOROPO.Framework.Guama.Core.Persistence.Repositories;
 using MOROPO.Framework.Guama.Core.Presentation.Web.Security.Attributes;

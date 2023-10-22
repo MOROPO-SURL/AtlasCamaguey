@@ -3,18 +3,6 @@
 }
 
 @section styles {
-    <style type="text/css">
-        footer {
-            position: fixed;
-            left: 0px;
-            bottom: 0px;
-            height: auto;
-            width: 100%;
-            background: #999;
-            text-align: center;
-        }
-    </style>
-
     @RenderSection("styles", false)
 }
 
@@ -23,80 +11,80 @@
 }
 
 <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light shadow">
-    <a class="navbar-brand" href="#">Atlas de Camagüey</a>
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">Atlas de Camagüey</a>
+    </div>
 </nav>
-<div class="container-fluid">
-    <div role="main" class="" style="padding-top: 56px;">
-        @if (ViewData[BreadcrumbViewModel.BREADCRUMBS_MAP_KEY] != null)
-        {
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb mb-4">
-                    @{
-                        ICollection<BreadcrumbViewModel> breadcrumbs = ViewData[BreadcrumbViewModel.BREADCRUMBS_MAP_KEY] as ICollection<BreadcrumbViewModel>;
+<main role="main" class="pt-5">
+    @if (ViewData[BreadcrumbViewModel.BREADCRUMBS_MAP_KEY] != null)
+    {
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-4">
+                @{
+                    ICollection<BreadcrumbViewModel> breadcrumbs = ViewData[BreadcrumbViewModel.BREADCRUMBS_MAP_KEY] as ICollection<BreadcrumbViewModel>;
 
-                        if (breadcrumbs != null)
+                    if (breadcrumbs != null)
+                    {
+                        var total = breadcrumbs.Count();
+                        var count = 1;
+
+                        foreach (var breadcrumb in breadcrumbs)
                         {
-                            var total = breadcrumbs.Count();
-                            var count = 1;
-
-                            foreach (var breadcrumb in breadcrumbs)
+                            if (count < total)
                             {
-                                if (count < total)
-                                {
-                                    <li class="breadcrumb-item"><a href="@breadcrumb.Url">@Html.Raw(breadcrumb.Caption)</a></li>
-                                }
-                                else
-                                {
-                                    <li class="breadcrumb-item active">@Html.Raw(breadcrumb.Caption)</li>
-                                }
-
-                                count++;
+                                <li class="breadcrumb-item"><a href="@breadcrumb.Url">@Html.Raw(breadcrumb.Caption)</a></li>
                             }
+                            else
+                            {
+                                <li class="breadcrumb-item active">@Html.Raw(breadcrumb.Caption)</li>
+                            }
+
+                            count++;
                         }
                     }
-                </ol>
-            </nav>
+                }
+            </ol>
+        </nav>
+    }
+
+    @{
+        var notificationEntries = TempData.Where(x => x.Key.EndsWith("-notification")).ToArray();
+
+        foreach (var extraNotificationEntry in notificationEntries)
+        {
+            var notification = JsonConvert.DeserializeObject<NotificationViewModel>(extraNotificationEntry.Value.ToString());
+
+            <div class="alert alert-dismissible fade show alert-@Html.Raw(notification.Type.ToString().ToLower())">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                @if (notification.Title != null)
+                {
+                    <h4>@GlobalViewLocalizationHelper.Localize(notification.Title, ViewLocalizer)</h4>
+                }
+
+                @if (notification.Message != null)
+                {
+                    @Html.Raw(GlobalViewLocalizationHelper.Localize(notification.Message, ViewLocalizer));
+                }
+
+                @if (notification.Messages != null)
+                {
+                    <ul>
+                        @foreach (var item in notification.Messages)
+                        {
+                            <li>@GlobalViewLocalizationHelper.Localize(item, ViewLocalizer)</li>
+                        }
+                    </ul>
+                }
+            </div>
         }
+    }
 
-        @{
-            var notificationEntries = TempData.Where(x => x.Key.EndsWith("-notification")).ToArray();
-
-            foreach (var extraNotificationEntry in notificationEntries)
-            {
-                var notification = JsonConvert.DeserializeObject<NotificationViewModel>(extraNotificationEntry.Value.ToString());
-
-                <div class="alert alert-dismissible fade show alert-@Html.Raw(notification.Type.ToString().ToLower())">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                    @if (notification.Title != null)
-                    {
-                        <h4>@GlobalViewLocalizationHelper.Localize(notification.Title, ViewLocalizer)</h4>
-                    }
-
-                    @if (notification.Message != null)
-                    {
-                        @Html.Raw(GlobalViewLocalizationHelper.Localize(notification.Message, ViewLocalizer));
-                    }
-
-                    @if (notification.Messages != null)
-                    {
-                        <ul>
-                            @foreach (var item in notification.Messages)
-                            {
-                                <li>@GlobalViewLocalizationHelper.Localize(item, ViewLocalizer)</li>
-                            }
-                        </ul>
-                    }
-                </div>
-            }
-        }
-
-        @RenderBody()
-    </div>
-    <footer class="p-3">
-        <a asp-controller="Dashboard" asp-action="Index" asp-area="management">Administrar</a>
-        <hr class="mt-2 mb-2" />
-        <p class="mb-0">Copyright 2023</p>
-    </footer>
-</div>
+    @RenderBody()
+</main>
+<footer class="footer mt-auto p-4">
+    <a asp-controller="Dashboard" asp-action="Index" asp-area="management">Administrar</a>
+    <hr class="mt-2 mb-2" />
+    <p class="mb-0">Copyright 2023</p>
+</footer>

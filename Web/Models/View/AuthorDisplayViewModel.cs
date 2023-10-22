@@ -1,4 +1,4 @@
-﻿namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend
+﻿namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View
 {
     public class AuthorDisplayViewModel : Framework.Guama.Core.Persistence.Presentation.Models.Contract.IEntityDisplayModel<Camaguey.Persistence.Entities.Author, System.Guid>
     {

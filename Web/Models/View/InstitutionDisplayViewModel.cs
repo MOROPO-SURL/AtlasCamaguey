@@ -1,6 +1,6 @@
 ﻿using MOROPO.CIMAC.Atlas.Camaguey.Persistence.Entities;
 
-namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend
+namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View
 {
     public class InstitutionDisplayViewModel : Framework.Guama.Core.Persistence.Presentation.Models.Contract.IEntityDisplayModel<Institution, System.Guid>
     {
