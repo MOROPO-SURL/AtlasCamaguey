@@ -8,7 +8,31 @@
 
 @section styles
 {
-    
+    <link rel="stylesheet" href="~/lib/OpenLayer/css/ol.css" />
+    <style type="text/css">
+        .map {
+            height: 600px;
+        }
+    </style>
+}
+
+@section scripts
+{
+    <script type="text/javascript" src="~/lib/OpenLayer/js/ol.js"></script>
+    <script type="text/javascript">
+        var mapa = new ol.Map({
+            target: 'map',
+            layers: [
+                new ol.layer.Tile({
+                    source: new ol.source.OSM()
+                })
+            ],
+            view: new ol.View({
+                center: ol.proj.fromLonLat([-77.9184, 21.3792]),
+                zoom: 10
+            })
+        });
+    </script>
 }
 
 <div style="padding: 2.0rem!important;">
@@ -18,4 +42,5 @@
         @Html.Raw(Model.Map.Description)
     </div>
     <div class="clearfix"></div>
+    <div id="map" class="map"></div>
 </div>
