@@ -6,7 +6,6 @@ using MOROPO.Framework.Guama.Media.Presentation.Web.Common.Managers.Facade;
 
 namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers
 {
-    [Microsoft.AspNetCore.Authorization.Authorize]
     public class DownloadController : Framework.Guama.Core.Presentation.Web.Common.Controllers.BaseWebController
     {
         private readonly IEntityRepository<Document, System.Guid> documentRepository;

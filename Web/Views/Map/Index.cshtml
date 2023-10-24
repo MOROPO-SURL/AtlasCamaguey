@@ -1,9 +1,15 @@
-﻿@model MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Frontend.MapIndexViewModel
+﻿@using MOROPO.CIMAC.Atlas.Camaguey.Web.Extensions
+
+@model MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Frontend.MapIndexViewModel
 
 @{
     ViewData["Title"] = GlobalViewLocalizationHelper.Localize("Map", ViewLocalizer);
 
     Layout = "_FrontendLayout";
+
+    var hasImages = Model.Images.Length > 0;
+    var hasVideos = Model.Videos.Length > 0;
+    var hasDocuments = Model.Documents.Length > 0;
 }
 
 @section styles
@@ -44,3 +50,91 @@
     <div class="clearfix"></div>
     <div id="map" class="map"></div>
 </div>
+@if (hasImages || hasVideos || hasDocuments)
+{
+    <div class="bg-light" style="padding: 2.0rem!important; padding-bottom: 0!important;">
+        @if (hasImages)
+        {
+            <h3 class="mb-0">Imágenes</h3>
+            <small class="text-muted lead">instantáneas relacionadas a la temática</small>
+            <div class="card-columns mt-3">
+                @foreach (var item in Model.Images)
+                {
+                    <div class="card shadow-sm" style="margin-bottom: 1.25rem !important;">
+                        <img class="card-img" src="~/media/images/@item.Id.@item.Extension" />
+                    </div>
+                }
+            </div>
+        }
+        @if (hasVideos)
+        {
+            var videoWrapperCssClass = "mt-3 mb-0";
+
+            if (!hasImages) videoWrapperCssClass = "mb-0";
+
+            <h3 class="@videoWrapperCssClass">Videos</h3>
+            <small class="text-muted lead">audiovisuales representativos disponibles</small>
+            <div class="row mt-3">
+                @foreach (var item in Model.Videos)
+                {
+                    <div class="col-lg-3 col-md-4 col-sm-6">
+                        <div class="card shadow-sm" style="margin-bottom: 1.25rem !important;">
+                            <div class="embed-responsive embed-responsive-16by9">
+                                <video controls="controls">
+                                    <source src="/media/videos/@item.Id.@item.Extension" type="video/mp4">
+                                    Su explorar no soporta nativamente la reproducción de videos.
+                                </video>
+                            </div>
+                            <div class="card-body">
+                                @if (string.IsNullOrEmpty(item.About))
+                                {
+                                    <p class="text-muted mb-0"><i>Acerca de no especificado</i></p>
+                                }
+                                else
+                                {
+                                    <p class="mb-0">@item.About</p>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        @if (hasDocuments)
+        {
+            var documentsWrapperCssClass = "mt-3 mb-0";
+
+            if (!hasImages && !hasVideos) documentsWrapperCssClass = "mb-0";
+
+            <h3 class="@documentsWrapperCssClass">Documentos</h3>
+            <small class="text-muted lead">material de consulta adicional</small>
+            <div class="row mt-3">
+                @foreach (var item in Model.Documents)
+                {
+                    <div class="col-lg-3 col-md-4 col-sm-6">
+                        <div class="card shadow-sm" style="margin-bottom: 1.25rem !important;">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-auto pr-0"><span class="mdi mdi-36px @item.Extension.AsExtensionToMDICssClass()"></span></div>
+                                    <div class="col">
+                                        <a asp-action="Document" asp-controller="Download" asp-route-key="@item.Id"><b>@item.Name</b></a>
+                                        <p class="mb-0">
+                                            @if (item.Description == null)
+                                            {
+                                                <span class="text-muted italic">Sin descripción</span>
+                                            }
+                                            else
+                                            {
+                                                <span style="color: #6c757d; word-wrap: break-word;">@item.Description</span>
+                                            }
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+}
