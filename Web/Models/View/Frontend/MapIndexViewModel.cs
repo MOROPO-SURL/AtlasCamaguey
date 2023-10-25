@@ -4,6 +4,8 @@
     {
         public MapDisplayViewModel Map { get; set; }
 
+        public AuthorDisplayViewModel[] Authors { get; set; }
+
         public DocumentDisplayViewModel[] Documents { get; set; }
 
         public ImageDisplayViewModel[] Images { get; set; }

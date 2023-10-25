@@ -1,9 +1,24 @@
 ﻿@model MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Frontend.SectionIndexViewModel
 
 @{
-    ViewData["Title"] = GlobalViewLocalizationHelper.Localize("Section", ViewLocalizer);
+    const string HEADER = "Sección";
+    
+    ViewData["Title"] = HEADER;
 
-    Layout = "_FrontendLayout";
+    ViewData[BreadcrumbViewModel.BREADCRUMBS_MAP_KEY] = new List<BreadcrumbViewModel>
+    {
+        new BreadcrumbViewModel
+        {
+            Caption = "<span class=\"mdi mdi-home-variant\" style=\"margin-right: 4px;\"></span> Inicio",
+            Url = "/"
+        },
+        new BreadcrumbViewModel
+        {
+            Caption = string.Format("<b>Sección</b>: {0}", Model.Section.Name)
+        }
+    };
+
+    Layout = "_NavigableFrontendLayout";
 }
 
 @section styles
@@ -18,32 +33,29 @@
     </style>
 }
 
-<div style="padding: 2.0rem!important;">
-    <h4 class="mb-0">Sección</h4>
-    <p class="display-4">@Model.Section.Name</p>
-    <div style="font-size: 1.5rem;">
-        <img class="img-thumbnail float-left mr-3 w-25" src="~/media/images/@Model.Section.ImageId.@Model.Section.ImageExtension" title="@Model.Section.Name" />
-        @Html.Raw(Model.Section.Description)
-    </div>
-    <div class="clearfix"></div>
+<h4 class="mb-0">Sección</h4>
+<p class="display-4">@Model.Section.Name</p>
+<div style="font-size: 1.5rem;">
+    <img class="img-thumbnail float-left mr-3 w-25" src="~/media/images/@Model.Section.ImageId.@Model.Section.ImageExtension" title="@Model.Section.Name" />
+    @Html.Raw(Model.Section.Description)
 </div>
-<div class="bg-light" style="padding: 2.0rem!important; padding-bottom: 0!important;">
-    <h2 class="mb-0">Epígrafes</h2>
-    <small class="text-muted lead">espacios temáticos que agrupan mapas y contenidos complementarios</small>
-    <div class="row mt-4">
-        @foreach (var item in Model.Epigraphs)
-        {
-            <div class="col-md-6 col-sm-12">
-                <div class="card shadow-sm" style="margin-bottom: 2.0rem!important;">
-                    <div class="card-body">
-                        <h4 class="card-title">@item.Name</h4>
-                        <div class="text-truncate text-wrap" style="height: 72px;">
-                            @Html.Raw(@item.Description)
-                        </div>
-                        <a class="btn btn-outline-primary mt-3" asp-action="index" asp-controller="epigraph" asp-route-key="@item.Id">Descubrir</a>
+<div class="clearfix"></div>
+<hr class="my-5" />
+<h2 class="mb-0">Epígrafes</h2>
+<small class="text-muted lead">espacios temáticos que agrupan mapas y contenidos complementarios</small>
+<div class="row mt-4">
+    @foreach (var item in Model.Epigraphs)
+    {
+        <div class="col-md-6 col-sm-12">
+            <div class="card shadow-sm" style="margin-bottom: 2.0rem!important;">
+                <div class="card-body">
+                    <h4 class="card-title">@item.Name</h4>
+                    <div class="text-truncate text-wrap" style="height: 72px;">
+                        @Html.Raw(@item.Description)
                     </div>
+                    <a class="btn btn-outline-primary mt-3" asp-action="index" asp-controller="epigraph" asp-route-key="@item.Id">Descubrir</a>
                 </div>
             </div>
-        }
-    </div>
+        </div>
+    }
 </div>

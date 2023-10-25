@@ -22,6 +22,14 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Frontend
             var model = new Models.View.Frontend.MapIndexViewModel
             {
                 Map = new Models.View.MapDisplayViewModel(),
+                Authors = map.AuthorBridges.Select(bridge =>
+                {
+                    var _model = new Models.View.AuthorDisplayViewModel();
+
+                    _model.Import(bridge.Stern);
+
+                    return _model;
+                }).ToArray(),
                 Images = map.ImageBridges.Select(bridge =>
                 {
                     var _model = new Models.View.ImageDisplayViewModel();
