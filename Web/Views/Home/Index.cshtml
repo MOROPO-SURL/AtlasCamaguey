@@ -9,19 +9,64 @@
 @section styles
 {
     <style type="text/css">
-        .section-img {
-            height: 225px;
+        .bg-img {
             background-repeat: no-repeat;
             background-color: black;
             background-size: cover;
         }
+        .section-img-overlay {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .carousel-control-action {
+            background: none;
+        }
     </style>
 }
 
-<div class="jumbotron text-center mb-0 bg-white" style="border-radius: 0;">
-    <div class="container">
-        <h1>Atlas Web de Camagüey</h1>
-        <p class="lead text-muted">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+<div class="row bg-white no-gutters">
+    <div class="col-md-6 col-sm-12">
+        <img class="float-left w-25" src="~/img/identity/banner_complement_left.svg" />
+        <img class="float-right w-25" src="~/img/identity/banner_complement_right_short.svg" />
+        <table class="table table-borderless table-sm mb-0 w-auto h-100">
+            <tbody>
+                <tr>
+                    <td class="text-center px-0 py-3" style="vertical-align: middle;">
+                        <img src="~/img/identity/AWC_Horizontal_Color_Reducción.svg" />
+                        <p class="lead text-muted text-wrap mt-3 mb-0">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="clearfix"></div>
+    </div>
+    <div class="col-md-6 col-sm-12 h">
+        <div id="carousel-main" class="carousel slide h-100 d-md-block d-none" data-ride="carousel">
+            <ol class="carousel-indicators">
+                <li data-target="#carousel-main" data-slide-to="0" class="active"></li>
+                <li data-target="#carousel-main" data-slide-to="1"></li>
+                <li data-target="#carousel-main" data-slide-to="2"></li>
+            </ol>
+            <div class="carousel-inner h-100" style="position: absolute;">
+                <div class="carousel-item bg-img h-100 active" role="img" style="background-image: url('/img/slides/1.jpg');">
+                </div>
+                <div class="carousel-item bg-img h-100" style="background-image: url('/img/slides/2.jpg');">
+                </div>
+                <div class="carousel-item bg-img h-100" style="background-image: url('/img/slides/3.jpg');">
+                </div>
+            </div>
+            <button class="carousel-control-action carousel-control-prev border-0" type="button" data-target="#carousel-main" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Anterior</span>
+            </button>
+            <button class="carousel-control-action carousel-control-next border-0" type="button" data-target="#carousel-main" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Siguiente</span>
+            </button>
+        </div>
+
     </div>
 </div>
 
@@ -33,7 +78,9 @@
         {
             <div class="col-lg-3 col-md-4 col-sm-6">
                 <div class="card shadow-sm" style="margin-bottom: 2.0rem!important;">
-                    <div class="card-img-top section-img" role="img" style="background-image: url('/media/images/@item.ImageId.@item.ImageExtension');"></div>
+                    <div class="card-img-top bg-img embed-responsive embed-responsive-4by3" role="img" style="background-image: url('/media/images/@item.ImageId.@item.ImageExtension');">
+                        <img class="section-img-overlay" src="~/img/identity/ovelray.png" />    
+                    </div>
 
                     <div class="card-body text-center">
                         <h5 class="card-title">@item.Name</h5>
