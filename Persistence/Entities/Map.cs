@@ -2,11 +2,10 @@
 
 namespace MOROPO.CIMAC.Atlas.Camaguey.Persistence.Entities
 {
-    public class Map : Framework.Guama.Core.Persistence.Entities.Contract.IEntity<System.Guid>
+    public class Map : Framework.Guama.Core.Persistence.Entities.Contract.IEntity<string>
     {
         public Map()
         {
-            Id = System.Guid.NewGuid();
             KeyWordBridges = new List<MapKeyWordBridge>();
             ImageBridges = new List<MapImageBridge>();
             VideoBridges = new List<MapVideoBridge>();
@@ -15,16 +14,21 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Persistence.Entities
         }
 
         [System.ComponentModel.DataAnnotations.Key]
-        public System.Guid Id { get; set; }
+        [System.ComponentModel.DataAnnotations.RegularExpression("^S[0-9]+_E[0-9]+_M[0-9]+$")]
+        public string Id { get; set; }
 
         public int Priority { get; set; } = 1;
 
         [System.ComponentModel.DataAnnotations.Required]
         public string Name { get; set; }
 
-        public string QgisProjectPath { get; set; }
-
         public string Description { get; set; }
+
+        public long Scale { get; set; }
+
+        //[System.ComponentModel.DataAnnotations.Schema.ForeignKey("PreviewImageId")]
+        //public Framework.Guama.Media.Persistence.Entities.Image PreviewImage { get; set; }
+        //public System.Guid PreviewImageId { get; set; }
 
         public List<MapKeyWordBridge> KeyWordBridges { get; set; }
 

@@ -1,4 +1,4 @@
-﻿@model MOROPO.Framework.Guama.Core.Presentation.Web.Frontend.Models.View.PaginationViewModel<MOROPO.CIMAC.Atlas.Camaguey.Persistence.Entities.Map, System.Guid, MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.MapDisplayViewModel>
+﻿@model MOROPO.Framework.Guama.Core.Presentation.Web.Frontend.Models.View.PaginationViewModel<MOROPO.CIMAC.Atlas.Camaguey.Persistence.Entities.Map, string, MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.MapDisplayViewModel>
 
 @{
     const string HEADER = "Gestionar Mapas";
@@ -154,15 +154,8 @@
                                         <dl class="mb-0">
                                             <dt>Nombre</dt>
                                             <dd>@item.Name</dd>
-                                            <dt>Ruta del Proyecto Qgis</dt>
-                                            @if (!string.IsNullOrEmpty(item.QgisProjectPath))
-                                            {
-                                                <dd>@item.QgisProjectPath</dd>
-                                            }
-                                            else
-                                            {
-                                                <dd>---</dd>
-                                            }
+                                            <dt>Escala</dt>
+                                            <dd>1:@item.Scale</dd>
                                             <dt>Descripción</dt>
                                             @if (!string.IsNullOrEmpty(item.Description))
                                             {

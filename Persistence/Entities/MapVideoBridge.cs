@@ -2,9 +2,9 @@
 
 namespace MOROPO.CIMAC.Atlas.Camaguey.Persistence.Entities
 {
-    public class MapVideoBridge : Framework.Guama.Core.Persistence.Entities.Contract.IBridge<Map, System.Guid, Video, System.Guid>
+    public class MapVideoBridge : Framework.Guama.Core.Persistence.Entities.Contract.IBridge<Map, string, Video, System.Guid>
     {
-        public System.Guid ProwId { get; set; }
+        public string ProwId { get; set; }
         public Map Prow { get; set; }
 
         public System.Guid SternId { get; set; }

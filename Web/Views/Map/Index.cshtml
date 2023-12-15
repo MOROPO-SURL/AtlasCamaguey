@@ -4,7 +4,7 @@
 
 @{
     const string HEADER = "Mapa S3_E1_M7";
-    
+
     ViewData["Title"] = HEADER;
 
     ViewData[BreadcrumbViewModel.BREADCRUMBS_MAP_KEY] = new List<BreadcrumbViewModel>
@@ -30,7 +30,7 @@
         }
     };
 
-    
+
 
     Layout = "_NavigableFrontendLayout";
 
@@ -41,7 +41,14 @@
 
 @section styles
 {
-    <link rel="stylesheet" href="~/lib/OpenLayer/css/ol.css" />
+    <link rel="stylesheet" href="~/lib/leaflet/leaflet.css" />
+    <link rel="stylesheet" href="~/lib/leaflet/plugins/minimap/Control.MiniMap.min.css" />
+    <link rel="stylesheet" href="~/lib/leaflet/plugins/fullscreen/Control.FullScreen.css" />
+    <link rel="stylesheet" href="~/lib/leaflet/plugins/mouse-position/L.Control.MousePosition.css" />
+    <link rel="stylesheet" href="~/lib/leaflet/plugins/grid/L.Grid.css" />
+    <link rel="stylesheet" href="~/lib/leaflet/plugins/grouped-layers/leaflet.groupedlayercontrol.min.css" />
+    <link rel="stylesheet" href="~/lib/leaflet/plugins/draw/leaflet.draw.css" />
+    <link rel="stylesheet" href="~/lib/leaflet/plugins/draw-style-editor/css/Leaflet.StyleEditor.min.css" />
     <style type="text/css">
         #map {
             height: 720px;
@@ -51,30 +58,154 @@
 
 @section scripts
 {
-    <script type="text/javascript" src="~/lib/OpenLayer/js/ol.js"></script>
+    <script type="text/javascript" src="~/lib/leaflet/leaflet.js"></script>
+    <script type="text/javascript" src="~/lib/leaflet/plugins/minimap/Control.MiniMap.min.js"></script>
+    <script type="text/javascript" src="~/lib/leaflet/plugins/fullscreen/Control.FullScreen.js"></script>
+    <script type="text/javascript" src="~/lib/leaflet/plugins/mouse-position/L.Control.MousePosition.js"></script>
+    <script type="text/javascript" src="~/lib/leaflet/plugins/grid/L.Grid.js"></script>
+    <script type="text/javascript" src="~/lib/leaflet/plugins/grouped-layers/leaflet.groupedlayercontrol.min.js"></script>
+    <script type="text/javascript" src="~/lib/leaflet/plugins/draw/leaflet.draw.js"></script>
+    <script type="text/javascript" src="~/lib/leaflet/plugins/draw-style-editor/javascript/Leaflet.StyleEditor.min.js"></script>
     <script type="text/javascript">
-        var mapa = new ol.Map({
-            target: 'map',
-            layers: [
-                new ol.layer.Tile({
-                    source: new ol.source.OSM()
-                }),
-                new ol.layer.Tile({
-                    source: new ol.source.TileWMS({
-                        url: 'http://qgis.moropo.cu/cgi-bin/qgis_mapserv.fcgi',
-                        params: {
-                            'MAP': '/home/cloud/qgisprojects/S3_E1_M7/S3_E1_M7.qgs',
-                            'LAYERS': 'Tasa de envejecimiento (%),Adulto mayor (personas)',
-                            'CRS': 'EPSG:4326'
-                        }
-                    })
-                })
-            ],
-            view: new ol.View({
-                center: ol.proj.fromLonLat([-77.9184, 21.3792]),
-                zoom: 9
-            })
+        $(document).ready(function () {
+            var map = L.map('map', {
+                fullscreenControl: true,
+                fullscreenControlOptions: {
+                    position: 'topleft'
+                },
+                scrollWheelZoom: false,
+                attributionControl: false
+            }).setView([21.3792,-77.9184], 9);
+
+            var drawingLayer = new L.featureGroup().addTo(map);
+
+            var baseLayer = new L.tileLayer('http://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19
+                //attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            }).addTo(map);
+
+            var overlay1Layer = new L.tileLayer.wms('http://localhost/cgi-bin/qgis_mapserv.fcgi.exe?MAP=C:/OSGeo4W/var/proj/S3_E1_M7/S3_E1_M7.qgs&SERVICE=WMS&VERSION=1.3.0&', {
+                maxZoom: 19,
+                version: '1.3.0',
+                format: 'image/png',
+                transparent: true,
+                srs: L.CRS.EPSG4326,
+                layers: 'tasa_evejecimiento'
+            }).addTo(map);
+            var overlay2Layer = new L.tileLayer.wms('http://localhost/cgi-bin/qgis_mapserv.fcgi.exe?MAP=C:/OSGeo4W/var/proj/S3_E1_M7/S3_E1_M7.qgs&SERVICE=WMS&VERSION=1.3.0&', {
+                maxZoom: 19,
+                version: '1.3.0',
+                format: 'image/png',
+                transparent: true,
+                srs: L.CRS.EPSG4326,
+                layers: 'adulto_mayor'
+            }).addTo(map);
+
+            var grid = new L.grid().addTo(map);
+
+            L.control.groupedLayers(null, { 
+                "Capas de datos": {
+                    'Envejecimiento poblacional (%)': overlay1Layer,
+                    'Adulto mayor (personas)': overlay2Layer
+                },
+                "Capas auxiliares": {
+                    'Regilla de coordenadas': grid,
+                    'Trazos sobre el mapa': drawingLayer
+                }
+	        }, {
+                hideSingleBase: true,
+		        collapsed: false
+	        }).addTo(map);
+
+            L.control.mousePosition({
+                emptyString: '0º N<br>0º E',
+                separator: '<br>',
+                lngFormatter: function(num) {
+                    var direction = (num < 0) ? 'W' : 'E';
+                    
+                    var formatted = Math.abs(L.Util.formatNum(num, 3)) + 'º ' + direction;
+                    
+                    return formatted; 
+                },
+                latFormatter: function(num) {
+                    var direction = (num < 0) ? 'S' : 'N';
+                    
+                    var formatted = Math.abs(L.Util.formatNum(num, 3)) + 'º ' + direction;
+                    
+                    return formatted;
+                }
+            }).addTo(map);
+            L.control.scale().addTo(map);
+
+            map.addControl(new L.Control.Draw({
+                edit: {
+                    featureGroup: drawingLayer,
+                    poly: {
+                        allowIntersection: false
+                    }
+                },
+                draw: {
+                    polygon: {
+                        allowIntersection: false,
+                        showArea: true
+                    }
+                }
+            }));
+            map.on(L.Draw.Event.CREATED, function (event) {
+                var drawLayer = event.layer;
+
+                drawingLayer.addLayer(drawLayer);
+            });
+
+            map.addControl(L.control.styleEditor());
+            
+            var miniMap = new L.Control.MiniMap(new L.tileLayer('http://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            }), { toggleDisplay: true }).addTo(map);
         });
+
+        //var mapa = new ol.Map({
+        //    target: 'map',
+        //    layers: [
+        //        //new ol.layer.Tile({
+        //        //    source: new ol.source.OSM()
+        //        //}),
+        //        //new ol.layer.Tile({
+        //        //    source: new ol.source.TileWMS({
+        //        //        url: 'http://qgis.moropo.cu/cgi-bin/qgis_mapserv.fcgi',
+        //        //        params: {
+        //        //            'MAP': '@string.Format("/home/cloud/qgisprojects/{0}/{0}.qgz", Model.Map.Id)',
+        //        //            'LAYERS': 'Tasa de envejecimiento (%),Adulto mayor (personas)',
+        //        //            'CRS': 'EPSG:4326'
+        //        //        }
+        //        //    })
+        //        //}),
+        //        new ol.layer.Vector({
+        //            source: new ol.source.Vector({
+        //                loader: function() {
+        //                    $.ajax({
+        //                        type: 'GET',
+        //                        url: '/media/geojson/s3_e1_m7/data/Embalses_0.json',
+        //                        context: this
+        //                    }).done(function(data) {
+        //                        alert(data);
+
+        //                        var format = new ol.format.GeoJSON();
+
+        //                        this.addFeatures(format.readFeatures(data));
+        //                    });
+        //                }
+        //            })
+        //        })
+        //    ],
+        //    view: new ol.View({
+        //        center: ol.proj.fromLonLat([-77.9184, 21.3792]),
+        //        //center: [0, 0],
+        //        zoom: 9
+        //        //zoom: 2
+        //    })
+        //});
     </script>
 }
 

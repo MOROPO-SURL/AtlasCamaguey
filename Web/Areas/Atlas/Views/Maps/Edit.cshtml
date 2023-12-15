@@ -55,32 +55,46 @@
                     <a class="nav-link active" href="#">Generales</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="@Url.Action("EditAuthors", Model.Id)">Autores</a>
+                    <a class="nav-link" asp-action="EditAuthors" asp-route-key="@Model.Id">Autores</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="@Url.Action("EditImages", Model.Id)">Imágenes</a>
+                    <a class="nav-link" asp-action="EditImages" asp-route-key="@Model.Id">Imágenes</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="@Url.Action("EditVideos", Model.Id)">Videos</a>
+                    <a class="nav-link" asp-action="EditVideos" asp-route-key="@Model.Id">Videos</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="@Url.Action("EditDocuments", Model.Id)">Documentos</a>
+                    <a class="nav-link" asp-action="EditDocuments" asp-route-key="@Model.Id">Documentos</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="@Url.Action("EditKeyWords", Model.Id)">Palabras Claves</a>
+                    <a class="nav-link" asp-action="EditKeyWords" asp-route-key="@Model.Id">Palabras Claves</a>
                 </li>
             </ul>
         </div>
         <div class="card-body">
-            <div class="mb-3">
-                @Html.LabelFor(model => model.Name, new { @class = "control-label" })
-                @Html.TextBoxFor(model => model.Name, new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.Name, null, new { @class = "text-danger" })
+            <div class="row">
+                <div class="col-md-3 col-lg-2 mb-3">
+                    @Html.LabelFor(model => model.Id, new { @class = "control-label" })
+                    @Html.TextBoxFor(model => model.Id, new { @class = "form-control", @readonly = "readonly" })
+                    @Html.ValidationMessageFor(model => model.Id, null, new { @class = "text-danger" })
+                </div>
+                <div class="col-md-9 col-lg-10 mb-3">
+                    @Html.LabelFor(model => model.Name, new { @class = "control-label" })
+                    @Html.TextBoxFor(model => model.Name, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.Name, null, new { @class = "text-danger" })
+                </div>
             </div>
-            <div class="mb-3">
-                @Html.LabelFor(model => model.QgisProjectPath, new { @class = "control-label" }) <span class="small text-muted">(opcional)</span>
-                @Html.TextBoxFor(model => model.QgisProjectPath, new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.QgisProjectPath, null, new { @class = "text-danger" })
+            <div class="row">
+                <div class=" col-sm-6 col-md-3 col-lg-2 mb-3">
+                    @Html.LabelFor(model => model.Scale, new { @class = "control-label" }) <span class="small text-muted"></span>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="basic-addon1">1:</span>
+                        </div>
+                        @Html.TextBoxFor(model => model.Scale, new { @class = "form-control" })
+                    </div>                
+                    @Html.ValidationMessageFor(model => model.Scale, null, new { @class = "text-danger" })
+                </div>
             </div>
             <div>
                 @Html.LabelFor(model => model.Description, new { @class = "control-label" }) <span class="small text-muted">(opcional)</span>

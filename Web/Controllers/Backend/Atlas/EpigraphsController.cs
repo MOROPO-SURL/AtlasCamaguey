@@ -22,12 +22,12 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         private readonly IEntityRepository<Document, System.Guid> documentRepository;
         private readonly IEntityRepository<Video, System.Guid> videoRepository;
         private readonly IEntityRepository<KeyWord, System.Guid> keyWordRepository;
-        private readonly IEntityRepository<Map, System.Guid> mapRepository;
+        private readonly IEntityRepository<Map, string> mapRepository;
         private readonly IImageFileManagerFacade imageFileManager;
         private readonly IDocumentFileManagerFacade documentFileManager;
         private readonly IVideoFileManagerFacade videoFileManager;
 
-        public EpigraphsController(IVideoFileManagerFacade videoFileManager, IDocumentFileManagerFacade documentFileManager, IImageFileManagerFacade imageFileManager, IEntityRepository<Map, System.Guid> mapRepository, IEntityRepository<KeyWord, System.Guid> keyWordRepository, IEntityRepository<Video, System.Guid> videoRepository, IEntityRepository<Document, System.Guid> documentRepository, IEntityRepository<Image, System.Guid> imageRepository, IEntityRepository<Section, System.Guid> sectionRepository, IEntityRepository<Epigraph, System.Guid> repository, IStringLocalizer<EpigraphsController> localizer, ILogger<EpigraphsController> logger) : base(repository, localizer, logger)
+        public EpigraphsController(IVideoFileManagerFacade videoFileManager, IDocumentFileManagerFacade documentFileManager, IImageFileManagerFacade imageFileManager, IEntityRepository<Map, string> mapRepository, IEntityRepository<KeyWord, System.Guid> keyWordRepository, IEntityRepository<Video, System.Guid> videoRepository, IEntityRepository<Document, System.Guid> documentRepository, IEntityRepository<Image, System.Guid> imageRepository, IEntityRepository<Section, System.Guid> sectionRepository, IEntityRepository<Epigraph, System.Guid> repository, IStringLocalizer<EpigraphsController> localizer, ILogger<EpigraphsController> logger) : base(repository, localizer, logger)
         {
             this.sectionRepository = sectionRepository;
             this.imageRepository = imageRepository;
@@ -266,7 +266,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         [Route("edit/{key}/maps/add")]
         [ValidateAntiForgeryToken]
         [RequirePermissions(Constants.Permission.EpigraphEditor)]
-        public IActionResult AddMap(System.Guid key, System.Guid mapId)
+        public IActionResult AddMap(System.Guid key, string mapId)
         {
             try
             {
@@ -312,7 +312,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         [Route("edit/{key}/maps/delete")]
         [ValidateAntiForgeryToken]
         [RequirePermissions(Constants.Permission.EpigraphEditor)]
-        public IActionResult DeleteMap(System.Guid key, System.Guid mapId)
+        public IActionResult DeleteMap(System.Guid key, string mapId)
         {
             try
             {

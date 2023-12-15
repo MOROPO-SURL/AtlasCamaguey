@@ -8,7 +8,6 @@
             {
                 return new System.Collections.Generic.List<Framework.Guama.Core.Persistence.ORM.EF.Configurators.IEntityTypeConfigurator>
                 {
-                    new Configurators.MapEntityTypeConfigurator(),
                     new Configurators.MapDocumentBridgeEntityTypeConfigurator(),
                     new Configurators.MapImageBridgeEntityTypeConfigurator(),
                     new Configurators.MapKeyWordBridgeEntityTypeConfigurator(),

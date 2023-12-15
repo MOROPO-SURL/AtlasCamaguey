@@ -16,7 +16,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
     [Microsoft.AspNetCore.Authorization.Authorize]
     [RequirePermissions(Framework.Guama.Core.Security.Presentation.Constants.Permissions.ShellManager)]
     [Area("atlas")]
-    public class MapsController : Framework.Guama.Core.Presentation.Web.Backend.Controllers.AbstractEntityManagementController<Map, System.Guid, MapInputViewModel, MapDisplayViewModel>
+    public class MapsController : Framework.Guama.Core.Presentation.Web.Backend.Controllers.AbstractEntityManagementController<Map, string, MapInputViewModel, MapDisplayViewModel>
     {
         private readonly IEntityRepository<Image, System.Guid> imageRepository;
         private readonly IEntityRepository<Document, System.Guid> documentRepository;
@@ -27,7 +27,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         private readonly IDocumentFileManagerFacade documentFileManager;
         private readonly IVideoFileManagerFacade videoFileManager;
 
-        public MapsController(IVideoFileManagerFacade videoFileManager, IDocumentFileManagerFacade documentFileManager, IImageFileManagerFacade imageFileManager, IEntityRepository<Author, System.Guid> authorRepository, IEntityRepository<KeyWord, System.Guid> keyWordRepository, IEntityRepository<Video, System.Guid> videoRepository, IEntityRepository<Document, System.Guid> documentRepository, IEntityRepository<Image, System.Guid> imageRepository, IEntityRepository<Map, System.Guid> repository, IStringLocalizer<MapsController> localizer, ILogger<MapsController> logger) : base(repository, localizer, logger)
+        public MapsController(IVideoFileManagerFacade videoFileManager, IDocumentFileManagerFacade documentFileManager, IImageFileManagerFacade imageFileManager, IEntityRepository<Author, System.Guid> authorRepository, IEntityRepository<KeyWord, System.Guid> keyWordRepository, IEntityRepository<Video, System.Guid> videoRepository, IEntityRepository<Document, System.Guid> documentRepository, IEntityRepository<Image, System.Guid> imageRepository, IEntityRepository<Map, string> repository, IStringLocalizer<MapsController> localizer, ILogger<MapsController> logger) : base(repository, localizer, logger)
         {
             this.imageRepository = imageRepository;
             this.documentRepository = documentRepository;
@@ -58,7 +58,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         }
 
         [RequirePermissions(Constants.Permission.MapEditor)]
-        public override IActionResult Edit(System.Guid key)
+        public override IActionResult Edit(string key)
         {
             return base.Edit(key);
         }
@@ -70,7 +70,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         }
 
         [RequirePermissions(Constants.Permission.MapRemover)]
-        public override IActionResult Delete(System.Guid key)
+        public override IActionResult Delete(string key)
         {
             return base.Delete(key);
         }
@@ -86,7 +86,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         [HttpGet]
         [Route("edit/{key}/authors")]
         [RequirePermissions(Constants.Permission.MapEditor)]
-        public ActionResult EditAuthors(System.Guid key)
+        public ActionResult EditAuthors(string key)
         {
             var entity = Repository.Get(key);
 
@@ -119,7 +119,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         [Route("edit/{key}/authors/add")]
         [ValidateAntiForgeryToken]
         [RequirePermissions(Constants.Permission.MapEditor)]
-        public IActionResult AddAuthor(System.Guid key, System.Guid authorId)
+        public IActionResult AddAuthor(string key, System.Guid authorId)
         {
             try
             {
@@ -165,7 +165,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         [Route("edit/{key}/authors/delete")]
         [ValidateAntiForgeryToken]
         [RequirePermissions(Constants.Permission.MapEditor)]
-        public IActionResult DeleteAuthor(System.Guid key, System.Guid authorId)
+        public IActionResult DeleteAuthor(string key, System.Guid authorId)
         {
             try
             {
@@ -206,7 +206,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         [HttpGet]
         [Route("edit/{key}/keywords")]
         [RequirePermissions(Constants.Permission.MapEditor)]
-        public ActionResult EditKeyWords(System.Guid key)
+        public ActionResult EditKeyWords(string key)
         {
             var entity = Repository.Get(key);
 
@@ -239,7 +239,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         [Route("edit/{key}/keywords/add")]
         [ValidateAntiForgeryToken]
         [RequirePermissions(Constants.Permission.MapEditor)]
-        public IActionResult AddKeyWord(System.Guid key, System.Guid keyWordId)
+        public IActionResult AddKeyWord(string key, System.Guid keyWordId)
         {
             try
             {
@@ -285,7 +285,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         [Route("edit/{key}/keywords/delete")]
         [ValidateAntiForgeryToken]
         [RequirePermissions(Constants.Permission.MapEditor)]
-        public IActionResult DeleteKeyWord(System.Guid key, System.Guid keyWordId)
+        public IActionResult DeleteKeyWord(string key, System.Guid keyWordId)
         {
             try
             {
@@ -326,7 +326,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         [HttpGet]
         [Route("edit/{key}/images")]
         [RequirePermissions(Constants.Permission.MapEditor)]
-        public ActionResult EditImages(System.Guid key)
+        public ActionResult EditImages(string key)
         {
             var entity = Repository.Get(key);
 
@@ -352,7 +352,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         [Route("edit/{key}/images/add")]
         [ValidateAntiForgeryToken]
         [RequirePermissions(Constants.Permission.MapEditor)]
-        public IActionResult AddImage(System.Guid key)
+        public IActionResult AddImage(string key)
         {
             try
             {
@@ -413,7 +413,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         [Route("edit/{key}/images/delete")]
         [ValidateAntiForgeryToken]
         [RequirePermissions(Constants.Permission.MapEditor)]
-        public IActionResult DeleteImage(System.Guid key, System.Guid imageId)
+        public IActionResult DeleteImage(string key, System.Guid imageId)
         {
             try
             {
@@ -458,7 +458,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         [HttpGet]
         [Route("edit/{key}/videos")]
         [RequirePermissions(Constants.Permission.MapEditor)]
-        public ActionResult EditVideos(System.Guid key)
+        public ActionResult EditVideos(string key)
         {
             var entity = Repository.Get(key);
 
@@ -484,7 +484,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         [Route("edit/{key}/videos/add")]
         [ValidateAntiForgeryToken]
         [RequirePermissions(Constants.Permission.MapEditor)]
-        public IActionResult AddVideo(System.Guid key, string about)
+        public IActionResult AddVideo(string key, string about)
         {
             try
             {
@@ -563,7 +563,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         [Route("edit/{key}/videos/delete")]
         [ValidateAntiForgeryToken]
         [RequirePermissions(Constants.Permission.MapEditor)]
-        public IActionResult DeleteVideo(System.Guid key, System.Guid videoId)
+        public IActionResult DeleteVideo(string key, System.Guid videoId)
         {
             try
             {
@@ -605,7 +605,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         [Route("edit/{key}/videos/edit")]
         [ValidateAntiForgeryToken]
         [RequirePermissions(Constants.Permission.MapEditor)]
-        public IActionResult EditVideo(System.Guid key, System.Guid videoId, string about)
+        public IActionResult EditVideo(string key, System.Guid videoId, string about)
         {
             try
             {
@@ -638,7 +638,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         [HttpGet]
         [Route("edit/{key}/documents")]
         [RequirePermissions(Constants.Permission.MapEditor)]
-        public ActionResult EditDocuments(System.Guid key)
+        public ActionResult EditDocuments(string key)
         {
             var entity = Repository.Get(key);
 
@@ -664,7 +664,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         [Route("edit/{key}/documents/add")]
         [ValidateAntiForgeryToken]
         [RequirePermissions(Constants.Permission.MapEditor)]
-        public IActionResult AddDocument(System.Guid key, DocumentInputViewModel model)
+        public IActionResult AddDocument(string key, DocumentInputViewModel model)
         {
             try
             {
@@ -733,7 +733,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         [Route("edit/{key}/documents/remove")]
         [ValidateAntiForgeryToken]
         [RequirePermissions(Constants.Permission.MapEditor)]
-        public IActionResult RemoveDocument(System.Guid key, System.Guid documentId)
+        public IActionResult RemoveDocument(string key, System.Guid documentId)
         {
             try
             {
@@ -777,7 +777,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         [Route("edit/{key}/documents/edit")]
         [ValidateAntiForgeryToken]
         [RequirePermissions(Constants.Permission.MapEditor)]
-        public IActionResult EditDocument(System.Guid key, DocumentInputViewModel modelInput)
+        public IActionResult EditDocument(string key, DocumentInputViewModel modelInput)
         {
             ModelState.ClearValidationState("File");
             ModelState.MarkFieldValid("File");

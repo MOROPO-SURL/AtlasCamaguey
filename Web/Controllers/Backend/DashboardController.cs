@@ -26,9 +26,9 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend
         private readonly IEntityRepository<Trace, long> traceRepository;
         private readonly IEntityRepository<Section, System.Guid> sectionRepository;
         private readonly IEntityRepository<Epigraph, System.Guid> epigraphRepository;
-        private readonly IEntityRepository<Map, System.Guid> mapRepository;
+        private readonly IEntityRepository<Map, string> mapRepository;
 
-        public DashboardController(IEntityRepository<Map, System.Guid> mapRepository, IEntityRepository<Epigraph, System.Guid> epigraphRepository, IEntityRepository<Section, System.Guid> sectionRepository, IEntityRepository<Trace, long> traceRepository, IEntityRepository<User, string> userRepository, IEnumerable<Framework.Guama.Core.Presentation.Web.Backend.Providers.Facade.IManagementDashboardSectionProviderFacade> managementDashboardSectionProviders, Microsoft.Extensions.Localization.IStringLocalizer<DashboardController> localizer, ILogger<DashboardController> logger) : base(localizer, logger)
+        public DashboardController(IEntityRepository<Map, string> mapRepository, IEntityRepository<Epigraph, System.Guid> epigraphRepository, IEntityRepository<Section, System.Guid> sectionRepository, IEntityRepository<Trace, long> traceRepository, IEntityRepository<User, string> userRepository, IEnumerable<Framework.Guama.Core.Presentation.Web.Backend.Providers.Facade.IManagementDashboardSectionProviderFacade> managementDashboardSectionProviders, Microsoft.Extensions.Localization.IStringLocalizer<DashboardController> localizer, ILogger<DashboardController> logger) : base(localizer, logger)
         {
             this.managementDashboardSectionProviders = managementDashboardSectionProviders;
             this.userRepository = userRepository;

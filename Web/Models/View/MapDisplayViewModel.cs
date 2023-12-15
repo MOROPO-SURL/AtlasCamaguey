@@ -2,13 +2,13 @@
 
 namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View
 {
-    public class MapDisplayViewModel : Framework.Guama.Core.Persistence.Presentation.Models.Contract.IEntityDisplayModel<Map, System.Guid>
+    public class MapDisplayViewModel : Framework.Guama.Core.Persistence.Presentation.Models.Contract.IEntityDisplayModel<Map, string>
     {
-        public System.Guid Id { get; set; }
+        public string Id { get; set; }
 
         public string Name { get; set; }
 
-        public string QgisProjectPath { get; set; }
+        public long Scale { get; set; }
 
         public string Description { get; set; }
 
@@ -16,7 +16,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View
         {
             Id = entity.Id;
             Name = entity.Name;
-            QgisProjectPath = entity.QgisProjectPath;
+            Scale = entity.Scale;
             Description = entity.Description;
         }
     }

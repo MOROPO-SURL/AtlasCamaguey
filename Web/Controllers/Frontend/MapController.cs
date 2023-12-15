@@ -7,15 +7,15 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Frontend
     [Microsoft.AspNetCore.Mvc.Route("[controller]")]
     public class MapController : Microsoft.AspNetCore.Mvc.Controller
     {
-        private readonly IEntityRepository<Map, System.Guid> mapRepository;
+        private readonly IEntityRepository<Map, string> mapRepository;
 
-        public MapController(IEntityRepository<Map, System.Guid> mapRepository)
+        public MapController(IEntityRepository<Map, string> mapRepository)
         {
             this.mapRepository = mapRepository;
         }
 
         [Microsoft.AspNetCore.Mvc.Route("{key}")]
-        public Microsoft.AspNetCore.Mvc.ActionResult<Models.View.Frontend.MapIndexViewModel> Index(System.Guid key)
+        public Microsoft.AspNetCore.Mvc.ActionResult<Models.View.Frontend.MapIndexViewModel> Index(string key)
         {
             var map = mapRepository.Get(key);
 
