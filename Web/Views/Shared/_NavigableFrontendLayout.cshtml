@@ -11,22 +11,16 @@
 }
 
 <div class="row no-gutters">
-    <div class="col-auto pl-4">
-        <div class="card bg-light" style="width: 320px; margin-top: 2.1rem!important;">
-            <img class="card-img-top" src="/img/identity-46.png" />
+    <div class="col-auto pl-4 mb-4">
+        <div class="card" style="width: 320px; margin-top: 2.1rem!important;">
+            <img class="card-img-top" src="/img/identity/banner-decored-left.jpg" />
             <div class="card-body">
                 <h3 class="card-title">Navegación</h3>
                 <h5 class="card-subtitle">Secciones</h5>
-                <hr class="my-4" />
-                <hr class="my-4" />
-                <hr class="my-4" />
-                <hr class="my-4" />
-                <hr class="my-4" />
-                <hr class="my-4" />
-                <hr class="my-4" />
-                <hr class="my-4" />
-                <hr class="mt-4" />
             </div>
+            <ul class="list-group list-group-flush">
+                @RenderSection("thematic_navigation", false)
+            </ul>
         </div>
     </div>
     <div class="col px-4" style="margin-top: 2.1rem!important;">

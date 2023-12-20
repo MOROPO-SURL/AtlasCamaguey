@@ -37,7 +37,291 @@
             background-color: black;
             background-size: cover;
         }
+
+        #nav-thematic .list-group-item {
+            padding: 0.65rem;
+        }
+
+        #nav-thematic .list-group-item > div.section-nav-item-head > div.row > span.mdi-chevron-down {
+            transition: all 0.3s ease;
+         }
+
+        #nav-thematic .list-group-item > div.section-nav-item-head.collapsed > div.row > span.mdi-chevron-down {
+            -webkit-transform: rotate(180deg);
+            -moz-transform: rotate(180deg);
+            -ms-transform: rotate(180deg);
+            transform: rotate(180deg);
+        }
+
+        #nav-thematic .list-group-item .card-body {
+            margin-top: 0.25rem;
+        }
+
+        #nav-thematic .list-group-item div.row.no-gutters > span {
+            align-self: center;
+        }       
+
+        #nav-thematic .list-group-item div.row.no-gutters > span.col {
+            margin: 0 0.25rem;
+        }
     </style>
+}
+
+@section thematic_navigation
+{
+    <div id="nav-thematic" class="accordion">
+        <div class="list-group-item" style="border-top: 1px solid rgba(0,0,0,.125);">
+            <div id="section-nav-item-1-head" class="section-nav-item-head collapsed" data-toggle="collapse" data-target="#section-nav-item-1-content" aria-expanded="true" aria-controls="section-nav-item-1-content">
+                <div class="row no-gutters">
+                    <span class="col-auto mdi mdi-24px mdi-bookmark"></span>
+                    <span class="col">Mapas generales y de referencia</span>
+                    <span class="col-auto mdi mdi-24px mdi-chevron-down"></span>
+                </div>
+            </div>            
+
+            <div id="section-nav-item-1-content" class="collapse" aria-labelledby="section-nav-item-1-head" data-parent="#nav-thematic">
+                <hr style="margin-top: 0.75rem" />
+                <a href="#" class="card-link"><span class="mdi mdi-arrow-left-thick"></span> Detalles de la sección</a>
+                <b class="d-block mt-2">Epígrafes</b>
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <div class="row no-gutters">
+                            <span class="col-auto mdi mdi-24px mdi-label"></span>
+                            <span class="col">Asentamientos humanos</span>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row no-gutters">
+                            <span class="col-auto mdi mdi-24px mdi-label"></span>
+                            <span class="col">Estado, dinámica y distribución de la población</span>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row no-gutters">
+                            <span class="col-auto mdi mdi-24px mdi-label"></span>
+                            <span class="col">Infraestructura social y desarrollo humano</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="list-group-item bg-light">
+            <div id="section-nav-item-2-head" class="section-nav-item-head" data-toggle="collapse" data-target="#section-nav-item-2-content" aria-expanded="true" aria-controls="section-nav-item-2-content">
+                <div class="row no-gutters text-info">
+                    <span class="col-auto mdi mdi-24px mdi-bookmark"></span>
+                    <span class="col"><b>Naturaleza y recursos naturales</b></span>
+                    <span class="col-auto mdi mdi-24px mdi-chevron-down"></span>
+                </div>
+            </div>            
+
+            <div id="section-nav-item-2-content" class="collapse show" aria-labelledby="section-nav-item-2-head" data-parent="#nav-thematic">
+                <hr class="bg-info" style="margin-top: 0.75rem" />
+                <a href="#" class="card-link"><span class="mdi mdi-arrow-left-thick"></span> Detalles de la sección</a>
+                <b class="d-block mt-2">Epígrafes</b>
+                <ul class="list-group">
+                    <li class="list-group-item bg-light">
+                        <div class="row no-gutters text-info">
+                            <span class="col-auto mdi mdi-24px mdi-label"></span>
+                            <span class="col">Constitución geológica</span>
+                        </div>
+                    </li>
+                    <li class="list-group-item bg-light">
+                        <div class="row no-gutters">
+                            <span class="col-auto mdi mdi-24px mdi-label"></span>
+                            <span class="col">Relieve</span>
+                        </div>
+                    </li>
+                    <li class="list-group-item bg-light">
+                        <div class="row no-gutters">
+                            <span class="col-auto mdi mdi-24px mdi-label"></span>
+                            <span class="col">Condiciones geofísicas</span>
+                        </div>
+                    </li>
+                    <li class="list-group-item bg-light">
+                        <div class="row no-gutters">
+                            <span class="col-auto mdi mdi-24px mdi-label"></span>
+                            <span class="col">Clima</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="list-group-item">
+            <div id="section-nav-item-3-head" class="section-nav-item-head collapsed" data-toggle="collapse" data-target="#section-nav-item-3-content" aria-expanded="true" aria-controls="section-nav-item-3-content">
+                <div class="row no-gutters">
+                    <span class="col-auto mdi mdi-24px mdi-bookmark"></span>
+                    <span class="col">Población, asentamientos y desarrollo humano</span>
+                    <span class="col-auto mdi mdi-24px mdi-chevron-down"></span>
+                </div>
+            </div>            
+
+            <div id="section-nav-item-3-content" class="collapse" aria-labelledby="section-nav-item-3-head" data-parent="#nav-thematic">
+                <hr style="margin-top: 0.75rem" />
+                <a href="#" class="card-link"><span class="mdi mdi-arrow-left-thick"></span> Detalles de la sección</a>
+                <b class="d-block mt-2">Epígrafes</b>
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <div class="row no-gutters">
+                            <span class="col-auto mdi mdi-24px mdi-label"></span>
+                            <span class="col">Asentamientos humanos</span>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row no-gutters">
+                            <span class="col-auto mdi mdi-24px mdi-label"></span>
+                            <span class="col">Estado, dinámica y distribución de la población</span>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row no-gutters">
+                            <span class="col-auto mdi mdi-24px mdi-label"></span>
+                            <span class="col">Infraestructura social y desarrollo humano</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="list-group-item">
+            <div id="section-nav-item-4-head" class="section-nav-item-head collapsed" data-toggle="collapse" data-target="#section-nav-item-4-content" aria-expanded="true" aria-controls="section-nav-item-4-content">
+                <div class="row no-gutters">
+                    <span class="col-auto mdi mdi-24px mdi-bookmark"></span>
+                    <span class="col">Transformación económica y productiva</span>
+                    <span class="col-auto mdi mdi-24px mdi-chevron-down"></span>
+                </div>
+            </div>            
+
+            <div id="section-nav-item-4-content" class="collapse" aria-labelledby="section-nav-item-4-head" data-parent="#nav-thematic">
+                <hr style="margin-top: 0.75rem" />
+                <a href="#" class="card-link"><span class="mdi mdi-arrow-left-thick"></span> Detalles de la sección</a>
+                <b class="d-block mt-2">Epígrafes</b>
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <div class="row no-gutters">
+                            <span class="col-auto mdi mdi-24px mdi-label"></span>
+                            <span class="col">Asentamientos humanos</span>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row no-gutters">
+                            <span class="col-auto mdi mdi-24px mdi-label"></span>
+                            <span class="col">Estado, dinámica y distribución de la población</span>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row no-gutters">
+                            <span class="col-auto mdi mdi-24px mdi-label"></span>
+                            <span class="col">Infraestructura social y desarrollo humano</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="list-group-item">
+            <div id="section-nav-item-5-head" class="section-nav-item-head collapsed" data-toggle="collapse" data-target="#section-nav-item-5-content" aria-expanded="true" aria-controls="section-nav-item-5-content">
+                <div class="row no-gutters">
+                    <span class="col-auto mdi mdi-24px mdi-bookmark"></span>
+                    <span class="col">Enfrentamiento al cambio climático y gestión del riesgo de desastres</span>
+                    <span class="col-auto mdi mdi-24px mdi-chevron-down"></span>
+                </div>
+            </div>            
+
+            <div id="section-nav-item-5-content" class="collapse" aria-labelledby="section-nav-item-5-head" data-parent="#nav-thematic">
+                <hr style="margin-top: 0.75rem" />
+                <a href="#" class="card-link"><span class="mdi mdi-arrow-left-thick"></span> Detalles de la sección</a>
+                <b class="d-block mt-2">Epígrafes</b>
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <div class="row no-gutters">
+                            <span class="col-auto mdi mdi-24px mdi-label"></span>
+                            <span class="col">Asentamientos humanos</span>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row no-gutters">
+                            <span class="col-auto mdi mdi-24px mdi-label"></span>
+                            <span class="col">Estado, dinámica y distribución de la población</span>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row no-gutters">
+                            <span class="col-auto mdi mdi-24px mdi-label"></span>
+                            <span class="col">Infraestructura social y desarrollo humano</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="list-group-item">
+            <div id="section-nav-item-6-head" class="section-nav-item-head collapsed" data-toggle="collapse" data-target="#section-nav-item-6-content" aria-expanded="true" aria-controls="section-nav-item-6-content">
+                <div class="row no-gutters">
+                    <span class="col-auto mdi mdi-24px mdi-bookmark"></span>
+                    <span class="col">Municipalidad y gobernanza</span>
+                    <span class="col-auto mdi mdi-24px mdi-chevron-down"></span>
+                </div>
+            </div>            
+
+            <div id="section-nav-item-6-content" class="collapse" aria-labelledby="section-nav-item-6-head" data-parent="#nav-thematic">
+                <hr style="margin-top: 0.75rem" />
+                <a href="#" class="card-link"><span class="mdi mdi-arrow-left-thick"></span> Detalles de la sección</a>
+                <b class="d-block mt-2">Epígrafes</b>
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <div class="row no-gutters">
+                            <span class="col-auto mdi mdi-24px mdi-label"></span>
+                            <span class="col">Asentamientos humanos</span>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row no-gutters">
+                            <span class="col-auto mdi mdi-24px mdi-label"></span>
+                            <span class="col">Estado, dinámica y distribución de la población</span>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row no-gutters">
+                            <span class="col-auto mdi mdi-24px mdi-label"></span>
+                            <span class="col">Infraestructura social y desarrollo humano</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="list-group-item">
+            <div id="section-nav-item-7-head" class="section-nav-item-head collapsed" data-toggle="collapse" data-target="#section-nav-item-7-content" aria-expanded="true" aria-controls="section-nav-item-7-content">
+                <div class="row no-gutters">
+                    <span class="col-auto mdi mdi-24px mdi-bookmark"></span>
+                    <span class="col">Historia y patrimonio histórico-cultural</span>
+                    <span class="col-auto mdi mdi-24px mdi-chevron-down"></span>
+                </div>
+            </div>            
+
+            <div id="section-nav-item-7-content" class="collapse" aria-labelledby="section-nav-item-7-head" data-parent="#nav-thematic">
+                <hr style="margin-top: 0.75rem" />
+                <a href="#" class="card-link"><span class="mdi mdi-arrow-left-thick"></span> Detalles de la sección</a>
+                <b class="d-block mt-2">Epígrafes</b>
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <div class="row no-gutters">
+                            <span class="col-auto mdi mdi-24px mdi-label"></span>
+                            <span class="col">Asentamientos humanos</span>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row no-gutters">
+                            <span class="col-auto mdi mdi-24px mdi-label"></span>
+                            <span class="col">Estado, dinámica y distribución de la población</span>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row no-gutters">
+                            <span class="col-auto mdi mdi-24px mdi-label"></span>
+                            <span class="col">Infraestructura social y desarrollo humano</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
 }
 
 <h4 class="mb-0">Epígrafe</h4>
