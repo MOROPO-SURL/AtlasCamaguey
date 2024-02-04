@@ -8,20 +8,24 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Frontend
     public class MapController : Microsoft.AspNetCore.Mvc.Controller
     {
         private readonly IEntityRepository<Map, string> mapRepository;
+        private readonly IEntityRepository<Epigraph, System.Guid> epigraphRepository;
+        private readonly IEntityRepository<Section, System.Guid> sectionRepository;
 
-        public MapController(IEntityRepository<Map, string> mapRepository)
+        public MapController(IEntityRepository<Section, System.Guid> sectionRepository, IEntityRepository<Epigraph, System.Guid> epigraphRepository, IEntityRepository<Map, string> mapRepository)
         {
             this.mapRepository = mapRepository;
+            this.epigraphRepository = epigraphRepository;
+            this.sectionRepository = sectionRepository;
         }
 
-        [Microsoft.AspNetCore.Mvc.Route("{key}")]
-        public Microsoft.AspNetCore.Mvc.ActionResult<Models.View.Frontend.MapIndexViewModel> Index(string key)
+        [Microsoft.AspNetCore.Mvc.Route("{key}/epigraph/{epigraphId}")]
+        public Microsoft.AspNetCore.Mvc.ActionResult<Models.View.Frontend.MapIndexViewModel> Index(string key, System.Guid epigraphId)
         {
             var map = mapRepository.Get(key);
 
             var model = new Models.View.Frontend.MapIndexViewModel
             {
-                Map = new Models.View.MapDisplayViewModel(),
+                Current = new Models.View.MapDisplayViewModel(),
                 Authors = map.AuthorBridges.Select(bridge =>
                 {
                     var _model = new Models.View.AuthorDisplayViewModel();
@@ -61,10 +65,45 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Frontend
                     _model.Import(bridge.Stern);
 
                     return _model;
+                }).ToArray(),
+                Epigraph = new Models.View.EpigraphDisplayViewModel(),
+                Section = new Models.View.SectionDisplayViewModel(),
+                Sections = sectionRepository.GetAll().ToArray().Select(entity =>
+                {
+                    var _model = new Models.View.SectionDisplayViewModel();
+
+                    _model.Import(entity);
+
+                    _model.Epigraphs = epigraphRepository.FindBy(_entity => _entity.SectionId == entity.Id).ToArray().Select(_entity =>
+                    {
+                        var __model = new Models.View.EpigraphDisplayViewModel();
+
+                        __model.Import(_entity);
+
+                        return __model;
+                    }).ToArray();
+
+                    return _model;
                 }).ToArray()
             };
 
-            model.Map.Import(map);
+            model.Current.Import(map);
+
+            var epigraph = epigraphRepository.Get(epigraphId);
+
+            model.Epigraph.Import(epigraph);
+
+            var section = sectionRepository.Get(epigraph.SectionId.Value);
+
+            model.Section.Import(section);
+            model.Section.Epigraphs = epigraphRepository.FindBy(entity => entity.SectionId == section.Id).ToArray().Select(entity =>
+            {
+                var _model = new Models.View.EpigraphDisplayViewModel();
+
+                _model.Import(entity);
+
+                return _model;
+            }).ToArray();
 
             return View(model);
         }

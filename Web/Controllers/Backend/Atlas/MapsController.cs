@@ -45,16 +45,14 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
             return View();
         }
 
-        [RequirePermissions(Constants.Permission.MapCreator)]
         public override IActionResult Create()
         {
-            return base.Create();
+            return NotFound();
         }
 
-        [RequirePermissions(Constants.Permission.MapCreator)]
         public override IActionResult Create(MapInputViewModel inputViewModel)
         {
-            return base.Create(inputViewModel);
+            return NotFound();
         }
 
         [RequirePermissions(Constants.Permission.MapEditor)]
@@ -79,6 +77,15 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         public override IActionResult Delete(MapDisplayViewModel displayModel)
         {
             return base.Delete(displayModel);
+        }
+
+        [HttpPost]
+        [Route("[action]")]
+        [ValidateAntiForgeryToken]
+        [RequirePermissions(Constants.Permission.MapCreator)]
+        public IActionResult Upload([FromBody] MapUploadViewModel model)
+        {
+            return RedirectToAction("Edit", new { key = "s3_e1_m7" });
         }
 
         #region Authors

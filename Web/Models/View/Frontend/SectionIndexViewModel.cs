@@ -2,8 +2,8 @@
 {
     public class SectionIndexViewModel
     {
-        public SectionDisplayViewModel Section { get; set; }
+        public SectionDisplayViewModel Current { get; set; }
 
-        public EpigraphDisplayViewModel[] Epigraphs { get; set; }
+        public SectionDisplayViewModel[] Sections { get; set; }
     }
 }

@@ -2,7 +2,13 @@
 {
     public class MapIndexViewModel
     {
-        public MapDisplayViewModel Map { get; set; }
+        public MapDisplayViewModel Current { get; set; }
+
+        public EpigraphDisplayViewModel Epigraph { get; set; }
+
+        public SectionDisplayViewModel Section { get; set; }
+
+        public SectionDisplayViewModel[] Sections { get; set; }
 
         public AuthorDisplayViewModel[] Authors { get; set; }
 

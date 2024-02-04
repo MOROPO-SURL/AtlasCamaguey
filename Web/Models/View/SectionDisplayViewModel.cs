@@ -13,6 +13,8 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View
         public System.Guid? ImageId { get; set; }
         public string ImageExtension { get; set; }
 
+        public EpigraphDisplayViewModel[] Epigraphs { get; set; }
+
         public void Import(Section entity)
         {
             Id = entity.Id;

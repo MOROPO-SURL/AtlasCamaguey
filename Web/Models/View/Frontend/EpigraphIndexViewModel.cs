@@ -2,7 +2,11 @@
 {
     public class EpigraphIndexViewModel
     {
-        public EpigraphDisplayViewModel Epigraph { get; set; }
+        public EpigraphDisplayViewModel Current { get; set; }
+
+        public SectionDisplayViewModel Section { get; set; }
+
+        public SectionDisplayViewModel[] Sections { get; set; }
 
         public MapDisplayViewModel[] Maps { get; set; }
 
