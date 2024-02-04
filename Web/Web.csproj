@@ -62,5 +62,6 @@
 	  <Folder Include="Views\Shared\Components\" />
 	  <Folder Include="Views\Shared\Components\BackendNavbar\" />
 	  <Folder Include="Resources\" />
+	  <Folder Include="wwwroot\lib\leaflet\plugins\measure\" />
 	</ItemGroup>
 </Project>
