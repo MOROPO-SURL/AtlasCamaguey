@@ -11,6 +11,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Persistence.Entities
             VideoBridges = new List<MapVideoBridge>();
             DocumentBridges = new List<MapDocumentBridge>();
             AuthorBridges = new List<MapAuthorBridge>();
+            Layers = new List<Layer>();
         }
 
         [System.ComponentModel.DataAnnotations.Key]
@@ -26,9 +27,19 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Persistence.Entities
 
         public long Scale { get; set; }
 
-        //[System.ComponentModel.DataAnnotations.Schema.ForeignKey("PreviewImageId")]
-        //public Framework.Guama.Media.Persistence.Entities.Image PreviewImage { get; set; }
-        //public System.Guid PreviewImageId { get; set; }
+        [System.ComponentModel.DataAnnotations.Required]
+        public string CRS { get; set; }
+
+        [System.ComponentModel.DataAnnotations.Required]
+        public string EPSG { get; set; }
+
+        public decimal WestBoundLongitude { get; set; }
+
+        public decimal EastBoundLatitude { get; set; }
+
+        public decimal SouthBoundLatitude { get; set; }
+
+        public decimal NorthBoundLatitude { get; set; }
 
         public List<MapKeyWordBridge> KeyWordBridges { get; set; }
 
@@ -39,5 +50,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Persistence.Entities
         public List<MapDocumentBridge> DocumentBridges { get; set; }
 
         public List<MapAuthorBridge> AuthorBridges { get; set; }
+
+        public List<Layer> Layers { get; set; }
     }
 }

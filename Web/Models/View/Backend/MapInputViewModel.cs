@@ -19,11 +19,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend
 
         public Map Export()
         {
-            var entity = new Map { Id = Id.ToLowerInvariant() };
-
-            Mergue(entity);
-
-            return entity;
+            throw new System.NotImplementedException();
         }
 
         public void Import(Map entity)

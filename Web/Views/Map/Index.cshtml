@@ -3,9 +3,9 @@
 @model MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Frontend.MapIndexViewModel
 
 @{
-    const string HEADER = "Mapa S3_E1_M7";
+    var header = string.Format("Mapa {0}", Model.Current.Id.ToUpperInvariant());
 
-    ViewData["Title"] = HEADER;
+    ViewData["Title"] = header;
 
     ViewData[BreadcrumbViewModel.BREADCRUMBS_MAP_KEY] = new List<BreadcrumbViewModel>
     {
@@ -138,125 +138,37 @@
                 //attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             }).addTo(map);
 
-            var overlay1Layer = new L.geoJSON.ajax('http://localhost/cgi-bin/qgis_mapserv.fcgi.exe?MAP=C:/OSGeo4W/var/proj/S3_E1_M7/S3_E1_M7.qgs&SERVICE=WFS&VERSION=1.1.0&REQUEST=GetFeature&TYPENAME=tasa_evejecimiento&OUTPUTFORMAT=geojson', {
-                style: function(feature) {
-                    if (feature.properties['Tasa'] >= 28.000000 && feature.properties['Tasa'] <= 30.200000) {
-                        return {
-                            opacity: 1,
-                            color: 'rgba(35,35,35,1.0)',
-                            dashArray: '',
-                            lineCap: 'butt',
-                            lineJoin: 'miter',
-                            weight: 1.0,
-                            fill: true,
-                            fillOpacity: 1,
-                            fillColor: 'rgba(255,255,212,1.0)',
-                            interactive: true,
-                        }
-                    }
-                    if (feature.properties['Tasa'] >= 30.200000 && feature.properties['Tasa'] <= 32.400000) {
-                        return {
-                            opacity: 1,
-                            color: 'rgba(35,35,35,1.0)',
-                            dashArray: '',
-                            lineCap: 'butt',
-                            lineJoin: 'miter',
-                            weight: 1.0,
-                            fill: true,
-                            fillOpacity: 1,
-                            fillColor: 'rgba(254,217,142,1.0)',
-                            interactive: true,
-                        }
-                    }
-                    if (feature.properties['Tasa'] >= 32.400000 && feature.properties['Tasa'] <= 34.600000) {
-                        return {
-                            opacity: 1,
-                            color: 'rgba(35,35,35,1.0)',
-                            dashArray: '',
-                            lineCap: 'butt',
-                            lineJoin: 'miter',
-                            weight: 1.0,
-                            fill: true,
-                            fillOpacity: 1,
-                            fillColor: 'rgba(254,153,41,1.0)',
-                            interactive: true,
-                        }
-                    }
-                    if (feature.properties['Tasa'] >= 34.600000 && feature.properties['Tasa'] <= 36.800000) {
-                        return {
-                            opacity: 1,
-                            color: 'rgba(35,35,35,1.0)',
-                            dashArray: '',
-                            lineCap: 'butt',
-                            lineJoin: 'miter',
-                            weight: 1.0,
-                            fill: true,
-                            fillOpacity: 1,
-                            fillColor: 'rgba(217,95,14,1.0)',
-                            interactive: true,
-                        }
-                    }
-                    if (feature.properties['Tasa'] >= 36.800000 && feature.properties['Tasa'] <= 39.000000) {
-                        return {
-                            opacity: 1,
-                            color: 'rgba(35,35,35,1.0)',
-                            dashArray: '',
-                            lineCap: 'butt',
-                            lineJoin: 'miter',
-                            weight: 1.0,
-                            fill: true,
-                            fillOpacity: 1,
-                            fillColor: 'rgba(153,52,4,1.0)',
-                            interactive: true,
-                        }
-                    }
-                },
-                onEachFeature: function(feature, layer) {
-                    layer.on({
-                        mouseout: function(e) {
-                            for (i in e.target._eventParents) {
-                                e.target._eventParents[i].resetStyle(e.target);
-                            }
-                        },
-                        mouseover: function(e) {
-                            highlightLayer = e.target;
+            @{
+                var index = 0;
 
-                            highlightLayer.setStyle({
-                                color: '#0000ff',
-                                weight: 3.0
-                            });
-                        },
-                    });
+                foreach (var item in Model.Current.Layers)
+                {
+                    var geoJSONUrl = string.Format("http://localhost/cgi-bin/qgis_mapserv.fcgi.exe?MAP=C:/OSGeo4W/var/proj/{0}/{0}.qgz&SERVICE=WFS&VERSION=1.1.0&REQUEST=GetFeature&TYPENAME={1}&OUTPUTFORMAT=geojson", Model.Current.Id.ToUpperInvariant(), System.Web.HttpUtility.UrlEncode(item.Name));
                 
-                    layer.bindPopup('<h5>' + feature.properties['municipio'].toLocaleString() + '</h5>', { height: 200});
+                    @Html.Raw(string.Format(
+                        "var overlayLayer{0} = new L.geoJSON.ajax('{1}', {{ " +
+                        "   style: function(feature) {{ " +
+                        "       {2} " +
+                        "   }}, " +
+                        "   onEachFeature: function(feature, layer) {{ " +
+                        "       {3} " +
+                        "   }} " +
+                        "}}).addTo(map);", ++index, geoJSONUrl, item.StylePresentantionJSBlock, item.InteractivePresentantionJSBlock))
                 }
-            }).addTo(map);
-            
-            //overlay1Layer.;
-
-            //var overlay1Layer = new L.tileLayer.wms('http://localhost/cgi-bin/qgis_mapserv.fcgi.exe?MAP=C:/OSGeo4W/var/proj/S3_E1_M7/S3_E1_M7.qgs&SERVICE=WMS&VERSION=1.3.0&', {
-            //    maxZoom: 19,
-            //    version: '1.3.0',
-            //    format: 'image/png',
-            //    transparent: true,
-            //    srs: L.CRS.EPSG4326,
-            //    layers: 'tasa_evejecimiento'
-            //}).addTo(map);
-            //var overlay2Layer = new L.tileLayer.wms('http://localhost/cgi-bin/qgis_mapserv.fcgi.exe?MAP=C:/OSGeo4W/var/proj/S3_E1_M7/S3_E1_M7.qgs&SERVICE=WMS&VERSION=1.3.0&', {
-            //    maxZoom: 19,
-            //    version: '1.3.0',
-            //    format: 'image/png',
-            //    transparent: true,
-            //    srs: L.CRS.EPSG4326,
-            //    layers: 'adulto_mayor'
-            //}).addTo(map);
+            }
 
             var grid = new L.grid().addTo(map);
 
             L.control.groupedLayers(null, { 
                 "Capas de datos": {
-                    'Envejecimiento poblacional (%)': overlay1Layer,
-                    //'Adulto mayor (personas)': overlay2Layer
+                    @{
+                        index = 0;
+
+                        foreach (var item in Model.Current.Layers)
+                        {
+                            @Html.Raw(string.Format("'{1}': overlayLayer{0},", ++index, item.Title))
+                        }
+                    }
                 },
                 "Capas auxiliares": {
                     'Regilla de coordenadas': grid,

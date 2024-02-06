@@ -1,4 +1,5 @@
 ﻿using MOROPO.CIMAC.Atlas.Camaguey.Persistence.Entities;
+using System.Linq;
 
 namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View
 {
@@ -12,12 +13,41 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View
 
         public string Description { get; set; }
 
+        public string CRS { get; set; }
+
+        public string EPSG { get; set; }
+
+        public decimal WestBoundLongitude { get; set; }
+
+        public decimal EastBoundLatitude { get; set; }
+
+        public decimal SouthBoundLatitude { get; set; }
+
+        public decimal NorthBoundLatitude { get; set; }
+
+        public LayerDisplayViewModel[] Layers { get; set; }
+
         public void Import(Map entity)
         {
             Id = entity.Id;
             Name = entity.Name;
             Scale = entity.Scale;
             Description = entity.Description;
+            CRS = entity.CRS;
+            EPSG = entity.EPSG;
+            WestBoundLongitude = entity.WestBoundLongitude;
+            EastBoundLatitude = entity.EastBoundLatitude;
+            SouthBoundLatitude = entity.SouthBoundLatitude;
+            NorthBoundLatitude = entity.NorthBoundLatitude;
+
+            Layers = entity.Layers.Select(_entity =>
+            {
+                var model = new LayerDisplayViewModel();
+
+                model.Import(_entity);
+
+                return model;
+            }).ToArray();
         }
     }
 }

@@ -11,6 +11,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Persistence.ORM.EF.Repositories
         protected override System.Linq.IQueryable<Camaguey.Persistence.Entities.Map> GetQueryableDbSet()
         {
             return base.GetQueryableDbSet()
+                .Include(entity => entity.Layers)
                 .Include(entity => entity.AuthorBridges).ThenInclude(bridge => bridge.Stern).ThenInclude(entity => entity.Identity).ThenInclude(entity => entity.Image)
                 .Include(entity => entity.AuthorBridges).ThenInclude(bridge => bridge.Stern).ThenInclude(entity => entity.Institution).ThenInclude(entity => entity.Identity).ThenInclude(entity => entity.Image)
                 .Include(entity => entity.KeyWordBridges).ThenInclude(bridge => bridge.Stern)

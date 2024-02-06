@@ -1,0 +1,117 @@
+﻿@using MOROPO.CIMAC.Atlas.Camaguey.Web.Extensions;
+
+@model MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend.MapLayersManagementViewModel
+
+@{
+    const string HEADER = "Modificar Mapa";
+
+    var title = string.Format("{0} (Capas)", HEADER);
+
+    ViewData["Title"] = title;
+
+    ViewData[BreadcrumbViewModel.BREADCRUMBS_MAP_KEY] = new List<BreadcrumbViewModel>
+    {
+        new BreadcrumbViewModel
+        {
+            Caption = "<span class=\"mdi mdi-desktop-mac-dashboard\" style=\"margin-right: 4px;\"></span>" + GlobalViewLocalizationHelper.Localize("Dashboard", ViewLocalizer),
+            Url = Url.Action("index", "dashboard", new { area = "management" })
+        },
+        new BreadcrumbViewModel
+        {
+            Caption = "Gestionar Mapas",
+            Url = Url.Action("index")
+        },
+        new BreadcrumbViewModel
+        {
+            Caption = title
+        }
+    };
+
+    Layout = "_BackendLayout";
+}
+
+<div class="card mb-3 mt-4">
+    <div class="card-header">
+        <h4>@HEADER</h4>
+        <ul class="nav nav-tabs card-header-tabs">
+            <li class="nav-item">
+                <a class="nav-link" asp-action="Edit" asp-route-key="@Model.Map.Id">Generales</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="#">Capas</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" asp-action="EditAuthors" asp-route-key="@Model.Map.Id">Autores</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" asp-action="EditImages" asp-route-key="@Model.Map.Id">Imágenes</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" asp-action="EditVideos" asp-route-key="@Model.Map.Id">Videos</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" asp-action="EditDocuments" asp-route-key="@Model.Map.Id">Documentos</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" asp-action="EditKeyWords" asp-route-key="@Model.Map.Id">Palabras Claves</a>
+            </li>
+        </ul>
+    </div>
+    <div class="card-body">
+        @await Html.PartialAsync("_SummaryPartial", Model.Map)
+
+        @if (Model.Layers.Length <= 0)
+        {
+            <p class="text-muted mb-0">Sin elementos que mostrar</p>
+        }
+        else
+        {
+            foreach (var item in Model.Layers)
+            {
+                <div class="card mb-1">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col">
+                                <div class="small text-muted">Nombre:</div>
+                                <div>@item.Name</div>
+                            </div>
+                            <div class="col-auto mt-3 mt-sm-0">
+                                <a class="btn btn-light" href="#" data-toggle="modal" data-target="#edit-layer-@item.Id">Modificar</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal fade" id="edit-layer-@item.Id" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-xl">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="edit-document-title">Modificar Datos de la Capa</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            @using (Html.BeginForm("editlayer", "maps", new { key = Model.Map.Id }, FormMethod.Post, true, null))
+                            {
+                                <div class="modal-body">
+                                    @Html.Hidden("layerId", item.Id)
+                                    @Html.Label("interactivePresentantionJSBlock", "Bloque Interactivo", new { @class = "control-label" })
+                                    @Html.TextArea("interactivePresentantionJSBlock", item.InteractivePresentantionJSBlock, 12, 0, new { @class = "form-control mb-3" })
+                                    @Html.Label("stylePresentantionJSBlock", "Bloque de Estilos", new { @class = "control-label" })
+                                    @Html.TextArea("stylePresentantionJSBlock", item.StylePresentantionJSBlock, 12, 0, new { @class = "form-control" })
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-primary">Modificar</button>
+                                    <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
+                                </div>
+                            }
+
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+    <div class="card-footer">
+        <a class="btn btn-primary" href="#" data-toggle="modal" data-target="#add-document">Agregar</a>
+    </div>
+</div>

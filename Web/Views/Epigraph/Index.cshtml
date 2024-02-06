@@ -156,11 +156,13 @@
 <div class="row mt-4">
     @foreach (var item in Model.Maps)
     {
+        var getMapUri = string.Format("http://localhost/cgi-bin/qgis_mapserv.fcgi.exe?MAP=C:/OSGeo4W/var/proj/{0}/{0}.qgz&SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&BBOX={1},{2},{3},{4}&CRS={5}&image/png&TRANSPARENT=TRUE&WIDTH=400&HEIGHT=300", item.Id.ToUpperInvariant(), item.NorthBoundLatitude.ToString().Replace(",", "."), item.EastBoundLatitude.ToString().Replace(",", "."), item.SouthBoundLatitude.ToString().Replace(",", "."), item.WestBoundLongitude.ToString().Replace(",", "."), item.EPSG);
+
         <div class="col-md-6 col-sm-12">
             <div class="card shadow-sm" style="margin-bottom: 2.0rem!important;">
                 <div class="row no-gutters">
                     <div class="col-auto">
-                        <img class="card-img-top" title="@item.Name" role="img" style="width: 250px;" src="http://qgis.moropo.cu/cgi-bin/qgis_mapserv.fcgi?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&BBOX=-432786,4372992,3358959,7513746&SRS=EPSG:3857&WIDTH=665&HEIGHT=551&LAYERS=countries&FORMAT=image/jpeg&map=/home/cloud/qgisprojects/default/world3.qgs" />
+                        <img class="card-img-top" title="@item.Name" role="img" style="width: 250px;" src="@getMapUri" />
                     </div>
                     <div class="col">
                         <div class="card-body">
