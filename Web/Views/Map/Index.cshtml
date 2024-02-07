@@ -578,8 +578,12 @@
                 <h5 class="mb-0"><span class="mdi mdi-map-legend"></span> Leyenda</h5>
             </div>
             <div class="card-body">
-                <img class="img-fluid" src="http://localhost/cgi-bin/qgis_mapserv.fcgi.exe?MAP=C:/OSGeo4W/var/proj/S3_E1_M7/S3_E1_M7.qgs&SERVICE=WMS&VERSION=1.3.0&LAYERS=tasa_evejecimiento&REQUEST=GetLegendGraphic" />
-                <img class="img-fluid" src="http://localhost/cgi-bin/qgis_mapserv.fcgi.exe?MAP=C:/OSGeo4W/var/proj/S3_E1_M7/S3_E1_M7.qgs&SERVICE=WMS&VERSION=1.3.0&LAYERS=adulto_mayor&REQUEST=GetLegendGraphic" />
+                @foreach (var item in Model.Current.Layers)
+                {
+                    var leyendRequestUrl = string.Format("http://localhost/cgi-bin/qgis_mapserv.fcgi.exe?MAP=C:/OSGeo4W/var/proj/{0}/{0}.qgz&SERVICE=WMS&VERSION=1.3.0&LAYERS={1}&REQUEST=GetLegendGraphic", Model.Current.Id.ToUpperInvariant(), System.Web.HttpUtility.UrlEncode(item.Name));
+                
+                    <img class="img-fluid" src="@leyendRequestUrl" />
+                }
             </div>
         </div>
     </div>
