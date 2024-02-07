@@ -329,6 +329,10 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Persistence.ORM.EF.Migrations
                         .HasColumnType("numeric")
                         .HasColumnName("eastboundlatitude");
 
+                    b.Property<Guid?>("ImageId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("imageid");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text")
@@ -356,6 +360,9 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Persistence.ORM.EF.Migrations
 
                     b.HasKey("Id")
                         .HasName("pk_maps");
+
+                    b.HasIndex("ImageId")
+                        .HasDatabaseName("ix_maps_imageid");
 
                     b.ToTable("maps");
                 });
@@ -1682,6 +1689,16 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Persistence.ORM.EF.Migrations
                         .HasConstraintName("fk_layer_maps_mapid");
 
                     b.Navigation("Map");
+                });
+
+            modelBuilder.Entity("MOROPO.CIMAC.Atlas.Camaguey.Persistence.Entities.Map", b =>
+                {
+                    b.HasOne("MOROPO.Framework.Guama.Media.Persistence.Entities.Image", "Image")
+                        .WithMany()
+                        .HasForeignKey("ImageId")
+                        .HasConstraintName("fk_maps_images_imageid");
+
+                    b.Navigation("Image");
                 });
 
             modelBuilder.Entity("MOROPO.CIMAC.Atlas.Camaguey.Persistence.Entities.MapAuthorBridge", b =>

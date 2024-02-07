@@ -67,9 +67,26 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         }
 
         [RequirePermissions(Constants.Permission.MapEditor)]
-        public override IActionResult Edit(MapInputViewModel inputModel)
+        public override IActionResult Edit(MapInputViewModel model)
         {
-            return base.Edit(inputModel);
+            ModelState.ClearValidationState("ImageFile");
+            ModelState.MarkFieldValid("ImageFile");
+
+            if (Request.Form.Files.Count > 0)
+            {
+                var formFile = Request.Form.Files[0];
+
+                if (formFile.Length > 0)
+                {
+                    model.ImageFile = formFile;
+
+                    var updateModelTask = TryUpdateModelAsync(model);
+
+                    updateModelTask.Wait();
+                }
+            }
+
+            return base.Edit(model);
         }
 
         [RequirePermissions(Constants.Permission.MapRemover)]
@@ -210,6 +227,55 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
             SetDefaultNotification(NotificationType.Danger, GetInvalidMessage());
 
             return RedirectToAction("Index");
+        }
+
+        protected override void PreEdit(Map entity, MapInputViewModel model)
+        {
+            base.PreEdit(entity, model);
+
+            if (model.ImageFile == null)
+            {
+                if (model.ResetImage && entity.Image != null)
+                {
+                    imageFileManager.DeleteImageFile(entity.Image);
+
+                    imageRepository.Delete(entity.Image, User.Identity.Name);
+                }
+
+                return;
+            }
+
+            var deprecatedImage = entity.Image;
+
+            using (var memoryStream = new System.IO.MemoryStream())
+            {
+                model.ImageFile.CopyTo(memoryStream);
+
+                var image = imageRepository.Add(new Image { ContentType = model.ImageFile.ContentType, Length = model.ImageFile.Length, About = "Map " + entity.Id }, User.Identity.Name);
+
+                imageFileManager.SaveImageFileContent(image.Id, memoryStream.ToArray(), model.ImageFile.ContentType);
+
+                entity.ImageId = image.Id;
+                entity.Image = image;
+            }
+
+            if (deprecatedImage != null)
+            {
+                imageFileManager.DeleteImageFile(deprecatedImage);
+
+                imageRepository.Delete(deprecatedImage, User.Identity.Name);
+            }
+        }
+
+        protected override void PostDelete(Map entity)
+        {
+            base.PostDelete(entity);
+
+            if (entity.Image == null) return;
+
+            imageRepository.Delete(entity.Image, User.Identity.Name);
+
+            imageFileManager.DeleteImageFile(entity.Image);
         }
 
         #region Layers

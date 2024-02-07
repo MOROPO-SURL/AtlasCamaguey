@@ -164,7 +164,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
             {
                 model.ImageFile.CopyTo(memoryStream);
 
-                var image = imageRepository.Add(new Image { ContentType = model.ImageFile.ContentType, Length = model.ImageFile.Length, About = "Collaborator Persons " + entity.Id }, User.Identity.Name);
+                var image = imageRepository.Add(new Image { ContentType = model.ImageFile.ContentType, Length = model.ImageFile.Length, About = "Epigraph " + entity.Id }, User.Identity.Name);
 
                 imageFileManager.SaveImageFileContent(image.Id, memoryStream.ToArray(), model.ImageFile.ContentType);
 

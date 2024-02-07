@@ -41,6 +41,10 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Persistence.Entities
 
         public decimal NorthBoundLatitude { get; set; }
 
+        [System.ComponentModel.DataAnnotations.Schema.ForeignKey("ImageId")]
+        public Framework.Guama.Media.Persistence.Entities.Image Image { get; set; }
+        public System.Guid? ImageId { get; set; }
+
         public List<MapKeyWordBridge> KeyWordBridges { get; set; }
 
         public List<MapImageBridge> ImageBridges { get; set; }

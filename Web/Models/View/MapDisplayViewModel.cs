@@ -25,6 +25,9 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View
 
         public decimal NorthBoundLatitude { get; set; }
 
+        public System.Guid? ImageId { get; set; }
+        public string ImageExtension { get; set; }
+
         public LayerDisplayViewModel[] Layers { get; set; }
 
         public void Import(Map entity)
@@ -39,6 +42,8 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View
             EastBoundLatitude = entity.EastBoundLatitude;
             SouthBoundLatitude = entity.SouthBoundLatitude;
             NorthBoundLatitude = entity.NorthBoundLatitude;
+            ImageId = entity.ImageId;
+            ImageExtension = entity.Image == null ? null : MimeTypes.MimeTypeMap.GetExtension(entity.Image.ContentType);
 
             Layers = entity.Layers.Select(_entity =>
             {
