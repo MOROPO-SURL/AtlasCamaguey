@@ -405,3 +405,4 @@ FodyWeavers.xsd
 /Web/Migrations
 /Web/appsettings.Development.json
 /Web/appsettings.Staging.json
+/Web/Persistence/ORM/EF/Migrations
