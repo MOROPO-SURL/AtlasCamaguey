@@ -65,19 +65,22 @@
                 <a class="nav-link" asp-action="Edit" asp-route-key="@Model.Map.Id">Generales</a>
             </li>
             <li class="nav-item">
+                <a class="nav-link" asp-action="EditLayers" asp-route-key="@Model.Map.Id">Capas</a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link active" href="#">Autores</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" asp-action="EditImages">Imágenes</a>
+                <a class="nav-link" asp-action="EditImages" asp-route-key="@Model.Map.Id">Imágenes</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" asp-action="EditVideos">Videos</a>
+                <a class="nav-link" asp-action="EditVideos" asp-route-key="@Model.Map.Id">Videos</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" asp-action="EditDocuments">Documentos</a>
+                <a class="nav-link" asp-action="EditDocuments" asp-route-key="@Model.Map.Id">Documentos</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" asp-action="EditKeyWords">Palabras Claves</a>
+                <a class="nav-link" asp-action="EditKeyWords" asp-route-key="@Model.Map.Id">Palabras Claves</a>
             </li>
         </ul>
     </div>

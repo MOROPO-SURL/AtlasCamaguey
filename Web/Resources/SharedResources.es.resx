@@ -819,6 +819,9 @@
   <data name="Institution" xml:space="preserve">
     <value>Institución</value>
   </data>
+  <data name="Scale" xml:space="preserve">
+    <value>Escala</value>
+  </data>
   <data name="Priority" xml:space="preserve">
     <value>Prioridad</value>
   </data>

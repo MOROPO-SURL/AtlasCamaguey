@@ -23,18 +23,35 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Frontend
 
             var model = new Models.View.Frontend.SectionIndexViewModel
             {
-                Section = new Models.View.SectionDisplayViewModel(),
-                Epigraphs = epigraphRepository.FindBy(entity => entity.SectionId == section.Id).ToArray().Select(entity =>
+                Current = new Models.View.SectionDisplayViewModel(),
+                Sections = sectionRepository.GetAll().ToArray().Select(entity =>
                 {
-                    var _model = new Models.View.EpigraphDisplayViewModel();
+                    var _model = new Models.View.SectionDisplayViewModel();
 
                     _model.Import(entity);
+
+                    _model.Epigraphs = epigraphRepository.FindBy(_entity => _entity.SectionId == entity.Id).ToArray().Select(_entity =>
+                    {
+                        var __model = new Models.View.EpigraphDisplayViewModel();
+
+                        __model.Import(_entity);
+
+                        return __model;
+                    }).ToArray();
 
                     return _model;
                 }).ToArray()
             };
 
-            model.Section.Import(section);
+            model.Current.Import(section);
+            model.Current.Epigraphs = epigraphRepository.FindBy(entity => entity.SectionId == section.Id).ToArray().Select(entity =>
+            {
+                var _model = new Models.View.EpigraphDisplayViewModel();
+
+                _model.Import(entity);
+
+                return _model;
+            }).ToArray();
 
             return View(model);
         }

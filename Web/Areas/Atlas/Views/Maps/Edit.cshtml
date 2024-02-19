@@ -40,10 +40,30 @@
             .catch( error => {
                 console.error( error );
             } );
+
+        $(function() {
+            $(document).on("change", "#ImageFile", function() {
+                var files = !!this.files ? this.files : [];
+
+                if (!files.length || !window.FileReader) return; // no file selected, or no FileReader support
+
+                if (/^image/.test(files[0].type)) {
+                    var reader = new FileReader();
+
+                    reader.readAsDataURL(files[0]);
+
+                    reader.onloadend = function() {
+                        $('#ImageFilePreview').attr('src', this.result);
+                        $('#ImageFilePreview').show();
+                    }
+                }
+
+            });
+        });
     </script>
 }
 
-@using (Html.BeginForm("edit", "maps", new { Area = "atlas", key = string.Empty }, FormMethod.Post))
+@using (Html.BeginForm("edit", "maps", new { Area = "atlas", key = string.Empty }, FormMethod.Post, true, new { enctype = "multipart/form-data" }))
 {
     @Html.HiddenFor(model => model.Id)
 
@@ -53,6 +73,9 @@
             <ul class="nav nav-tabs card-header-tabs">
                 <li class="nav-item">
                     <a class="nav-link active" href="#">Generales</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="EditLayers" asp-route-key="@Model.Id">Capas</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" asp-action="EditAuthors" asp-route-key="@Model.Id">Autores</a>
@@ -94,6 +117,24 @@
                         @Html.TextBoxFor(model => model.Scale, new { @class = "form-control" })
                     </div>                
                     @Html.ValidationMessageFor(model => model.Scale, null, new { @class = "text-danger" })
+                </div>
+            </div>            
+            <div class="row">
+                <div class="col-md-6 mb-1 mb-md-3">
+                    @Html.LabelFor(model => model.ImageFile, new { @class = "control-label" }) <span class="small text-muted">(opcional)</span>
+                    <input type="file" class="form-control" id="ImageFile" name="ImageFile" />
+                    @Html.ValidationMessageFor(model => model.ImageFile, null, new { @class = "text-danger" })
+                </div>
+                <div class="col-md-6 mb-3">
+                @if (Model.ImageId != null) {
+                    var imageSource = string.Format("/media/images/{0}.{1}", Model.ImageId, Model.ImageExtension);
+                
+                    <img src="@imageSource" class="img-thumbnail" id="ImageFilePreview" />
+                }
+                else
+                {
+                    <img class="img-thumbnail" id="ImageFilePreview" style="display: none;" />
+                }
                 </div>
             </div>
             <div>

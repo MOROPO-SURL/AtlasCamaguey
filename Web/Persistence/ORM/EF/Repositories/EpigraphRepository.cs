@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MOROPO.CIMAC.Atlas.Camaguey.Persistence.Entities;
 
 namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Persistence.ORM.EF.Repositories
 {
@@ -9,12 +8,12 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Persistence.ORM.EF.Repositories
         {
         }
 
-        protected override System.Linq.IQueryable<Epigraph> GetQueryableDbSet()
+        protected override System.Linq.IQueryable<Camaguey.Persistence.Entities.Epigraph> GetQueryableDbSet()
         {
             return base.GetQueryableDbSet()
                 .Include(entity => entity.Image)
                 .Include(entity => entity.Section)
-                .Include(entity => entity.MapBridges).ThenInclude(bridge => bridge.Stern)
+                .Include(entity => entity.MapBridges).ThenInclude(bridge => bridge.Stern).ThenInclude(entity => entity.Image)
                 .Include(entity => entity.KeyWordBridges).ThenInclude(bridge => bridge.Stern)
                 .Include(entity => entity.ImageBridges).ThenInclude(bridge => bridge.Stern)
                 .Include(entity => entity.VideoBridges).ThenInclude(bridge => bridge.Stern)

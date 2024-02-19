@@ -9,6 +9,7 @@ using MOROPO.Framework.Guama.Core.Presentation.Models.View;
 using MOROPO.Framework.Guama.Core.Presentation.Web.Security.Attributes;
 using MOROPO.Framework.Guama.Media.Persistence.Entities;
 using MOROPO.Framework.Guama.Media.Presentation.Web.Common.Managers.Facade;
+using System.IO.Compression;
 using System.Linq;
 
 namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
@@ -23,20 +24,24 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         private readonly IEntityRepository<Video, System.Guid> videoRepository;
         private readonly IEntityRepository<KeyWord, System.Guid> keyWordRepository;
         private readonly IEntityRepository<Author, System.Guid> authorRepository;
+        private readonly IEntityRepository<Layer, System.Guid> layerRepository;
         private readonly IImageFileManagerFacade imageFileManager;
         private readonly IDocumentFileManagerFacade documentFileManager;
         private readonly IVideoFileManagerFacade videoFileManager;
+        private readonly Microsoft.Extensions.Configuration.IConfiguration configuration;
 
-        public MapsController(IVideoFileManagerFacade videoFileManager, IDocumentFileManagerFacade documentFileManager, IImageFileManagerFacade imageFileManager, IEntityRepository<Author, System.Guid> authorRepository, IEntityRepository<KeyWord, System.Guid> keyWordRepository, IEntityRepository<Video, System.Guid> videoRepository, IEntityRepository<Document, System.Guid> documentRepository, IEntityRepository<Image, System.Guid> imageRepository, IEntityRepository<Map, string> repository, IStringLocalizer<MapsController> localizer, ILogger<MapsController> logger) : base(repository, localizer, logger)
+        public MapsController(Microsoft.Extensions.Configuration.IConfiguration configuration, IVideoFileManagerFacade videoFileManager, IDocumentFileManagerFacade documentFileManager, IImageFileManagerFacade imageFileManager, IEntityRepository<Layer, System.Guid> layerRepository, IEntityRepository<Author, System.Guid> authorRepository, IEntityRepository<KeyWord, System.Guid> keyWordRepository, IEntityRepository<Video, System.Guid> videoRepository, IEntityRepository<Document, System.Guid> documentRepository, IEntityRepository<Image, System.Guid> imageRepository, IEntityRepository<Map, string> repository, IStringLocalizer<MapsController> localizer, ILogger<MapsController> logger) : base(repository, localizer, logger)
         {
             this.imageRepository = imageRepository;
             this.documentRepository = documentRepository;
             this.videoRepository = videoRepository;
             this.keyWordRepository = keyWordRepository;
             this.authorRepository = authorRepository;
+            this.layerRepository = layerRepository;
             this.imageFileManager = imageFileManager;
             this.documentFileManager = documentFileManager;
             this.videoFileManager = videoFileManager;
+            this.configuration = configuration;
         }
 
         [RequirePermissions(Constants.Permission.MapViewer)]
@@ -45,16 +50,14 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
             return View();
         }
 
-        [RequirePermissions(Constants.Permission.MapCreator)]
         public override IActionResult Create()
         {
-            return base.Create();
+            return NotFound();
         }
 
-        [RequirePermissions(Constants.Permission.MapCreator)]
         public override IActionResult Create(MapInputViewModel inputViewModel)
         {
-            return base.Create(inputViewModel);
+            return NotFound();
         }
 
         [RequirePermissions(Constants.Permission.MapEditor)]
@@ -64,9 +67,26 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         }
 
         [RequirePermissions(Constants.Permission.MapEditor)]
-        public override IActionResult Edit(MapInputViewModel inputModel)
+        public override IActionResult Edit(MapInputViewModel model)
         {
-            return base.Edit(inputModel);
+            ModelState.ClearValidationState("ImageFile");
+            ModelState.MarkFieldValid("ImageFile");
+
+            if (Request.Form.Files.Count > 0)
+            {
+                var formFile = Request.Form.Files[0];
+
+                if (formFile.Length > 0)
+                {
+                    model.ImageFile = formFile;
+
+                    var updateModelTask = TryUpdateModelAsync(model);
+
+                    updateModelTask.Wait();
+                }
+            }
+
+            return base.Edit(model);
         }
 
         [RequirePermissions(Constants.Permission.MapRemover)]
@@ -80,6 +100,257 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         {
             return base.Delete(displayModel);
         }
+
+        [RequestSizeLimit(52428800)] // 50 mb
+        [HttpPost]
+        [Route("[action]")]
+        [ValidateAntiForgeryToken]
+        [RequirePermissions(Constants.Permission.MapCreator)]
+        public async System.Threading.Tasks.Task<IActionResult> UploadAsync(MapUploadViewModel model)
+        {
+            ModelState.ClearValidationState("MapArchive");
+
+            model.MapArchive = Request.Form.Files[0];
+
+            TryValidateModel(model);
+
+            if (ModelState.IsValid)
+            {
+                var mapId = System.IO.Path.GetFileNameWithoutExtension(model.MapArchive.FileName).ToLowerInvariant();
+
+                try
+                {
+                    using (var memoryStream = new System.IO.MemoryStream())
+                    {
+                        model.MapArchive.CopyTo(memoryStream);
+
+                        var qgisProjectsPath = configuration["QGIS:ProjectsPath"];
+
+                        using (var uploadZipArchive = new ZipArchive(memoryStream, ZipArchiveMode.Read, false, System.Text.CodePagesEncodingProvider.Instance.GetEncoding(System.Globalization.CultureInfo.CurrentCulture.TextInfo.OEMCodePage)))
+                        {
+                            uploadZipArchive.ExtractToDirectory(qgisProjectsPath, true);
+                        }
+
+                        using (var httpClient = new System.Net.Http.HttpClient())
+                        {
+                            var httpResponseMessage = await httpClient.GetAsync(string.Format("{0}?MAP={1}/{2}/{2}.qgz&SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities", configuration["QGIS:ServerBaseUri"], qgisProjectsPath.Replace("\\", "/"), mapId.ToUpperInvariant()));
+
+                            if (httpResponseMessage.IsSuccessStatusCode)
+                            {
+                                using (var contentStream = await httpResponseMessage.Content.ReadAsStreamAsync())
+                                {
+                                    var projDescriptorXmlDocument = new System.Xml.XmlDocument();
+
+                                    projDescriptorXmlDocument.Load(contentStream);
+
+                                    var globalLayerNode = projDescriptorXmlDocument.ChildNodes[1].ChildNodes[1].ChildNodes[3];
+
+                                    var map = new Map
+                                    {
+                                        Id = mapId,
+                                        Scale = 10000
+                                    };
+
+                                    var globalLayerNodeChildNodesCount = globalLayerNode.ChildNodes.Count;
+
+                                    for (int i = 0; i < globalLayerNodeChildNodesCount; i++)
+                                    {
+                                        var globalLayerNodeChild = globalLayerNode.ChildNodes[i];
+
+                                        switch (globalLayerNodeChild.Name)
+                                        {
+                                            case "Title":
+                                                map.Name = globalLayerNodeChild.InnerText;
+
+                                                break;
+
+                                            case "CRS":
+                                                var crsValue = globalLayerNodeChild.InnerText;
+
+                                                if (crsValue.StartsWith("CRS:"))
+                                                {
+                                                    map.CRS = crsValue;
+                                                }
+                                                else
+                                                {
+                                                    map.EPSG = crsValue;
+                                                }
+
+                                                break;
+
+                                            case "EX_GeographicBoundingBox":
+                                                map.WestBoundLongitude = decimal.Parse(globalLayerNodeChild.ChildNodes[0].InnerText.Replace(".", ","));
+                                                map.EastBoundLatitude = decimal.Parse(globalLayerNodeChild.ChildNodes[1].InnerText.Replace(".", ","));
+                                                map.SouthBoundLatitude = decimal.Parse(globalLayerNodeChild.ChildNodes[2].InnerText.Replace(".", ","));
+                                                map.NorthBoundLatitude = decimal.Parse(globalLayerNodeChild.ChildNodes[3].InnerText.Replace(".", ","));
+
+                                                break;
+
+                                            case "Layer":
+                                                var layer = new Layer
+                                                {
+                                                    Name = globalLayerNodeChild.ChildNodes[0].InnerText,
+                                                    Title = globalLayerNodeChild.ChildNodes[1].InnerText,
+                                                    CRS = globalLayerNodeChild.ChildNodes[2].InnerText,
+                                                    EPSG = globalLayerNodeChild.ChildNodes[3].InnerText,
+                                                };
+
+                                                var layerBBOXNode = globalLayerNodeChild.ChildNodes[4];
+
+                                                layer.WestBoundLongitude = decimal.Parse(layerBBOXNode.ChildNodes[0].InnerText.Replace(".", ","));
+                                                layer.EastBoundLatitude = decimal.Parse(layerBBOXNode.ChildNodes[1].InnerText.Replace(".", ","));
+                                                layer.SouthBoundLatitude = decimal.Parse(layerBBOXNode.ChildNodes[2].InnerText.Replace(".", ","));
+                                                layer.NorthBoundLatitude = decimal.Parse(layerBBOXNode.ChildNodes[3].InnerText.Replace(".", ","));
+
+                                                map.Layers.Add(layer);
+
+                                                break;
+                                        }                                        
+                                    }
+
+                                    Repository.Add(map, User.Identity.Name, true);
+                                }
+                            }
+                        }
+                    }
+
+                    SetDefaultNotification(NotificationType.Success, GetCreationSuccessMessage());
+
+                    return RedirectToAction("Edit", new { key = mapId });
+                }
+                catch (Framework.Guama.Core.Presentation.Web.Frontend.InvalidModelException e)
+                {
+                    ModelState.AddModelError(e.ModelKey, e.ErrorMessage);
+                }
+            }
+
+            SetDefaultNotification(NotificationType.Danger, GetInvalidMessage());
+
+            return RedirectToAction("Index");
+        }
+
+        protected override void PreEdit(Map entity, MapInputViewModel model)
+        {
+            base.PreEdit(entity, model);
+
+            if (model.ImageFile == null)
+            {
+                if (model.ResetImage && entity.Image != null)
+                {
+                    imageFileManager.DeleteImageFile(entity.Image);
+
+                    imageRepository.Delete(entity.Image, User.Identity.Name);
+                }
+
+                return;
+            }
+
+            var deprecatedImage = entity.Image;
+
+            using (var memoryStream = new System.IO.MemoryStream())
+            {
+                model.ImageFile.CopyTo(memoryStream);
+
+                var image = imageRepository.Add(new Image { ContentType = model.ImageFile.ContentType, Length = model.ImageFile.Length, About = "Map " + entity.Id }, User.Identity.Name);
+
+                imageFileManager.SaveImageFileContent(image.Id, memoryStream.ToArray(), model.ImageFile.ContentType);
+
+                entity.ImageId = image.Id;
+                entity.Image = image;
+            }
+
+            if (deprecatedImage != null)
+            {
+                imageFileManager.DeleteImageFile(deprecatedImage);
+
+                imageRepository.Delete(deprecatedImage, User.Identity.Name);
+            }
+        }
+
+        protected override void PostDelete(Map entity)
+        {
+            base.PostDelete(entity);
+
+            if (entity.Image == null) return;
+
+            imageRepository.Delete(entity.Image, User.Identity.Name);
+
+            imageFileManager.DeleteImageFile(entity.Image);
+        }
+
+        #region Layers
+
+        [HttpGet]
+        [Route("edit/{key}/layers")]
+        [RequirePermissions(Constants.Permission.MapEditor)]
+        public ActionResult EditLayers(string key)
+        {
+            var entity = Repository.Get(key);
+
+            var model = new MapLayersManagementViewModel
+            {
+                Map = new MapDisplayViewModel(),
+                Layers = entity.Layers.Select(item =>
+                {
+                    var result = new LayerDisplayViewModel();
+
+                    result.Import(item);
+
+                    return result;
+                }).ToArray()
+            };
+
+            model.Map.Import(entity);
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [Route("edit/{key}/layers/edit")]
+        [ValidateAntiForgeryToken]
+        [RequirePermissions(Constants.Permission.MapEditor)]
+        public IActionResult EditLayer(string key, System.Guid layerId, string stylePresentantionJSBlock, string interactivePresentantionJSBlock)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var entity = Repository.Get(key);
+
+                    try
+                    {
+                        var _entity = entity.Layers.First(b => b.Id == layerId);
+
+                        _entity.StylePresentantionJSBlock = stylePresentantionJSBlock;
+                        _entity.InteractivePresentantionJSBlock = interactivePresentantionJSBlock;
+
+                        layerRepository.Update(_entity, User.Identity.Name);
+
+                        SetDefaultNotification(NotificationType.Success, GetEditionSuccessMessage());
+
+                        return RedirectToAction("editlayers", new { key = entity.Id });
+                    }
+                    catch (Framework.Guama.Core.Presentation.Web.Frontend.InvalidModelException e)
+                    {
+                        ModelState.AddModelError(e.ModelKey, e.ErrorMessage);
+                    }
+
+                    SetDefaultNotification(NotificationType.Danger, GetInvalidMessage());
+
+                    return RedirectToAction("editlayers", new { key = entity.Id });
+                }
+                catch (System.Exception e)
+                {
+                    logger.LogError(e.InnerException, e.Message);
+                }
+            }
+
+            SetDefaultNotification(notificationType: NotificationType.Danger, GetNotFoundMessage());
+
+            return GetDefaultActionResult();
+        }
+
+        #endregion
 
         #region Authors
 
