@@ -68,7 +68,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Frontend
                 }).ToArray(),
                 Epigraph = new Models.View.EpigraphDisplayViewModel(),
                 Section = new Models.View.SectionDisplayViewModel(),
-                Sections = sectionRepository.GetAll().ToArray().Select(entity =>
+                Sections = sectionRepository.GetAll().OrderBy(entity => entity.Priority).ToArray().Select(entity =>
                 {
                     var _model = new Models.View.SectionDisplayViewModel();
 

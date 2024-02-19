@@ -24,7 +24,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Frontend
             var model = new Models.View.Frontend.SectionIndexViewModel
             {
                 Current = new Models.View.SectionDisplayViewModel(),
-                Sections = sectionRepository.GetAll().ToArray().Select(entity =>
+                Sections = sectionRepository.GetAll().OrderBy(entity => entity.Priority).ToArray().Select(entity =>
                 {
                     var _model = new Models.View.SectionDisplayViewModel();
 
