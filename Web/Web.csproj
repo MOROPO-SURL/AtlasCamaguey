@@ -17,15 +17,19 @@
 	<ItemGroup>
 		<Compile Remove="dpkeys\**" />
 		<Compile Remove="logs\**" />
+		<Compile Remove="Migrations\**" />
 		<Compile Remove="wwwroot\media\**" />
 		<Content Remove="dpkeys\**" />
 		<Content Remove="logs\**" />
+		<Content Remove="Migrations\**" />
 		<Content Remove="wwwroot\media\**" />
 		<EmbeddedResource Remove="dpkeys\**" />
 		<EmbeddedResource Remove="logs\**" />
+		<EmbeddedResource Remove="Migrations\**" />
 		<EmbeddedResource Remove="wwwroot\media\**" />
 		<None Remove="dpkeys\**" />
 		<None Remove="logs\**" />
+		<None Remove="Migrations\**" />
 		<None Remove="wwwroot\media\**" />
 		<None Remove="Controllers\Backend\Complements\" />
 		<None Remove="Components\" />
@@ -58,7 +62,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Migrations\" />
 	  <Folder Include="wwwroot\lib\ckeditor\" />
 	  <Folder Include="Views\Shared\Components\" />
 	  <Folder Include="Views\Shared\Components\BackendNavbar\" />
