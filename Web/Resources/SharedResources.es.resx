@@ -819,4 +819,7 @@
   <data name="Institution" xml:space="preserve">
     <value>Institución</value>
   </data>
+  <data name="Priority" xml:space="preserve">
+    <value>Prioridad</value>
+  </data>
 </root>

@@ -125,9 +125,6 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web
 
         public void Configure(IApplicationBuilder app, Microsoft.Extensions.Options.IOptions<RequestLocalizationOptions> requestLocalizationOptions, Microsoft.Extensions.Logging.ILoggerFactory loggerFactory, DbContext dbContext)
         {
-            System.AppContext.SetSwitch("System.Drawing.EnableUnixSupport", true);
-            System.AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
-
             loggerFactory.AddSerilog(Log.Logger);
 
             app.UseRequestLocalization(requestLocalizationOptions.Value);
@@ -193,14 +190,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web
                 Framework.Guama.Core.Security.Common.Presentation.Web.Frontend.Providers.RoleMemoryProvider.Instance.Roles.Add(item);
             }
 
-            var contentTypePovider = new Microsoft.AspNetCore.StaticFiles.FileExtensionContentTypeProvider();
-
-            contentTypePovider.Mappings.Add(".apk", "application/vnd.android.package-archive");
-
-            app.UseStaticFiles(new StaticFileOptions
-            {
-                ContentTypeProvider = contentTypePovider
-            });
+            app.UseStaticFiles();
 
             app.UseAuthentication();
             app.UseSession();
