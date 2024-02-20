@@ -72,6 +72,11 @@
                     </div>                
                     @Html.ValidationMessageFor(model => model.Scale, null, new { @class = "text-danger" })
                 </div>
+                <div class="col-auto mb-3">
+                    @Html.LabelFor(model => model.Priority, new { @class = "control-label" })
+                    @Html.TextBoxFor(model => model.Priority, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.Priority, null, new { @class = "text-danger" })
+                </div>
             </div>
             <div>
                 @Html.LabelFor(model => model.Description, new { @class = "control-label" }) <span class="small text-muted">(opcional)</span>

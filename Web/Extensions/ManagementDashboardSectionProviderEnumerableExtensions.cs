@@ -82,11 +82,24 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Extensions
                 }
             };
 
+            var contentSections = new List<ManagementDashboardSectionViewModel>
+            {
+                new ManagementDashboardSectionViewModel
+                {
+                    Title = "Bloques de Texto",
+                    Controller = "richtextblocks",
+                    Action = "index",
+                    Area = "content",
+                    Role = Constants.Permission.RichTextBlockViewer
+                }
+            };
+
             return new Dictionary<string, ICollection<ManagementDashboardSectionViewModel>>
             {
                 { "security", securitySections },
                 { "atlas", atlasSections },
-                { "complements", complementarySections }
+                { "complements", complementarySections },
+                { "content", contentSections }
             };
         }
     }

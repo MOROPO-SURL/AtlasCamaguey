@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using MOROPO.CIMAC.Atlas.Camaguey.Persistence.Entities;
 using MOROPO.Framework.Guama.Core.Security.Common.Persistence.ORM.EF.Extensions;
 
 namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Helpers
@@ -130,6 +131,56 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Helpers
             if (!permissionDbSet.Any(role => role.Code.Equals(Constants.Permission.InstitutionViewer)))
             {
                 permissionDbSet.Add(Constants.Permission.InstitutionViewer.ToPermissionEntity(Constants.PermissionsFamily.InstitutionManagement));
+            }
+            #endregion
+
+            #region RichTextBlock
+            if (!permissionDbSet.Any(role => role.Code.Equals(Constants.Permission.RichTextBlockViewer)))
+            {
+                permissionDbSet.Add(Constants.Permission.RichTextBlockViewer.ToPermissionEntity(Constants.PermissionsFamily.RichTextBlokManagement));
+            }
+            if (!permissionDbSet.Any(role => role.Code.Equals(Constants.Permission.RichTextBlockEditor)))
+            {
+                permissionDbSet.Add(Constants.Permission.RichTextBlockEditor.ToPermissionEntity(Constants.PermissionsFamily.RichTextBlokManagement));
+            }
+
+            var richTextBlockDbSet = dbContext.Set<RichTextBlock>();
+
+            if (!richTextBlockDbSet.Any(entity => entity.Id == Camaguey.Persistence.Enumerations.RichTextBlockKind.LogotypeContext))
+            {
+                richTextBlockDbSet.Add(new RichTextBlock { Id = Camaguey.Persistence.Enumerations.RichTextBlockKind.LogotypeContext, Content = "Stet elit molestie invidunt tincidunt lobortis erat augue sadipscing nonumy suscipit voluptua duo nonumy et mazim duis et qui et" });
+            }
+            if (!richTextBlockDbSet.Any(entity => entity.Id == Camaguey.Persistence.Enumerations.RichTextBlockKind.FooterLeft)) 
+            {
+                richTextBlockDbSet.Add(new RichTextBlock { Id = Camaguey.Persistence.Enumerations.RichTextBlockKind.FooterLeft, Content = "Stet elit molestie invidunt tincidunt lobortis erat augue sadipscing nonumy suscipit voluptua duo nonumy et mazim duis et qui et" });
+            }
+            if (!richTextBlockDbSet.Any(entity => entity.Id == Camaguey.Persistence.Enumerations.RichTextBlockKind.FooterCenter))
+            {
+                richTextBlockDbSet.Add(new RichTextBlock { Id = Camaguey.Persistence.Enumerations.RichTextBlockKind.FooterCenter, Content = "Stet elit molestie invidunt tincidunt lobortis erat augue sadipscing nonumy suscipit voluptua duo nonumy et mazim duis et qui et" });
+            }
+            if (!richTextBlockDbSet.Any(entity => entity.Id == Camaguey.Persistence.Enumerations.RichTextBlockKind.FooterRight))
+            {
+                richTextBlockDbSet.Add(new RichTextBlock { Id = Camaguey.Persistence.Enumerations.RichTextBlockKind.FooterRight, Content = "Stet elit molestie invidunt tincidunt lobortis erat augue sadipscing nonumy suscipit voluptua duo nonumy et mazim duis et qui et" });
+            }
+            if (!richTextBlockDbSet.Any(entity => entity.Id == Camaguey.Persistence.Enumerations.RichTextBlockKind.PageHomeIntro)) 
+            {
+                richTextBlockDbSet.Add(new RichTextBlock { Id = Camaguey.Persistence.Enumerations.RichTextBlockKind.PageHomeIntro, Content = "Stet elit molestie invidunt tincidunt lobortis erat augue sadipscing nonumy suscipit voluptua duo nonumy et mazim duis et qui et" });
+            }
+            if (!richTextBlockDbSet.Any(entity => entity.Id == Camaguey.Persistence.Enumerations.RichTextBlockKind.PageContactIntro))
+            {
+                richTextBlockDbSet.Add(new RichTextBlock { Id = Camaguey.Persistence.Enumerations.RichTextBlockKind.PageContactIntro, Content = "Stet elit molestie invidunt tincidunt lobortis erat augue sadipscing nonumy suscipit voluptua duo nonumy et mazim duis et qui et" });
+            }
+            if (!richTextBlockDbSet.Any(entity => entity.Id == Camaguey.Persistence.Enumerations.RichTextBlockKind.PageSearchIntro))
+            {
+                richTextBlockDbSet.Add(new RichTextBlock { Id = Camaguey.Persistence.Enumerations.RichTextBlockKind.PageSearchIntro, Content = "Stet elit molestie invidunt tincidunt lobortis erat augue sadipscing nonumy suscipit voluptua duo nonumy et mazim duis et qui et" });
+            }
+            if (!richTextBlockDbSet.Any(entity => entity.Id == Camaguey.Persistence.Enumerations.RichTextBlockKind.PageAboutContent))
+            {
+                richTextBlockDbSet.Add(new RichTextBlock { Id = Camaguey.Persistence.Enumerations.RichTextBlockKind.PageAboutContent, Content = "Stet elit molestie invidunt tincidunt lobortis erat augue sadipscing nonumy suscipit voluptua duo nonumy et mazim duis et qui et" });
+            }
+            if (!richTextBlockDbSet.Any(entity => entity.Id == Camaguey.Persistence.Enumerations.RichTextBlockKind.PageHelpContent))
+            {
+                richTextBlockDbSet.Add(new RichTextBlock { Id = Camaguey.Persistence.Enumerations.RichTextBlockKind.PageHelpContent, Content = "Stet elit molestie invidunt tincidunt lobortis erat augue sadipscing nonumy suscipit voluptua duo nonumy et mazim duis et qui et" });
             }
             #endregion
 

@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MOROPO.CIMAC.Atlas.Camaguey.Persistence.Entities;
 
 namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Persistence.ORM.EF.Repositories
 {
@@ -9,9 +8,14 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Persistence.ORM.EF.Repositories
         {
         }
 
-        protected override System.Linq.IQueryable<Section> GetQueryableDbSet()
+        protected override System.Linq.IQueryable<Camaguey.Persistence.Entities.Section> GetQueryableDbSet()
         {
             return base.GetQueryableDbSet().Include(entity => entity.Image);
+        }
+
+        public override System.Func<Camaguey.Persistence.Entities.Section, object> GetPagingOrderSelector()
+        {
+            return entity => entity.Name;
         }
     }
 }

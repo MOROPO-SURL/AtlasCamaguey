@@ -75,5 +75,13 @@
         public const string InstitutionRemover = "institution-remover";
 
         #endregion
+
+        #region RichTextBlock
+
+        public const string RichTextBlockViewer = "richtextblock-viewer";
+
+        public const string RichTextBlockEditor = "richtextblock-editor";
+
+        #endregion
     }
 }

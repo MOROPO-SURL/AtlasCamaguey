@@ -8,6 +8,8 @@
 
         public string Description { get; set; }
 
+        public uint Priority { get; set; }
+
         public System.Guid? ImageId { get; set; }
         public string ImageExtension { get; set; }
 
@@ -18,6 +20,7 @@
             Id = entity.Id;
             Name = entity.Name;
             Description = entity.Description;
+            Priority = (uint)entity.Priority;
             ImageId = entity.ImageId;
             ImageExtension = entity.Image == null ? null : MimeTypes.MimeTypeMap.GetExtension(entity.Image.ContentType);
             Layout = entity.Layout;

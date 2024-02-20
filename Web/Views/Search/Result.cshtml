@@ -1,0 +1,218 @@
+﻿@using MOROPO.CIMAC.Atlas.Camaguey.Web.Extensions
+
+@model MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Frontend.SearchResultViewModel
+
+@{
+    const string TITLE = "Búsqueda";
+
+    ViewData["Title"] = TITLE;
+
+    ViewData[BreadcrumbViewModel.BREADCRUMBS_MAP_KEY] = new List<BreadcrumbViewModel>
+    {
+        new BreadcrumbViewModel
+        {
+            Caption = "<span class=\"mdi mdi-home-variant\" style=\"margin-right: 4px;\"></span> Inicio",
+            Url = "/"
+        },
+        new BreadcrumbViewModel
+        {
+            Caption = @TITLE
+        }
+    };
+
+    Layout = "_NavigableFrontendLayout";
+}
+
+<h4 class="display-4 mb-4">@TITLE</h4>
+
+@if (Model.InformationResourceKind == null || Model.InformationResourceKind.Value == MOROPO.CIMAC.Atlas.Camaguey.Web.Enumerations.InformationResourceKind.Section)
+{
+    <h5 class="mt-3">Resultados para Secciones</h5>
+    <hr />
+
+    @if (Model.Sections == null || Model.Sections.Length <= 0)
+    {
+        <p class="mb-3 text-muted">No se encontraron coincidencias</p>
+    }
+    else
+    {
+        <div class="row">
+        @foreach (var item in Model.Sections)
+        {
+            <div class="col-md-4 col-sm-6">
+                <div class="card shadow-sm" style="margin-bottom: 2.0rem!important;">
+                    <div class="card-body">
+                        <h4 class="card-title"><a asp-action="index" asp-controller="section" asp-route-key="@item.Id">@item.Name</a></h4>
+                        <div class="text-truncate text-wrap" style="height: 72px;">
+                            @Html.Raw(@item.Description)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }            
+        </div>
+    }
+}
+
+@if (Model.InformationResourceKind == null || Model.InformationResourceKind.Value == MOROPO.CIMAC.Atlas.Camaguey.Web.Enumerations.InformationResourceKind.Epigraph)
+{
+    <h5 class="mt-3">Resultados para Epígrafes</h5>
+    <hr />
+
+    @if (Model.Epigraphs == null || Model.Epigraphs.Length <= 0)
+    {
+        <p class="mb-3 text-muted">No se encontraron coincidencias</p>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var item in Model.Epigraphs)
+            {
+                <div class="col-md-4 col-sm-6">
+                    <div class="card shadow-sm" style="margin-bottom: 2.0rem!important;">
+                        <div class="card-body">
+                            <h4 class="card-title"><a asp-action="index" asp-controller="epigraph" asp-route-key="@item.Id">@item.Name</a></h4>
+                            <div class="text-truncate text-wrap" style="height: 72px;">
+                                @Html.Raw(@item.Description)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+}
+
+@if (Model.InformationResourceKind == null || Model.InformationResourceKind.Value == MOROPO.CIMAC.Atlas.Camaguey.Web.Enumerations.InformationResourceKind.Map)
+{
+    <h5 class="mt-3">Resultados para Mapas</h5>
+    <hr />
+
+    @if (Model.Maps == null || Model.Maps.Length <= 0)
+    {
+        <p class="mb-3 text-muted">No se encontraron coincidencias</p>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var item in Model.Maps)
+            {
+                <div class="col-md-4 col-sm-6">
+                    <div class="card shadow-sm" style="margin-bottom: 2.0rem!important;">
+                        <div class="card-body">
+                            <h4 class="card-title"><a asp-action="index" asp-controller="map" asp-route-key="@item.Id">@item.Name</a></h4>
+                            <div class="text-truncate text-wrap" style="height: 72px;">
+                                @Html.Raw(@item.Description)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+}
+
+@if (Model.InformationResourceKind == null || Model.InformationResourceKind.Value == MOROPO.CIMAC.Atlas.Camaguey.Web.Enumerations.InformationResourceKind.Image)
+{
+    <h5 class="mt-3">Resultados para Imágenes</h5>
+    <hr />
+
+    @if (Model.Images == null || Model.Images.Length <= 0)
+    {
+        <p class="mb-3 text-muted">No se encontraron coincidencias</p>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var item in Model.Images)
+            {
+                <div class="col-md-4 col-sm-6">
+                    <div class="card shadow-sm" style="margin-bottom: 2.0rem!important;">
+                        <img class="card-img" src="~/media/images/@item.Id.@item.Extension" />
+                    </div>
+                </div>
+            }
+        </div>
+    }
+}
+
+@if (Model.InformationResourceKind == null || Model.InformationResourceKind.Value == MOROPO.CIMAC.Atlas.Camaguey.Web.Enumerations.InformationResourceKind.Video)
+{
+    <h5 class="mt-3">Resultados para Videos</h5>
+    <hr />
+
+    @if (Model.Videos == null || Model.Videos.Length <= 0)
+    {
+        <p class="mb-3 text-muted">No se encontraron coincidencias</p>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var item in Model.Videos)
+            {
+                <div class="col-md-4 col-sm-6">
+                    <div class="card shadow-sm" style="margin-bottom: 2.0rem!important;">
+                        <div class="embed-responsive embed-responsive-16by9">
+                            <video controls="controls">
+                                <source src="/media/videos/@item.Id.@item.Extension" type="video/mp4">
+                                Su explorar no soporta nativamente la reproducción de videos.
+                            </video>
+                        </div>
+                        <div class="card-body">
+                            @if (string.IsNullOrEmpty(item.About))
+                            {
+                                <p class="text-muted mb-0"><i>Acerca de no especificado</i></p>
+                            }
+                            else
+                            {
+                                <p class="mb-0">@item.About</p>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+}
+
+@if (Model.InformationResourceKind == null || Model.InformationResourceKind.Value == MOROPO.CIMAC.Atlas.Camaguey.Web.Enumerations.InformationResourceKind.Document)
+{
+    <h5 class="mt-3">Resultados para Documentos</h5>
+    <hr />
+
+    @if (Model.Documents == null || Model.Documents.Length <= 0)
+    {
+        <p class="mb-3 text-muted">No se encontraron coincidencias</p>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var item in Model.Documents)
+            {
+                <div class="col-md-4 col-sm-6">
+                    <div class="card shadow-sm" style="margin-bottom: 2.0rem!important;">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-auto pr-0"><span class="mdi mdi-36px @item.Extension.AsExtensionToMDICssClass()"></span></div>
+                                <div class="col">
+                                    <a asp-action="Document" asp-controller="Download" asp-route-key="@item.Id"><b>@item.Name</b></a>
+                                    <p class="mb-0">
+                                        @if (item.Description == null)
+                                        {
+                                            <span class="text-muted italic">Sin descripción</span>
+                                        }
+                                        else
+                                        {
+                                            <span style="color: #6c757d; word-wrap: break-word;">@item.Description</span>
+                                        }
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+}
+

@@ -1,0 +1,60 @@
+﻿@{
+    Layout = "_FrontendLayout";
+}
+
+@section styles {
+    @RenderSection("styles", false)
+}
+
+@section scripts {
+    @RenderSection("scripts", false)
+}
+
+<div class="row no-gutters">
+    <div class="col-auto pl-4 mb-4">
+        <div class="card" style="width: 320px; margin-top: 2.1rem!important;">
+            <img class="card-img-top" src="/img/identity/banner-decored-left.jpg" />
+            <div class="card-body">
+                <h3 class="card-title">Navegación</h3>
+                <h5 class="card-subtitle">Secciones</h5>
+            </div>
+            <ul class="list-group list-group-flush">
+                @RenderSection("thematic_navigation", false)
+            </ul>
+        </div>
+    </div>
+    <div class="col px-4" style="margin-top: 2.1rem!important;">
+        @if (ViewData[BreadcrumbViewModel.BREADCRUMBS_MAP_KEY] != null)
+        {
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-4">
+                    @{
+                        ICollection<BreadcrumbViewModel> breadcrumbs = ViewData[BreadcrumbViewModel.BREADCRUMBS_MAP_KEY] as ICollection<BreadcrumbViewModel>;
+
+                        if (breadcrumbs != null)
+                        {
+                            var total = breadcrumbs.Count();
+                            var count = 1;
+
+                            foreach (var breadcrumb in breadcrumbs)
+                            {
+                                if (count < total)
+                                {
+                                    <li class="breadcrumb-item"><a href="@breadcrumb.Url">@Html.Raw(breadcrumb.Caption)</a></li>
+                                }
+                                else
+                                {
+                                    <li class="breadcrumb-item active">@Html.Raw(breadcrumb.Caption)</li>
+                                }
+
+                                count++;
+                            }
+                        }
+                    }
+                </ol>
+            </nav>
+        }
+
+        @RenderBody()
+    </div>
+</div>

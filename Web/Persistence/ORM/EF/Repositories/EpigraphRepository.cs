@@ -19,5 +19,10 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Persistence.ORM.EF.Repositories
                 .Include(entity => entity.VideoBridges).ThenInclude(bridge => bridge.Stern)
                 .Include(entity => entity.DocumentBridges).ThenInclude(bridge => bridge.Stern);
         }
+
+        public override System.Func<Camaguey.Persistence.Entities.Epigraph, object> GetPagingOrderSelector()
+        {
+            return entity => entity.Name;
+        }
     }
 }

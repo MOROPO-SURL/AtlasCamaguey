@@ -22,6 +22,8 @@
 
             if (target.Controller == "keywords") return new Microsoft.AspNetCore.Html.HtmlString("<span class=\"mdi mdi-tag-text\"></span>");
 
+            if (target.Controller == "richtextblocks") return new Microsoft.AspNetCore.Html.HtmlString("<span class=\"mdi mdi-text\"></span>");
+
             return new Microsoft.AspNetCore.Html.HtmlString("<span class=\"mdi mdi-toy-brick-outline\"></span>");
         }
     }

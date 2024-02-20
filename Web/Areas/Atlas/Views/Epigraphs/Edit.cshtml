@@ -93,10 +93,17 @@
             </ul>
         </div>
         <div class="card-body">
-            <div class="mb-3">
-                @Html.LabelFor(model => model.Name, new { @class = "control-label" })
-                @Html.TextBoxFor(model => model.Name, new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.Name, null, new { @class = "text-danger" })
+            <div class="row">
+                <div class="col mb-3">
+                    @Html.LabelFor(model => model.Name, new { @class = "control-label" })
+                    @Html.TextBoxFor(model => model.Name, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.Name, null, new { @class = "text-danger" })
+                </div>
+                <div class="col-auto mb-3">
+                    @Html.LabelFor(model => model.Priority, new { @class = "control-label" })
+                    @Html.TextBoxFor(model => model.Priority, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.Priority, null, new { @class = "text-danger" })
+                </div>
             </div>
             <div class="mb-3">
                 @Html.LabelFor(model => model.SectionId, new { @class = "control-label" })

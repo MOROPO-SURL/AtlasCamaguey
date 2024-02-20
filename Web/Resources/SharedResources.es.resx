@@ -793,7 +793,7 @@
     <value>Seguridad</value>
   </data>
   <data name="complements" xml:space="preserve">
-    <value>Complementos</value>
+    <value>Complementarios</value>
   </data>
   <data name="atlas" xml:space="preserve">
     <value>Atlas</value>
@@ -824,5 +824,38 @@
   </data>
   <data name="Priority" xml:space="preserve">
     <value>Prioridad</value>
+  </data>
+  <data name="content" xml:space="preserve">
+    <value>Contenido</value>
+  </data>
+  <data name="FooterCenter" xml:space="preserve">
+    <value>Centro del Panel Inferior</value>
+  </data>
+  <data name="FooterLeft" xml:space="preserve">
+    <value>Izquierda del Panel Inferior</value>
+  </data>
+  <data name="FooterRight" xml:space="preserve">
+    <value>Derecha del Panel Inferior</value>
+  </data>
+  <data name="Id" xml:space="preserve">
+    <value>Identificador</value>
+  </data>
+  <data name="LogotypeContext" xml:space="preserve">
+    <value>Contextual del Logotipo</value>
+  </data>
+  <data name="PageAboutContent" xml:space="preserve">
+    <value>Contenido de Página Acerca de</value>
+  </data>
+  <data name="PageContactIntro" xml:space="preserve">
+    <value>Intro de Página de Contacto</value>
+  </data>
+  <data name="PageHelpContent" xml:space="preserve">
+    <value>Contenid de Página Ayuda</value>
+  </data>
+  <data name="PageHomeIntro" xml:space="preserve">
+    <value>Intro de Página de Inicio</value>
+  </data>
+  <data name="PageSearchIntro" xml:space="preserve">
+    <value>Intro de Página de Búsqueda</value>
   </data>
 </root>

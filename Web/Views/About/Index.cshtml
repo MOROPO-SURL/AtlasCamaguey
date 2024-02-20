@@ -1,0 +1,26 @@
+﻿@model MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.RichTextBlockDisplayViewModel
+
+@{
+    const string TITLE = "Acerca de";
+
+    ViewData["Title"] = TITLE;
+
+    ViewData[BreadcrumbViewModel.BREADCRUMBS_MAP_KEY] = new List<BreadcrumbViewModel>
+    {
+        new BreadcrumbViewModel
+        {
+            Caption = "<span class=\"mdi mdi-home-variant\" style=\"margin-right: 4px;\"></span> Inicio",
+            Url = "/"
+        },
+        new BreadcrumbViewModel
+        {
+            Caption = @TITLE
+        }
+    };
+
+    Layout = "_NavigableFrontendLayout";
+}
+
+<h4 class="display-4">@TITLE</h4>
+
+@Html.Raw(Model.Content)

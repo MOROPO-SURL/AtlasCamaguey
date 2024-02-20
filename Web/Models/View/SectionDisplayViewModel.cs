@@ -10,7 +10,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View
 
         public string Description { get; set; }
 
-        public int Priority { get; set; }
+        public uint Priority { get; set; }
 
         public System.Guid? ImageId { get; set; }
         public string ImageExtension { get; set; }
@@ -22,7 +22,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View
             Id = entity.Id;
             Name = entity.Name;
             Description = entity.Description;
-            Priority = entity.Priority;
+            Priority = (uint)entity.Priority;
             ImageId = entity.ImageId;
             ImageExtension = entity.Image == null ? null : MimeTypes.MimeTypeMap.GetExtension(entity.Image.ContentType);
         }

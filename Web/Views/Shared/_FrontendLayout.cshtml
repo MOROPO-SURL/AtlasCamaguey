@@ -1,4 +1,6 @@
-﻿@{
+﻿@using MOROPO.CIMAC.Atlas.Camaguey.Web.Enumerations;
+
+@{
     Layout = "_Layout";
 }
 
@@ -10,17 +12,54 @@
     @RenderSection("scripts", false)
 }
 
+<div class="modal fade " id="search-form" tabindex="-1" role="dialog" aria-labelledby="search-form-label" aria-hidden="true">
+    <div class="modal-dialog" role="form">
+        <form asp-action="result" asp-controller="search" asp-antiforgery="true" method="post">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="search-form-label">Realizar Búsqueda</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="key">Parámetro</label>
+                        <input type="text" name="key" class="form-control" />
+                    </div>
+                    <div class="mb-1">
+                        <label for="informationResourceKind">Recurso</label>
+                        @Html.DropDownList("informationResourceKind", new SelectListItem[]
+                        {
+                            new SelectListItem { Value = InformationResourceKind.Section.ToString(), Text = "Secciones" },
+                            new SelectListItem { Value = InformationResourceKind.Epigraph.ToString(), Text = "Epígrafes" },
+                            new SelectListItem { Value = InformationResourceKind.Map.ToString(), Text = "Mapas" },
+                            new SelectListItem { Value = InformationResourceKind.Image.ToString(), Text = "Imágenes" },
+                            new SelectListItem { Value = InformationResourceKind.Video.ToString(), Text = "Videos" },
+                            new SelectListItem { Value = InformationResourceKind.Document.ToString(), Text = "Documentos" }
+                        }, "Todos", new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" class="btn btn-primary" value="Enviar" />
+                    <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
 <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light shadow">
     <div class="container-fluid">
         <a class="navbar-brand my-0 mr-md-auto font-weight-normal" href="/">Atlas de Camagüey</a>
         <nav class="my-2 my-md-0 mr-md-3">
-            <a class="p-3 text-dark" href="#">Acerca de</a>
+            <a class="p-3 text-dark" asp-action="index" asp-controller="about">Acerca de</a>
             <a class="p-3 text-dark" href="#">Estructura Temática</a>
             <a class="p-3 text-dark" href="#">Autores</a>
-            <a class="p-3 text-dark" href="#">Ayuda</a>
+            <a class="p-3 text-dark" asp-action="index" asp-controller="help">Ayuda</a>
             <a class="p-3 text-dark" href="#">Contacto</a>
         </nav>
-        <a class="btn btn-light" href="#"><span class="mdi mdi-book-search"></span> Buscar</a>
+        <a class="btn btn-light" href="#" data-toggle="modal" data-target="#search-form"><span class="mdi mdi-book-search"></span> Buscar</a>
     </div>
 </nav>
 <main role="main" class="pt-5">
@@ -60,8 +99,4 @@
 
     @RenderBody()
 </main>
-<footer class="footer mt-auto p-4 text-light" style="background-color: #817769">
-    <a asp-controller="Dashboard" asp-action="Index" asp-area="management">Administrar</a>
-    <hr class="mt-2 mb-2" />
-    <p class="mb-0">Copyright 2023</p>
-</footer>
+@await Component.InvokeAsync("Footer")

@@ -31,7 +31,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Frontend
                     _model.Import(bridge.Stern);
 
                     return _model;
-                }).ToArray(),
+                }).OrderBy(_model => _model.Priority).ToArray(),
                 Images = epigraph.ImageBridges.Select(bridge =>
                 {
                     var _model = new Models.View.ImageDisplayViewModel();
@@ -71,7 +71,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Frontend
 
                     _model.Import(entity);
 
-                    _model.Epigraphs = epigraphRepository.FindBy(_entity => _entity.SectionId == entity.Id).ToArray().Select(_entity =>
+                    _model.Epigraphs = epigraphRepository.FindBy(_entity => _entity.SectionId == entity.Id).OrderBy(_entity => _entity.Priority).ToArray().Select(_entity =>
                     {
                         var __model = new Models.View.EpigraphDisplayViewModel();
 
@@ -89,7 +89,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Frontend
             var section = sectionRepository.Get(epigraph.SectionId.Value);
 
             model.Section.Import(section);
-            model.Section.Epigraphs = epigraphRepository.FindBy(entity => entity.SectionId == section.Id).ToArray().Select(entity =>
+            model.Section.Epigraphs = epigraphRepository.FindBy(entity => entity.SectionId == section.Id).OrderBy(entity => entity.Priority).ToArray().Select(entity =>
             {
                 var _model = new Models.View.EpigraphDisplayViewModel();
 

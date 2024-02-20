@@ -1,0 +1,29 @@
+﻿@using MOROPO.Framework.Guama.Core.Security.Common.Presentation.Web.Frontend.Extensions;
+@using MOROPO.CIMAC.Atlas.Camaguey.Web.Extensions;
+
+@model MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.RichTextBlockDisplayViewModel[]
+
+<footer class="footer mt-auto p-4 bg-dark text-light">
+    <div class="row">
+        <div class="col-md-4">
+            @Html.Raw(Model.First(model => model.Id == MOROPO.CIMAC.Atlas.Camaguey.Persistence.Enumerations.RichTextBlockKind.FooterLeft).Content)
+        </div>
+        <div class="col-md-4">
+            @Html.Raw(Model.First(model => model.Id == MOROPO.CIMAC.Atlas.Camaguey.Persistence.Enumerations.RichTextBlockKind.FooterCenter).Content)
+        </div>
+        <div class="col-md-4">
+            @Html.Raw(Model.First(model => model.Id == MOROPO.CIMAC.Atlas.Camaguey.Persistence.Enumerations.RichTextBlockKind.FooterRight).Content)
+        </div>
+    </div>
+    <hr class="mt-3 mb-3 bg-light" />
+    <div class="row">
+        <div class="col">
+            <p class="mb-0">© Copyright @System.DateTime.Now.Year Centro de Investigaciones del Medio Ambiente de Camagüey (CIMAC) y MOROPO S.U.R.L., Todos los derechos reservados.</p>
+        </div>
+        <div class="col-auto">
+            <a asp-controller="Dashboard" asp-action="Index" asp-area="management">Administrar</a>
+        </div>
+    </div>
+</footer>
+
+

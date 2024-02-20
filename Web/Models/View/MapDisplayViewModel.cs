@@ -9,6 +9,8 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View
 
         public string Name { get; set; }
 
+        public uint Priority { get; set; }
+
         public long Scale { get; set; }
 
         public string Description { get; set; }
@@ -36,6 +38,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View
             Name = entity.Name;
             Scale = entity.Scale;
             Description = entity.Description;
+            Priority = (uint)entity.Priority;
             CRS = entity.CRS;
             EPSG = entity.EPSG;
             WestBoundLongitude = entity.WestBoundLongitude;

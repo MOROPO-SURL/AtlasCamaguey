@@ -118,6 +118,11 @@
                     </div>                
                     @Html.ValidationMessageFor(model => model.Scale, null, new { @class = "text-danger" })
                 </div>
+                <div class="col-auto mb-3">
+                    @Html.LabelFor(model => model.Priority, new { @class = "control-label" })
+                    @Html.TextBoxFor(model => model.Priority, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.Priority, null, new { @class = "text-danger" })
+                </div>
             </div>            
             <div class="row">
                 <div class="col-md-6 mb-1 mb-md-3">

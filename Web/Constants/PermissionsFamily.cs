@@ -13,5 +13,7 @@
         internal const string AuthorManagement = "author-management";
 
         internal const string InstitutionManagement = "institution-management";
+
+        internal const string RichTextBlokManagement = "richtextblock-management";
     }
 }

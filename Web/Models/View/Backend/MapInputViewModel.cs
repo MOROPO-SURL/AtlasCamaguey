@@ -18,6 +18,9 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend
         [Display(Name = "Description")]
         public string Description { get; set; }
 
+        [Display(Name = "Priority")]
+        public uint Priority { get; set; }
+
         [FormFileContentTypes(ContentTypes = new string[] { "image/png", "image/jpeg" }, ErrorMessage = "PNG_JPEG_FileAllowedOnlyMessage")]
         [FormFileMaxLength(Length = 3145728, ErrorMessage = "FileLimitSizeExcededMessage")]
         [Display(Name = "ImageFile")]
@@ -39,6 +42,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend
             Name = entity.Name;
             Scale = entity.Scale;
             Description = entity.Description;
+            Priority = (uint)entity.Priority;
             ImageId = entity.ImageId;
             ImageExtension = entity.Image == null ? null : MimeTypes.MimeTypeMap.GetExtension(entity.Image.ContentType);
         }
@@ -48,6 +52,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend
             entity.Name = Name;
             entity.Scale = Scale;
             entity.Description = Description;
+            entity.Priority = (int)Priority;
         }
     }
 }
