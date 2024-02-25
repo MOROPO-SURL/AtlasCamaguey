@@ -170,9 +170,9 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Helpers
             {
                 richTextBlockDbSet.Add(new RichTextBlock { Id = Camaguey.Persistence.Enumerations.RichTextBlockKind.PageContactIntro, Content = "Stet elit molestie invidunt tincidunt lobortis erat augue sadipscing nonumy suscipit voluptua duo nonumy et mazim duis et qui et" });
             }
-            if (!richTextBlockDbSet.Any(entity => entity.Id == Camaguey.Persistence.Enumerations.RichTextBlockKind.PageSearchIntro))
+            if (!richTextBlockDbSet.Any(entity => entity.Id == Camaguey.Persistence.Enumerations.RichTextBlockKind.PageAuthorsIntro))
             {
-                richTextBlockDbSet.Add(new RichTextBlock { Id = Camaguey.Persistence.Enumerations.RichTextBlockKind.PageSearchIntro, Content = "Stet elit molestie invidunt tincidunt lobortis erat augue sadipscing nonumy suscipit voluptua duo nonumy et mazim duis et qui et" });
+                richTextBlockDbSet.Add(new RichTextBlock { Id = Camaguey.Persistence.Enumerations.RichTextBlockKind.PageAuthorsIntro, Content = "Stet elit molestie invidunt tincidunt lobortis erat augue sadipscing nonumy suscipit voluptua duo nonumy et mazim duis et qui et" });
             }
             if (!richTextBlockDbSet.Any(entity => entity.Id == Camaguey.Persistence.Enumerations.RichTextBlockKind.PageAboutContent))
             {

@@ -8,7 +8,7 @@
         FooterRight,
         PageHomeIntro,
         PageContactIntro,
-        PageSearchIntro,
+        PageAuthorsIntro,
         PageAboutContent,
         PageHelpContent
     }
