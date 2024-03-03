@@ -30,7 +30,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Frontend
 
                     _model.Import(entity);
 
-                    _model.Epigraphs = epigraphRepository.FindBy(_entity => _entity.SectionId == entity.Id).ToArray().Select(_entity =>
+                    _model.Epigraphs = epigraphRepository.FindBy(_entity => _entity.SectionId == entity.Id).OrderBy(entity => entity.Priority).ToArray().Select(_entity =>
                     {
                         var __model = new Models.View.EpigraphDisplayViewModel();
 
@@ -44,7 +44,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Frontend
             };
 
             model.Current.Import(section);
-            model.Current.Epigraphs = epigraphRepository.FindBy(entity => entity.SectionId == section.Id).ToArray().Select(entity =>
+            model.Current.Epigraphs = epigraphRepository.FindBy(entity => entity.SectionId == section.Id).OrderBy(entity => entity.Priority).ToArray().Select(entity =>
             {
                 var _model = new Models.View.EpigraphDisplayViewModel();
 
