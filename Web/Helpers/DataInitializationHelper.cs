@@ -182,6 +182,10 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Helpers
             {
                 richTextBlockDbSet.Add(new RichTextBlock { Id = Camaguey.Persistence.Enumerations.RichTextBlockKind.PageHelpContent, Content = "Stet elit molestie invidunt tincidunt lobortis erat augue sadipscing nonumy suscipit voluptua duo nonumy et mazim duis et qui et" });
             }
+            if (!richTextBlockDbSet.Any(entity => entity.Id == Camaguey.Persistence.Enumerations.RichTextBlockKind.PageThematicStructureIntro))
+            {
+                richTextBlockDbSet.Add(new RichTextBlock { Id = Camaguey.Persistence.Enumerations.RichTextBlockKind.PageThematicStructureIntro, Content = "Stet elit molestie invidunt tincidunt lobortis erat augue sadipscing nonumy suscipit voluptua duo nonumy et mazim duis et qui et" });
+            }
             #endregion
 
             if (dbContext is Framework.Guama.Core.Persistence.ORM.EF.Context.Contract.ITraceableDbContext)

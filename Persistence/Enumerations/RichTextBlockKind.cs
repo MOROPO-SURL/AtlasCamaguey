@@ -10,6 +10,7 @@
         PageContactIntro,
         PageAuthorsIntro,
         PageAboutContent,
-        PageHelpContent
+        PageHelpContent,
+        PageThematicStructureIntro
     }
 }

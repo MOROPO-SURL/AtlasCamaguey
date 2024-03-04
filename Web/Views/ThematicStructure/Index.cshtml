@@ -1,0 +1,71 @@
+﻿@model MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Frontend.ThematicStructureIndexViewModel
+
+@{
+    const string TITLE = "Estructura Temática";
+
+    ViewData["Title"] = TITLE;
+
+    ViewData[BreadcrumbViewModel.BREADCRUMBS_MAP_KEY] = new List<BreadcrumbViewModel>
+    {
+        new BreadcrumbViewModel
+        {
+            Caption = "<span class=\"mdi mdi-home-variant\" style=\"margin-right: 4px;\"></span> Inicio",
+            Url = "/"
+        },
+        new BreadcrumbViewModel
+        {
+            Caption = @TITLE
+        }
+    };
+
+    Layout = "_NavigableFrontendLayout";
+}
+
+@section styles {
+    <style type="text/css">
+        .badge {
+            font-size: 100%;
+            padding: .85em;
+        }
+    </style>
+}
+
+<h4 class="display-4">@TITLE</h4>
+
+@Html.Raw(Model.Intro)
+
+<div class="mt-4">
+    <span class="badge badge-info"><span class="mdi mdi-bookmark"> Secciones</span></span>
+    <span class="badge badge-info"><span class="mdi mdi-label"> Epígrafes</span></span>
+    <span class="badge badge-info"><span class="mdi mdi-earth-box"> Mapas</span></span>
+</div>
+
+@foreach (var item in Model.Structure)
+{
+    <div class="mt-4 mb-2">
+        <h4><span class="mdi mdi-bookmark"></span> <a asp-action="index" asp-controller="section" asp-route-key="@item.Key.Id">@item.Key.Name</a></h4>
+        <div class="text-truncate text-wrap" style="max-height: 72px;">
+            @Html.Raw(@item.Key.Description)
+        </div>
+    </div>
+
+    @foreach (var _item in item.Value)
+    {
+        <div class="ml-5 mt-3 mb-1">
+            <h4><span class="mdi mdi-label"></span> <a asp-action="index" asp-controller="epigraph" asp-route-key="@_item.Key.Id">@_item.Key.Name</a></h4>
+            <div class="text-truncate text-wrap" style="max-height: 72px;">
+                @Html.Raw(@_item.Key.Description)
+            </div>            
+
+            @foreach (var __item in _item.Value)
+            {
+                <div class="ml-5 mt-3 mb-1">
+                    <h4><span class="mdi mdi-earth-box"></span> <a asp-action="index" asp-controller="map" asp-route-key="@__item.Id" asp-route-epigraphId="@_item.Key.Id">@__item.Name</a></h4>
+                    <div class="text-truncate text-wrap" style="max-height: 72px;">
+                        @Html.Raw(@__item.Description)
+                    </div>
+                </div>
+            }
+        </div>
+    }
+}
