@@ -12,7 +12,7 @@
         {
             public AuthorDisplayViewModel Author { get; set; }
 
-            public MapDisplayViewModel[] Maps { get; set; }
+            public System.Collections.Generic.Dictionary<MapDisplayViewModel, EpigraphDisplayViewModel[]> Maps { get; set; }
         }
     }
 }

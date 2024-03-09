@@ -1,0 +1,83 @@
+﻿@model MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Frontend.AuthorsIndexViewModel
+
+@{
+    const string TITLE = "Autores";
+
+    ViewData["Title"] = TITLE;
+
+    ViewData[BreadcrumbViewModel.BREADCRUMBS_MAP_KEY] = new List<BreadcrumbViewModel>
+    {
+        new BreadcrumbViewModel
+        {
+            Caption = "<span class=\"mdi mdi-home-variant\" style=\"margin-right: 4px;\"></span> Inicio",
+            Url = "/"
+        },
+        new BreadcrumbViewModel
+        {
+            Caption = @TITLE
+        }
+    };
+
+    Layout = "_NavigableFrontendLayout";
+}
+
+@section styles {
+    <style type="text/css">
+        .badge {
+            font-size: 100%;
+            padding: .85em;
+        }
+    </style>
+}
+
+<h4 class="display-4">@TITLE</h4>
+
+@Html.Raw(Model.Intro)
+
+<div class="row mt-5">
+@foreach (var item in Model.AuthorOverviews)
+{
+    <div class="col-md-6 mb-4">
+        <div class="media">
+        @if (item.Author.ImageId != null)
+        {
+            <img class="w-25 mr-3 img-fluid img-thumbnail" src="~/media/images/@item.Author.ImageId.@item.Author.ImageExtension">
+        }
+        else
+        {
+            <img class="w-25 mr-3 img-fluid img-thumbnail" src="~/img/default-person-picture.jpg">
+        }                
+            <div class="media-body">
+                <h4 class="mt-0">                
+                    @if (item.Author.NamePrefix != null)
+                    {
+                        <span>@item.Author.NamePrefix</span>
+                    }
+                    <span>@item.Author.Name</span>
+                    @if (item.Author.LastName != null)
+                    {
+                        <span>@item.Author.LastName</span>
+                    }
+                </h4>
+                @if (item.Author.Institution != null)
+                {
+                    <p><span class="mdi mdi-domain"></span> @item.Author.Institution.Name</p>
+                }
+                @if (item.Author.About != null)
+                {
+                    <p>@item.Author.About</p>
+                }
+                <div>
+                @foreach (var dictionary in item.Maps)
+                {
+                    foreach (var _item in dictionary.Value)
+                    {
+                        <a class="mr-2 mb-2" asp-action="index" asp-controller="map" asp-route-key="@dictionary.Key.Id" asp-route-epigraphId="@_item.Id"><span class="mdi mdi-earth-box"></span> @dictionary.Key.Id.ToUpper()</a>
+                    }
+                }
+                </div>
+            </div>
+        </div>
+    </div>
+}
+</div>

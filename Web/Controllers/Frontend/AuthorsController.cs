@@ -17,16 +17,16 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Frontend
         {
             var entity = dbContext.Set<RichTextBlock>().First(entity => entity.Id == Camaguey.Persistence.Enumerations.RichTextBlockKind.PageAuthorsIntro);
 
-            var query = dbContext.Set<MapAuthorBridge>()
+            var universe = dbContext.Set<MapAuthorBridge>()
                 .Include(bridge => bridge.Prow)
                 .Include(bridge => bridge.Stern).ThenInclude(entity => entity.Identity).ThenInclude(entity => entity.Image)
                 .Include(bridge => bridge.Stern).ThenInclude(entity => entity.Institution).ThenInclude(entity => entity.Identity).ThenInclude(entity => entity.Image)
-                .GroupBy(entity => entity.Stern);
+                .ToArray();
 
             return View(new Models.View.Frontend.AuthorsIndexViewModel
             {
                 Intro = entity.Content,
-                AuthorOverviews = query.Select(group => BuildAuthorOverviewViewModel(group)).OrderBy(model => model.Author.Name).ToArray()
+                AuthorOverviews = universe.GroupBy(entity => entity.Stern).Select(group => BuildAuthorOverviewViewModel(group)).OrderBy(model => model.Author.Name).ToArray()
             });
         }
 
@@ -39,14 +39,22 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Frontend
 
             model.Author.Import(group.Key);
 
-            model.Maps = group.Select(bridge =>
+            model.Maps = new System.Collections.Generic.Dictionary<Models.View.MapDisplayViewModel, Models.View.EpigraphDisplayViewModel[]>();
+
+            foreach (var item in group)
             {
+                var epigraphs = dbContext.Set<EpigraphMapBridge>().Where(bridge => bridge.Stern.Id == item.Prow.Id).ToArray();
+
                 var _model = new Models.View.MapDisplayViewModel();
 
-                _model.Import(bridge.Prow);
+                _model.Import(item.Prow);
 
-                return _model;
-            }).ToArray();
+                model.Maps.Add(_model, epigraphs.Select(bridge => new Models.View.EpigraphDisplayViewModel
+                {
+                    Id = bridge.ProwId,
+                    Name = item.Prow.Name
+                }).ToArray());
+            }
 
             return model;
         }
