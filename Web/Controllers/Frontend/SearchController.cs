@@ -71,7 +71,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Frontend
                 {
                     foreach (var bridge in entity.ImageBridges)
                     {
-                        if (bridge.Stern.About.Contains(key))
+                        if (!string.IsNullOrEmpty(bridge.Stern.About) && bridge.Stern.About.Contains(key))
                         {
                             var __model = new ImageDisplayViewModel();
 
@@ -86,7 +86,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Frontend
                 {
                     foreach (var bridge in entity.VideoBridges)
                     {
-                        if (bridge.Stern.About.Contains(key))
+                        if (!string.IsNullOrEmpty(bridge.Stern.About) && bridge.Stern.About.Contains(key))
                         {
                             var __model = new VideoDisplayViewModel();
 
@@ -101,7 +101,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Frontend
                 {
                     foreach (var bridge in entity.DocumentBridges)
                     {
-                        if (bridge.Stern.Description.Contains(key))
+                        if (!string.IsNullOrEmpty(bridge.Stern.Description) && bridge.Stern.Description.Contains(key))
                         {
                             var __model = new DocumentDisplayViewModel();
 
@@ -137,7 +137,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Frontend
                 {
                     foreach (var bridge in entity.ImageBridges)
                     {
-                        if (bridge.Stern.About.Contains(key))
+                        if (!string.IsNullOrEmpty(bridge.Stern.About) && bridge.Stern.About.Contains(key))
                         {
                             var __model = new ImageDisplayViewModel();
 
@@ -152,7 +152,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Frontend
                 {
                     foreach (var bridge in entity.VideoBridges)
                     {
-                        if (bridge.Stern.About.Contains(key))
+                        if (!string.IsNullOrEmpty(bridge.Stern.About) && bridge.Stern.About.Contains(key))
                         {
                             var __model = new VideoDisplayViewModel();
 
@@ -167,7 +167,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Frontend
                 {
                     foreach (var bridge in entity.DocumentBridges)
                     {
-                        if (bridge.Stern.Description.Contains(key))
+                        if (!string.IsNullOrEmpty(bridge.Stern.Description) && bridge.Stern.Description.Contains(key))
                         {
                             var __model = new DocumentDisplayViewModel();
 
