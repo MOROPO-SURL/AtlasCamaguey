@@ -8,7 +8,13 @@
 
         public string Title { get; set; }
 
+        public bool Enabled { get; set; }
+
+        public int Priority { get; set; }
+
         public string StylePresentantionJSBlock { get; set; }
+
+        public string PointToPresentationJSBlock { get; set; }
 
         public string InteractivePresentantionJSBlock { get; set; }
 
@@ -29,7 +35,10 @@
             Id = entity.Id;
             Name = entity.Name;
             Title = entity.Title;
+            Enabled = entity.Enabled;
+            Priority = entity.Priority;
             StylePresentantionJSBlock = entity.StylePresentantionJSBlock;
+            PointToPresentationJSBlock = entity.PointToPresentationJSBlock;
             InteractivePresentantionJSBlock = entity.InteractivePresentantionJSBlock;
             CRS = entity.CRS;
             EPSG = entity.EPSG;

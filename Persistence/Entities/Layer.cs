@@ -1,6 +1,6 @@
 ﻿namespace MOROPO.CIMAC.Atlas.Camaguey.Persistence.Entities
 {
-    public class Layer : Framework.Guama.Core.Persistence.Entities.Contract.INamedEntity<System.Guid>
+    public class Layer : Framework.Guama.Core.Persistence.Entities.Contract.INamedEntity<System.Guid>, Framework.Guama.Core.Persistence.Entities.Contract.IHabilitableEntity<System.Guid>
     {
         public Layer()
         {
@@ -16,7 +16,13 @@
         [System.ComponentModel.DataAnnotations.Required]
         public string Title { get; set; }
 
+        public bool Enabled { get; set; } = true;
+
+        public int Priority { get; set; } = 1;
+
         public string StylePresentantionJSBlock { get; set; }
+
+        public string PointToPresentationJSBlock { get; set; }
 
         public string InteractivePresentantionJSBlock { get; set; }
 

@@ -107,11 +107,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web
             services.AddMemoryCache();
             services.AddSession();
 
-            services.AddMvc(mvc =>
-            {
-                mvc.EnableEndpointRouting = false;
-                mvc.ModelBinderProviders.Insert(0, new Framework.Guama.Core.Presentation.Web.Common.ModelBinding.AbstractsModelBinderProvider());
-            })
+            services.AddControllersWithViews()
             .AddViewLocalization(Microsoft.AspNetCore.Mvc.Razor.LanguageViewLocationExpanderFormat.Suffix)
             .AddDataAnnotationsLocalization(options =>
                 options.DataAnnotationLocalizerProvider = (type, factory) =>
@@ -119,6 +115,8 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web
                     return factory.Create(typeof(SharedResources));
                 }
             );
+
+            services.AddCors();
 
             services.AddDataProtection().PersistKeysToFileSystem(new System.IO.DirectoryInfo(System.IO.Path.Combine(env.ContentRootPath, "dpkeys")));
 
@@ -193,18 +191,23 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web
             }
 
             app.UseStaticFiles();
-
+            app.UseRouting();
+            app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
             app.UseAuthentication();
+            app.UseAuthorization();
             app.UseSession();
 
-            app.UseMvc(routes =>
+            app.UseEndpoints(endpoints =>
             {
-                routes.MapRoute("defaultAreaRoutes",
-                    template: "{area:exists}/{controller=home}/{action=index}/{id?}");
+                endpoints.MapControllerRoute(
+                    name: "areaRoute",
+                    pattern: "{area:exists}/{controller}/{action}",
+                    defaults: new { action = "Index" });
 
-                routes.MapRoute(
-                    name: "defaultRoutes",
-                    template: "{controller=home}/{action=index}/{id?}");
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller}/{action}/{id?}",
+                    defaults: new { controller = "Home", action = "Index" });
             });
         }
     }

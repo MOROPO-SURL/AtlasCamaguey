@@ -31,6 +31,12 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend
         public System.Guid? ImageId { get; set; }
         public string ImageExtension { get; set; }
 
+        [Display(Name = "PreLayersJSBlock")]
+        public string PreLayersJSBlock { get; set; }
+
+        [Display(Name = "PostLayersJSBlock")]
+        public string PostLayersJSBlock { get; set; }
+
         public Map Export()
         {
             throw new System.NotImplementedException();
@@ -45,6 +51,8 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend
             Priority = (uint)entity.Priority;
             ImageId = entity.ImageId;
             ImageExtension = entity.Image == null ? null : MimeTypes.MimeTypeMap.GetExtension(entity.Image.ContentType);
+            PreLayersJSBlock = entity.PreLayersJSBlock;
+            PostLayersJSBlock = entity.PostLayersJSBlock;
         }
 
         public void Mergue(Map entity)
@@ -53,6 +61,8 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend
             entity.Scale = Scale;
             entity.Description = Description;
             entity.Priority = (int)Priority;
+            entity.PreLayersJSBlock = PreLayersJSBlock;
+            entity.PostLayersJSBlock = PostLayersJSBlock;
         }
     }
 }

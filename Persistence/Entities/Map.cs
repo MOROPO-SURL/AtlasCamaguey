@@ -56,5 +56,9 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Persistence.Entities
         public List<MapAuthorBridge> AuthorBridges { get; set; }
 
         public List<Layer> Layers { get; set; }
+
+        public string PreLayersJSBlock { get; set; }
+
+        public string PostLayersJSBlock { get; set; }
     }
 }

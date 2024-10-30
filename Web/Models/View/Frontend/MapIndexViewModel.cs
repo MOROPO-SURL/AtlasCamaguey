@@ -2,6 +2,10 @@
 {
     public class MapIndexViewModel
     {
+        public string QgisServerBaseUri { get; set; }
+
+        public string QgisProjectsRootPath { get; set; }
+
         public MapDisplayViewModel Current { get; set; }
 
         public EpigraphDisplayViewModel Epigraph { get; set; }

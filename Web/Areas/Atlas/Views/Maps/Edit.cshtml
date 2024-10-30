@@ -142,10 +142,20 @@
                 }
                 </div>
             </div>
-            <div>
-                @Html.LabelFor(model => model.Description, new { @class = "control-label" }) <span class="small text-muted">(opcional)</span>
+            <div class="mb-3">
+                @Html.LabelFor(model => model.Description, new { @class = "control-label" })
                 @Html.TextAreaFor(model => model.Description, new { @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.Description, null, new { @class = "text-danger" })
+            </div>
+            <div class="mb-3">
+                @Html.LabelFor(model => model.PreLayersJSBlock, new { @class = "control-label" })
+                @Html.TextAreaFor(model => model.PreLayersJSBlock, 6, 1, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.PreLayersJSBlock, null, new { @class = "text-danger" })
+            </div>
+            <div>
+                @Html.LabelFor(model => model.PostLayersJSBlock, new { @class = "control-label" })
+                @Html.TextAreaFor(model => model.PostLayersJSBlock, 6, 1, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.PostLayersJSBlock, null, new { @class = "text-danger" })
             </div>
         </div>
         <div class="card-footer">

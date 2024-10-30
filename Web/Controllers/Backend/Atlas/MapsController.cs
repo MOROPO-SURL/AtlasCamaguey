@@ -9,6 +9,7 @@ using MOROPO.Framework.Guama.Core.Presentation.Models.View;
 using MOROPO.Framework.Guama.Core.Presentation.Web.Security.Attributes;
 using MOROPO.Framework.Guama.Media.Persistence.Entities;
 using MOROPO.Framework.Guama.Media.Presentation.Web.Common.Managers.Facade;
+using System.Collections.Generic;
 using System.IO.Compression;
 using System.Linq;
 
@@ -117,6 +118,10 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
             if (ModelState.IsValid)
             {
                 var mapId = System.IO.Path.GetFileNameWithoutExtension(model.MapArchive.FileName).ToLowerInvariant();
+                
+                var qgisProjectsRootPath = configuration["QGIS:ProjectsPath"];
+
+                var qgisProjectDirectoryInfo = new System.IO.DirectoryInfo(System.IO.Path.Combine(qgisProjectsRootPath, mapId.ToUpperInvariant()));
 
                 try
                 {
@@ -124,16 +129,26 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
                     {
                         model.MapArchive.CopyTo(memoryStream);
 
-                        var qgisProjectsPath = configuration["QGIS:ProjectsPath"];
-
                         using (var uploadZipArchive = new ZipArchive(memoryStream, ZipArchiveMode.Read, false, System.Text.CodePagesEncodingProvider.Instance.GetEncoding(System.Globalization.CultureInfo.CurrentCulture.TextInfo.OEMCodePage)))
                         {
-                            uploadZipArchive.ExtractToDirectory(qgisProjectsPath, true);
+                            uploadZipArchive.ExtractToDirectory(qgisProjectsRootPath, true);
+                        }
+
+                        if (!qgisProjectDirectoryInfo.Exists)
+                        {
+                            throw new Framework.Guama.Core.Presentation.Web.Frontend.InvalidModelException("MapArchive", "Estructura del empaqutado incorrecta!!!");
+                        }
+
+                        if (!System.IO.File.Exists(System.IO.Path.Combine(qgisProjectDirectoryInfo.FullName, string.Format("{0}.qgz", mapId.ToUpperInvariant()))))
+                        {
+                            throw new Framework.Guama.Core.Presentation.Web.Frontend.InvalidModelException("MapArchive", "Archivo de proyecto no encontrado!!!");
                         }
 
                         using (var httpClient = new System.Net.Http.HttpClient())
                         {
-                            var httpResponseMessage = await httpClient.GetAsync(string.Format("{0}?MAP={1}/{2}/{2}.qgz&SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities", configuration["QGIS:ServerBaseUri"], qgisProjectsPath.Replace("\\", "/"), mapId.ToUpperInvariant()));
+                            var uri = string.Format("{0}?MAP={1}/{2}.qgz&SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities", configuration["QGIS:ServerBaseUri"], qgisProjectDirectoryInfo.FullName.Replace("\\", "/"), mapId.ToUpperInvariant());
+
+                            var httpResponseMessage = await httpClient.GetAsync(uri);
 
                             if (httpResponseMessage.IsSuccessStatusCode)
                             {
@@ -187,29 +202,42 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
                                                 break;
 
                                             case "Layer":
-                                                var layer = new Layer
+                                                var childs = FindSubLayers(globalLayerNodeChild);
+
+                                                if (childs.Count > 0)
                                                 {
-                                                    Name = globalLayerNodeChild.ChildNodes[0].InnerText,
-                                                    Title = globalLayerNodeChild.ChildNodes[1].InnerText,
-                                                    CRS = globalLayerNodeChild.ChildNodes[2].InnerText,
-                                                    EPSG = globalLayerNodeChild.ChildNodes[3].InnerText,
-                                                };
+                                                    foreach (var item in childs)
+                                                    {
+                                                        map.Layers.Add(item.Value);
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    var layer = new Layer
+                                                    {
+                                                        Name = globalLayerNodeChild.ChildNodes[0].InnerText,
+                                                        Title = globalLayerNodeChild.ChildNodes[1].InnerText,
+                                                        Enabled = true,
+                                                        Priority = 1,
+                                                        CRS = globalLayerNodeChild.ChildNodes[2].InnerText,
+                                                        EPSG = globalLayerNodeChild.ChildNodes[3].InnerText,
+                                                    };
 
-                                                var layerBBOXNode = globalLayerNodeChild.ChildNodes[4];
-
-                                                layer.WestBoundLongitude = decimal.Parse(layerBBOXNode.ChildNodes[0].InnerText.Replace(".", ","));
-                                                layer.EastBoundLatitude = decimal.Parse(layerBBOXNode.ChildNodes[1].InnerText.Replace(".", ","));
-                                                layer.SouthBoundLatitude = decimal.Parse(layerBBOXNode.ChildNodes[2].InnerText.Replace(".", ","));
-                                                layer.NorthBoundLatitude = decimal.Parse(layerBBOXNode.ChildNodes[3].InnerText.Replace(".", ","));
-
-                                                map.Layers.Add(layer);
+                                                    map.Layers.Add(layer);
+                                                }
 
                                                 break;
                                         }                                        
                                     }
 
+                                    if (string.IsNullOrEmpty(map.Name)) map.Name = map.Id;
+
                                     Repository.Add(map, User.Identity.Name, true);
                                 }
+                            }
+                            else
+                            {
+                                throw new Framework.Guama.Core.Presentation.Web.Frontend.InvalidModelException("MapArchive", string.Format("Archivo de proyecto no interpretable por el servidor de QGIS. Código del error: {0}!!!", httpResponseMessage.StatusCode));
                             }
                         }
                     }
@@ -220,7 +248,23 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
                 }
                 catch (Framework.Guama.Core.Presentation.Web.Frontend.InvalidModelException e)
                 {
+                    logger.LogWarning(e, "Problemas cargando archivo de proyecto QGIS.");
+
                     ModelState.AddModelError(e.ModelKey, e.ErrorMessage);
+
+                    if (qgisProjectDirectoryInfo.Exists)
+                    {
+                        qgisProjectDirectoryInfo.Delete(true);
+                    }
+                }
+                catch (System.Exception e)
+                {
+                    logger.LogError(e, "Excepción no esperada cargando archivo de proyect QGIS!!!");
+
+                    if (qgisProjectDirectoryInfo.Exists)
+                    {
+                        qgisProjectDirectoryInfo.Delete(true);
+                    }
                 }
             }
 
@@ -309,7 +353,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         [Route("edit/{key}/layers/edit")]
         [ValidateAntiForgeryToken]
         [RequirePermissions(Constants.Permission.MapEditor)]
-        public IActionResult EditLayer(string key, System.Guid layerId, string stylePresentantionJSBlock, string interactivePresentantionJSBlock)
+        public IActionResult EditLayer(string key, System.Guid layerId, bool enabled, int priority, string stylePresentantionJSBlock, string pointToPresentationJSBlock, string interactivePresentantionJSBlock)
         {
             if (ModelState.IsValid)
             {
@@ -321,7 +365,10 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
                     {
                         var _entity = entity.Layers.First(b => b.Id == layerId);
 
+                        _entity.Enabled = enabled;
+                        _entity.Priority = priority;
                         _entity.StylePresentantionJSBlock = stylePresentantionJSBlock;
+                        _entity.PointToPresentationJSBlock = pointToPresentationJSBlock;
                         _entity.InteractivePresentantionJSBlock = interactivePresentantionJSBlock;
 
                         layerRepository.Update(_entity, User.Identity.Name);
@@ -1093,6 +1140,43 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         }
 
         #endregion
+
+        private List<KeyValuePair<System.Xml.XmlNode, Layer>> FindSubLayers(System.Xml.XmlNode layerGroupNode)
+        {
+            var result = new List<KeyValuePair<System.Xml.XmlNode, Layer>>();
+
+            var childNodesCount = layerGroupNode.ChildNodes.Count;
+
+            for (int i = 0; i < childNodesCount; i++)
+            {
+                var nodeChild = layerGroupNode.ChildNodes[i];
+
+                if (nodeChild.Name != "Layer") continue;
+
+                var layerChilds = FindSubLayers(nodeChild);
+
+                if (layerChilds.Count > 0)
+                {
+                    result.AddRange(layerChilds);
+                }
+                else
+                {
+                    var layer = new Layer
+                    {
+                        Name = nodeChild.ChildNodes[0].InnerText,
+                        Title = nodeChild.ChildNodes[1].InnerText,
+                        Enabled = true,
+                        Priority = 1,
+                        CRS = nodeChild.ChildNodes[2].InnerText,
+                        EPSG = nodeChild.ChildNodes[3].InnerText,
+                    };
+
+                    result.Add(new KeyValuePair<System.Xml.XmlNode, Layer>(nodeChild, layer));
+                }
+            }
+
+            return result;
+        }
     }
 }
 

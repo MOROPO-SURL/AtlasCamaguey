@@ -10,12 +10,14 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Frontend
         private readonly IEntityRepository<Map, string> mapRepository;
         private readonly IEntityRepository<Epigraph, System.Guid> epigraphRepository;
         private readonly IEntityRepository<Section, System.Guid> sectionRepository;
+        private readonly Microsoft.Extensions.Configuration.IConfiguration configuration;
 
-        public MapController(IEntityRepository<Section, System.Guid> sectionRepository, IEntityRepository<Epigraph, System.Guid> epigraphRepository, IEntityRepository<Map, string> mapRepository)
+        public MapController(Microsoft.Extensions.Configuration.IConfiguration configuration, IEntityRepository<Section, System.Guid> sectionRepository, IEntityRepository<Epigraph, System.Guid> epigraphRepository, IEntityRepository<Map, string> mapRepository)
         {
             this.mapRepository = mapRepository;
             this.epigraphRepository = epigraphRepository;
             this.sectionRepository = sectionRepository;
+            this.configuration = configuration;
         }
 
         [Microsoft.AspNetCore.Mvc.Route("{key}/epigraph/{epigraphId}")]
@@ -25,6 +27,8 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Frontend
 
             var model = new Models.View.Frontend.MapIndexViewModel
             {
+                QgisServerBaseUri = configuration["QGIS:ServerBaseUri"],
+                QgisProjectsRootPath = configuration["QGIS:ProjectsPath"],
                 Current = new Models.View.MapDisplayViewModel(),
                 Authors = map.AuthorBridges.Select(bridge =>
                 {

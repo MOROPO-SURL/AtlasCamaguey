@@ -94,10 +94,25 @@
                             {
                                 <div class="modal-body">
                                     @Html.Hidden("layerId", item.Id)
+                                    <div class="row">
+                                        <div class="col-sm-6 mb-3">
+                                            <div class="checkbox">
+                                                <label>
+                                                    @Html.CheckBox("enabled", item.Enabled) Habilitado
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6 mb-3">
+                                            @Html.Label("priority", "Prioridad", new { @class = "control-label" })
+                                            @Html.TextBox("priority", item.Priority, new { @class = "form-control mb-3" })
+                                        </div>
+                                    </div>
                                     @Html.Label("interactivePresentantionJSBlock", "Bloque Interactivo", new { @class = "control-label" })
                                     @Html.TextArea("interactivePresentantionJSBlock", item.InteractivePresentantionJSBlock, 12, 0, new { @class = "form-control mb-3" })
                                     @Html.Label("stylePresentantionJSBlock", "Bloque de Estilos", new { @class = "control-label" })
-                                    @Html.TextArea("stylePresentantionJSBlock", item.StylePresentantionJSBlock, 12, 0, new { @class = "form-control" })
+                                    @Html.TextArea("stylePresentantionJSBlock", item.StylePresentantionJSBlock, 12, 0, new { @class = "form-control mb-3" })
+                                    @Html.Label("pointToPresentationJSBlock", "Bloque de Marcación", new { @class = "control-label" })
+                                    @Html.TextArea("pointToPresentationJSBlock", item.PointToPresentationJSBlock, 12, 0, new { @class = "form-control" })
                                 </div>
                                 <div class="modal-footer">
                                     <button type="submit" class="btn btn-primary">Modificar</button>
