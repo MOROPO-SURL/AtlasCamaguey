@@ -2,6 +2,8 @@
 {
     public class HomeIndexViewModel
     {
+        public string LogotypeContext { get; set; }
+
         public SectionDisplayViewModel[] Sections { get; set; }
     }
 }

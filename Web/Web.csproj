@@ -31,11 +31,6 @@
 		<None Remove="logs\**" />
 		<None Remove="Migrations\**" />
 		<None Remove="wwwroot\media\**" />
-		<None Remove="Controllers\Backend\Complements\" />
-		<None Remove="Components\" />
-		<None Remove="Views\Shared\Components\" />
-		<None Remove="Views\Shared\Components\BackendNavbar\" />
-		<None Remove="Resources\" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -59,12 +54,5 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\Persistence\Persistence.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="wwwroot\lib\ckeditor\" />
-	  <Folder Include="Views\Shared\Components\BackendNavbar\" />
-	  <Folder Include="Resources\" />
-	  <Folder Include="wwwroot\lib\leaflet\plugins\measure\" />
 	</ItemGroup>
 </Project>
