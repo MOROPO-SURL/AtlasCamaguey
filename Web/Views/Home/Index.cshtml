@@ -35,12 +35,12 @@
     <div class="col-md-6 col-sm-12">
         <img class="float-left w-25" src="~/img/identity/banner_complement_left.svg" />
         <img class="float-right w-25" src="~/img/identity/banner_complement_right_short.svg" />
-        <table class="table table-borderless table-sm mb-0 w-auto h-100">
+        <table class="table table-borderless table-sm mb-0 w-50 h-100">
             <tbody>
                 <tr>
                     <td class="text-center px-0 py-3" style="vertical-align: middle;">
                         <img src="~/img/identity/AWEC_Color_Horizontal_Fit.svg" />
-                        <p class="lead text-muted text-wrap mt-3 mb-0">@Model.LogotypeContext</p>
+                        <p class="lead text-muted text-wrap mt-3 mb-0">@Html.Raw(Model.LogotypeContext)</p>
                     </td>
                 </tr>
             </tbody>
