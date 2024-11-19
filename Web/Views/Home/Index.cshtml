@@ -9,6 +9,11 @@
 @section styles
 {
     <style type="text/css">
+        #sections-block-back .row > div[class*='col-'] {
+          display: flex;
+          flex:1 0 auto;
+        }
+
         .bg-img {
             background-repeat: no-repeat;
             background-color: black;
@@ -70,20 +75,21 @@
     </div>
 </div>
 
-<div class="bg-light" style="padding: 2.0rem!important; padding-bottom: 0!important;">
+<div id="sections-block" class="bg-light" style="padding: 2.0rem!important; padding-bottom: 0!important;">
     <h4 class="display-4 mb-0">Secciones</h4>
     <small class="text-muted lead">espacios temáticos que agrupan epígrafes, mapas y contenidos complementarios</small>
-    <div class="row mt-4">
+    <div class="row row-cols-1 row-cols-lg-4 row-cols-md-3 row-cols-sm-2 mt-4">
         @foreach (var item in Model.Sections)
         {
-            <div class="col-lg-3 col-md-4 col-sm-6">
-                <div class="card shadow-sm" style="margin-bottom: 2.0rem!important;">
+            <div class="col" style="padding-bottom: 2.0rem!important;">
+                <div class="card shadow-sm h-100">
                     <div class="card-img-top bg-img embed-responsive embed-responsive-4by3" role="img" style="background-image: url('/media/images/@item.ImageId.@item.ImageExtension');">
                         <img class="section-img-overlay" src="~/img/identity/ovelray.png" />    
                     </div>
-
-                    <div class="card-body text-center">
+                    <div class="card-body text-center pb-0">
                         <h5 class="card-title">@item.Name</h5>
+                    </div>
+                    <div class="card-footer text-center bg-white border-top-0 p-4" style="padding-top: 0!important;">
                         <a class="btn btn-outline-primary" asp-action="index" asp-controller="section" asp-route-key="@item.Id">Descubrir</a>
                     </div>
                 </div>
