@@ -2,7 +2,7 @@
 
 namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Persistence.ORM.EF.Repositories
 {
-    public class EpigraphRepository : Framework.Guama.Core.Persistence.ORM.EF.Repositories.AbstractEntityRepository<Camaguey.Persistence.Entities.Epigraph, System.Guid>
+    public class EpigraphRepository : Framework.Guama.Core.Persistence.ORM.EF.Repositories.Contract.AbstractEntityRepository<Camaguey.Persistence.Entities.Epigraph, System.Guid>
     {
         public EpigraphRepository(DbContext dbContext) : base(dbContext)
         {
@@ -18,11 +18,6 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Persistence.ORM.EF.Repositories
                 .Include(entity => entity.ImageBridges).ThenInclude(bridge => bridge.Stern)
                 .Include(entity => entity.VideoBridges).ThenInclude(bridge => bridge.Stern)
                 .Include(entity => entity.DocumentBridges).ThenInclude(bridge => bridge.Stern);
-        }
-
-        public override System.Func<Camaguey.Persistence.Entities.Epigraph, object> GetPagingOrderSelector()
-        {
-            return entity => entity.Name;
         }
     }
 }

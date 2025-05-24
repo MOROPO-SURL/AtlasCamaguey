@@ -11,7 +11,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Content
     [Microsoft.AspNetCore.Authorization.Authorize]
     [RequirePermissions(Framework.Guama.Core.Security.Presentation.Constants.Permissions.ShellManager)]
     [Area("content")]
-    public class RichTextBlocksController : Framework.Guama.Core.Presentation.Web.Backend.Controllers.AbstractEntityManagementController<RichTextBlock, RichTextBlockKind, RichTextBlockInputViewModel, RichTextBlockDisplayViewModel>
+    public class RichTextBlocksController : Framework.Guama.Core.Presentation.Web.Backend.Controllers.Contract.AbstractEntityManagementController<RichTextBlock, RichTextBlockKind, RichTextBlockInputViewModel, RichTextBlockDisplayViewModel>
     {
         public RichTextBlocksController(Framework.Guama.Core.Persistence.Repositories.IEntityRepository<RichTextBlock, RichTextBlockKind> repository, Microsoft.Extensions.Localization.IStringLocalizer<RichTextBlocksController> localizer, ILogger<RichTextBlocksController> logger) : base(repository, localizer, logger)
         {

@@ -199,7 +199,7 @@
                     @foreach (var item in subList)
                     {
                         <div class="col-sm-4" style="text-align: center; padding-bottom: 15px; padding-top: 15px;">
-                            @if (User.IsAuthorized(item.Role))
+                            @if (User.IsAuthorized(item.Role, Context))
                             {
                                 <a href="@Url.Action(item.Action, item.Controller, new { item.Area })">
                                     @item.ToIconographyHtmlString()
@@ -247,7 +247,7 @@
                             @foreach (var item in subList)
                             {
                                 <div class="col-sm-4" style="text-align: center; padding-bottom: 15px; padding-top: 15px;">
-                                    @if (User.IsAuthorized(item.Role))
+                                    @if (User.IsAuthorized(item.Role, Context))
                                     {
                                     <a href="@Url.Action(item.Action, item.Controller, new { item.Area })">
                                         @item.ToIconographyHtmlString()

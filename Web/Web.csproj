@@ -1,14 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
 	<PropertyGroup>
-		<TargetFramework>net6.0</TargetFramework>
+		<TargetFramework>net8.0</TargetFramework>
+		<Nullable>disable</Nullable>
+		<ImplicitUsings>disable</ImplicitUsings>
 		<AssemblyName>MOROPO.CIMAC.Atlas.Camaguey.Web</AssemblyName>
 		<RootNamespace>MOROPO.CIMAC.Atlas.Camaguey.Web</RootNamespace>
 		<Product>AtlasCamaguey</Product>
 		<Authors>MOROPO DotNet DevTeam</Authors>
 		<Company>MOROPO S.U.R.L.</Company>
-		<Copyright>© CIMAC - MOROPO 2024, Todos los derechos reservados.</Copyright>
-		<Version>0.10.1</Version>
+		<Copyright>© CIMAC - MOROPO 2025, Todos los derechos reservados.</Copyright>
+		<Version>0.11.0</Version>
 		<PackageProjectUrl>https://www.moropo.cu/</PackageProjectUrl>
 	</PropertyGroup>
 
@@ -34,10 +36,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="GuamaFramework.Core.Presentation.Web.API" Version="6.0.0.16" />
-		<PackageReference Include="GuamaFramework.Core.Security.Common.Presentation.Web.Frontend" Version="6.0.0.15" />
-		<PackageReference Include="GuamaFramework.Media.Presentation.Web.Common" Version="6.0.0.15" />
-		<PackageReference Include="GuamaFramework.Security.Personal.Presentation.Web.Backend" Version="6.0.0.15" />
+		<PackageReference Include="GuamaFramework.Core.Presentation.Web.API" Version="6.0.1" />
+		<PackageReference Include="GuamaFramework.Core.Security.Common.Presentation.Web.Frontend" Version="6.0.1" />
+		<PackageReference Include="GuamaFramework.Media.Presentation.Web.Common" Version="6.0.1" />
+		<PackageReference Include="GuamaFramework.Security.Personal.Presentation.Web.Backend" Version="6.0.1" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.10">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

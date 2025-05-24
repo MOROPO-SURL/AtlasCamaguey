@@ -2,7 +2,7 @@
 
 namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Persistence.ORM.EF.Configurators
 {
-    public class EpigraphDocumentBridgeEntityTypeConfigurator : Framework.Guama.Core.Persistence.ORM.EF.Configurators.AbstractBridgeEntityTypeConfigurator<EpigraphDocumentBridge, Epigraph, System.Guid, Framework.Guama.Media.Persistence.Entities.Document, System.Guid>
+    public class EpigraphDocumentBridgeEntityTypeConfigurator : Framework.Guama.Core.Persistence.ORM.EF.Configurators.Contract.AbstractBridgeEntityTypeConfigurator<EpigraphDocumentBridge, Epigraph, System.Guid, Framework.Guama.Media.Persistence.Entities.Document, System.Guid>
     {
         public EpigraphDocumentBridgeEntityTypeConfigurator()
         {

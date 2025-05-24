@@ -78,7 +78,7 @@
                 {
                     var isCurrent = Context.Request.Path.Value.StartsWith("/management/" + item.Area + "/" + item.Controller) || (string.IsNullOrEmpty(item.Area) && Context.Request.Path.Value.StartsWith("/management/" + item.Controller));
 
-                    if (User.IsAuthorized(item.Role))
+                    if (User.IsAuthorized(item.Role, Context))
                     {
                         if (isCurrent)
                         {

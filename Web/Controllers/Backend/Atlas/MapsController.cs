@@ -18,7 +18,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
     [Microsoft.AspNetCore.Authorization.Authorize]
     [RequirePermissions(Framework.Guama.Core.Security.Presentation.Constants.Permissions.ShellManager)]
     [Area("atlas")]
-    public class MapsController : Framework.Guama.Core.Presentation.Web.Backend.Controllers.AbstractEntityManagementController<Map, string, MapInputViewModel, MapDisplayViewModel>
+    public class MapsController : Framework.Guama.Core.Presentation.Web.Backend.Controllers.Contract.AbstractEntityManagementController<Map, string, MapInputViewModel, MapDisplayViewModel>
     {
         private readonly IEntityRepository<Image, System.Guid> imageRepository;
         private readonly IEntityRepository<Document, System.Guid> documentRepository;
@@ -49,6 +49,11 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         public IActionResult Index()
         {
             return View();
+        }
+
+        protected override System.Func<Map, object> GetOrderSelector()
+        {
+            return entity => entity.Name;
         }
 
         public override IActionResult Create()

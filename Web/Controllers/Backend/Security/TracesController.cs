@@ -8,7 +8,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Security
     [Microsoft.AspNetCore.Authorization.Authorize]
     [RequirePermissions(Framework.Guama.Core.Security.Presentation.Constants.Permissions.ShellManager)]
     [Area("security")]
-    public class TracesController : Framework.Guama.Core.Presentation.Web.Backend.Controllers.AbstractEntityManagementFilteredController<Trace, long, TraceInputViewModel, TraceDisplayViewModel, Models.View.Backend.Filter.TracesFilterViewModel>
+    public class TracesController : Framework.Guama.Core.Presentation.Web.Backend.Controllers.Contract.AbstractEntityManagementFilteredController<Trace, long, TraceInputViewModel, TraceDisplayViewModel, Models.View.Backend.Filter.TracesFilterViewModel>
     {
         public TracesController(Framework.Guama.Core.Persistence.Repositories.IEntityRepository<Trace, long> repository, Microsoft.Extensions.Localization.IStringLocalizer<TracesController> localizer, Microsoft.Extensions.Logging.ILogger<TracesController> logger) : base(repository, localizer, logger)
         {

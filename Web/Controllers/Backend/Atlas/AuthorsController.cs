@@ -15,7 +15,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
     [Microsoft.AspNetCore.Authorization.Authorize]
     [RequirePermissions(Framework.Guama.Core.Security.Presentation.Constants.Permissions.ShellManager)]
     [Area("atlas")]
-    public class AuthorsController : Framework.Guama.Core.Presentation.Web.Backend.Controllers.AbstractEntityManagementController<Author, System.Guid, AuthorInputViewModel, AuthorDisplayViewModel>
+    public class AuthorsController : Framework.Guama.Core.Presentation.Web.Backend.Controllers.Contract.AbstractEntityManagementController<Author, System.Guid, AuthorInputViewModel, AuthorDisplayViewModel>
     {
         private readonly IEntityRepository<Institution, System.Guid> institutionRepository;
         private readonly IEntityRepository<Image, System.Guid> imageRepository;
@@ -33,6 +33,10 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         [RequirePermissions(Constants.Permission.AuthorViewer)]
         public IActionResult Index() => View();
 
+        protected override System.Func<Author, object> GetOrderSelector()
+        {
+            return entity => entity.Identity.Name;
+        }
 
         [RequirePermissions(Constants.Permission.AuthorCreator)]
         public override IActionResult Create() => base.Create();

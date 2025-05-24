@@ -3,15 +3,10 @@ using MOROPO.CIMAC.Atlas.Camaguey.Persistence.Entities;
 
 namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Persistence.ORM.EF.Repositories
 {
-    public class InstitutionRepository : Framework.Guama.Core.Persistence.ORM.EF.Repositories.AbstractEntityRepository<Institution, System.Guid>
+    public class InstitutionRepository : Framework.Guama.Core.Persistence.ORM.EF.Repositories.Contract.AbstractEntityRepository<Institution, System.Guid>
     {
         public InstitutionRepository(DbContext dbContext) : base(dbContext)
         {
-        }
-
-        public override System.Func<Institution, object> GetPagingOrderSelector()
-        {
-            return entity => entity.Identity.Name;
         }
 
         protected override System.Linq.IQueryable<Institution> GetQueryableDbSet()

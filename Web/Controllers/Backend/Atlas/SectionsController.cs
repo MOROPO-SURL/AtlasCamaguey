@@ -5,7 +5,6 @@ using MOROPO.CIMAC.Atlas.Camaguey.Persistence.Entities;
 using MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View;
 using MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend;
 using MOROPO.Framework.Guama.Core.Persistence.Repositories;
-using MOROPO.Framework.Guama.Core.Presentation.Web.Backend.Controllers;
 using MOROPO.Framework.Guama.Core.Presentation.Web.Security.Attributes;
 using MOROPO.Framework.Guama.Media.Persistence.Entities;
 using MOROPO.Framework.Guama.Media.Presentation.Web.Common.Managers.Facade;
@@ -15,7 +14,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
     [Microsoft.AspNetCore.Authorization.Authorize]
     [RequirePermissions(Framework.Guama.Core.Security.Presentation.Constants.Permissions.ShellManager)]
     [Area("atlas")]
-    public class SectionsController : AbstractEntityManagementController<Section, System.Guid, SectionInputViewModel, SectionDisplayViewModel>
+    public class SectionsController : Framework.Guama.Core.Presentation.Web.Backend.Controllers.Contract.AbstractEntityManagementController<Section, System.Guid, SectionInputViewModel, SectionDisplayViewModel>
     {
         private readonly IEntityRepository<Image, System.Guid> imageRepository;
         private readonly IImageFileManagerFacade imageFileManager;
@@ -30,6 +29,11 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         public IActionResult Index()
         {
             return View();
+        }
+
+        protected override System.Func<Section, object> GetOrderSelector()
+        {
+            return entity => entity.Name;
         }
 
         [RequirePermissions(Constants.Permission.SectionCreator)]

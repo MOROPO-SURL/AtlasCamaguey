@@ -15,7 +15,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
     [Microsoft.AspNetCore.Authorization.Authorize]
     [RequirePermissions(Framework.Guama.Core.Security.Presentation.Constants.Permissions.ShellManager)]
     [Area("atlas")]
-    public class EpigraphsController : Framework.Guama.Core.Presentation.Web.Backend.Controllers.AbstractEntityManagementController<Epigraph, System.Guid, EpigraphInputViewModel, EpigraphDisplayViewModel>
+    public class EpigraphsController : Framework.Guama.Core.Presentation.Web.Backend.Controllers.Contract.AbstractEntityManagementController<Epigraph, System.Guid, EpigraphInputViewModel, EpigraphDisplayViewModel>
     {
         private readonly IEntityRepository<Section, System.Guid> sectionRepository;
         private readonly IEntityRepository<Image, System.Guid> imageRepository;
@@ -44,6 +44,11 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         public IActionResult Index()
         {
             return View();
+        }
+
+        protected override System.Func<Epigraph, object> GetOrderSelector()
+        {
+            return entity => entity.Name;
         }
 
         [RequirePermissions(Constants.Permission.EpigraphCreator)]

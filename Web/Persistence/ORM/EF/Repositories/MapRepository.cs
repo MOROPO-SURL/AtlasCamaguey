@@ -2,7 +2,7 @@
 
 namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Persistence.ORM.EF.Repositories
 {
-    public class MapRepository : Framework.Guama.Core.Persistence.ORM.EF.Repositories.AbstractEntityRepository<Camaguey.Persistence.Entities.Map, string>
+    public class MapRepository : Framework.Guama.Core.Persistence.ORM.EF.Repositories.Contract.AbstractEntityRepository<Camaguey.Persistence.Entities.Map, string>
     {
         public MapRepository(DbContext dbContext) : base(dbContext)
         {
@@ -19,11 +19,6 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Persistence.ORM.EF.Repositories
                 .Include(entity => entity.ImageBridges).ThenInclude(bridge => bridge.Stern)
                 .Include(entity => entity.VideoBridges).ThenInclude(bridge => bridge.Stern)
                 .Include(entity => entity.DocumentBridges).ThenInclude(bridge => bridge.Stern);
-        }
-
-        public override System.Func<Camaguey.Persistence.Entities.Map, object> GetPagingOrderSelector()
-        {
-            return entity => entity.Name;
         }
     }
 }

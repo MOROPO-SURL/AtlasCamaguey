@@ -78,8 +78,6 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web
             services.AddSingleton<Framework.Guama.Core.Presentation.Web.Common.ModelBinding.Contract.IConcretModelBindHelper, Helpers.ConcretModelBindHelper>();
 
             services.AddScoped<Framework.Guama.Core.Presentation.Web.Security.Managers.Facade.IUserProfileManagerFacade, Managers.UserProfileManager>();
-
-            services.AddSingleton<Framework.Guama.Core.Presentation.Web.Security.Providers.Facade.IRoleIdProviderFacade>(Framework.Guama.Core.Security.Common.Presentation.Web.Frontend.Providers.RoleMemoryProvider.Instance);
             #endregion
 
             #region Globalization configuration
@@ -185,9 +183,11 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web
 
             var atStartUpRoles = dbContext.Set<Framework.Guama.Core.Security.Common.Persistence.Entities.Role>().Include(e => e.PermissionBridges).ThenInclude(b => b.Stern).ToArray();
 
+            var roleMemoryManager = app.ApplicationServices.GetService<Framework.Guama.Core.Presentation.Web.Security.Managers.Facade.IRoleMemoryManagerFacade>();
+
             foreach (var item in atStartUpRoles)
             {
-                Framework.Guama.Core.Security.Common.Presentation.Web.Frontend.Providers.RoleMemoryProvider.Instance.Roles.Add(item);
+                roleMemoryManager.RememberRole(item);
             }
 
             app.UseStaticFiles();

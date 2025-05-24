@@ -15,7 +15,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Complements
     [Microsoft.AspNetCore.Authorization.Authorize]
     [RequirePermissions(Framework.Guama.Core.Security.Presentation.Constants.Permissions.ShellManager)]
     [Area("complements")]
-    public class InstitutionsController : Framework.Guama.Core.Presentation.Web.Backend.Controllers.AbstractEntityManagementController<Institution, System.Guid, InstitutionInputViewModel, InstitutionDisplayViewModel>
+    public class InstitutionsController : Framework.Guama.Core.Presentation.Web.Backend.Controllers.Contract.AbstractEntityManagementController<Institution, System.Guid, InstitutionInputViewModel, InstitutionDisplayViewModel>
     {
         private readonly IImageFileManagerFacade imageFileManager;
         private readonly IEntityRepository<Image, System.Guid> imageRepository;
@@ -36,6 +36,11 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Complements
 
         [RequirePermissions(Constants.Permission.InstitutionViewer)]
         public IActionResult Index() => View();
+
+        protected override System.Func<Institution, object> GetOrderSelector()
+        {
+            return entity => entity.Identity.Name;
+        }
 
 
         [RequirePermissions(Constants.Permission.InstitutionCreator)]
