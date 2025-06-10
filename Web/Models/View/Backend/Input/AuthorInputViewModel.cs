@@ -39,7 +39,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend.Input
 
         public Author Export()
         {
-            var entity = new Author();
+            var entity = new Author { Identity = new Framework.Guama.Identity.Persistence.Entities.PersonIdentity() };
 
             Mergue(entity);
 
