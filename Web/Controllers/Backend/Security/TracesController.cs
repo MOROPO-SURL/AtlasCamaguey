@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend;
+using MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend.Display;
+using MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend.Input;
 using MOROPO.Framework.Guama.Core.Persistence.ORM.EF.Entities;
 using MOROPO.Framework.Guama.Core.Presentation.Web.Security.Attributes;
 

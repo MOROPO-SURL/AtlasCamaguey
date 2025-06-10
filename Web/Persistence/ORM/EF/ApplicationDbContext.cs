@@ -77,7 +77,8 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Persistence.ORM.EF
         public DbSet<EpigraphImageBridge> EpigraphImageBridges { get; set; }
         public DbSet<EpigraphVideoBridge> EpigraphVideoBridges { get; set; }
         public DbSet<EpigraphDocumentBridge> EpigraphDocumentBridges { get; set; }
-        public DbSet<EpigraphMapBridge> EpigraphMapBridges { get; set; }
         public DbSet<RichTextBlock> RichTextBlocks { get; set; }
+        public DbSet<Theme> Themes { get; set; }
+        public DbSet<ThemeMapBridge> ThemeMapBridges { get; set; }
     }
 }

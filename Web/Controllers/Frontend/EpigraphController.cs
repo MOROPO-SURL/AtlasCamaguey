@@ -9,11 +9,13 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Frontend
     {
         private readonly IEntityRepository<Epigraph, System.Guid> epigraphRepository;
         private readonly IEntityRepository<Section, System.Guid> sectionRepository;
+        private readonly IEntityRepository<Theme, System.Guid> themeRepository;
 
-        public EpigraphController(IEntityRepository<Section, System.Guid> sectionRepository, IEntityRepository<Epigraph, System.Guid> epigraphRepository)
+        public EpigraphController(IEntityRepository<Theme, System.Guid> themeRepository, IEntityRepository<Section, System.Guid> sectionRepository, IEntityRepository<Epigraph, System.Guid> epigraphRepository)
         {
             this.epigraphRepository = epigraphRepository;
             this.sectionRepository = sectionRepository;
+            this.themeRepository = themeRepository;
         }
 
         [Microsoft.AspNetCore.Mvc.Route("{key}")]
@@ -24,11 +26,20 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Frontend
             var model = new Models.View.Frontend.EpigraphIndexViewModel
             {
                 Current = new Models.View.EpigraphDisplayViewModel(),
-                Maps = epigraph.MapBridges.Select(bridge =>
+                Themes = themeRepository.FindBy(entity => entity.EpigraphId == epigraph.Id).ToArray().Select(entity =>
                 {
-                    var _model = new Models.View.MapDisplayViewModel();
+                    var _model = new Models.View.ThemeDisplayViewModel();
 
-                    _model.Import(bridge.Stern);
+                    _model.Import(entity);
+
+                    _model.Maps = entity.MapBridges.Select(bridge =>
+                    {
+                        var _model = new Models.View.MapDisplayViewModel();
+
+                        _model.Import(bridge.Stern);
+
+                        return _model;
+                    }).OrderBy(_model => _model.Priority).ToArray();
 
                     return _model;
                 }).OrderBy(_model => _model.Priority).ToArray(),
@@ -86,7 +97,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Frontend
 
             model.Current.Import(epigraph);
 
-            var section = sectionRepository.Get(epigraph.SectionId.Value);
+            var section = sectionRepository.Get(epigraph.SectionId);
 
             model.Section.Import(section);
             model.Section.Epigraphs = epigraphRepository.FindBy(entity => entity.SectionId == section.Id).OrderBy(entity => entity.Priority).ToArray().Select(entity =>

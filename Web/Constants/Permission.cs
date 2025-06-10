@@ -83,5 +83,17 @@
         public const string RichTextBlockEditor = "richtextblock-editor";
 
         #endregion
+
+        #region Theme
+
+        public const string ThemeViewer = "theme-viewer";
+
+        public const string ThemeCreator = "theme-creator";
+
+        public const string ThemeEditor = "theme-editor";
+
+        public const string ThemeRemover = "theme-remover";
+
+        #endregion
     }
 }

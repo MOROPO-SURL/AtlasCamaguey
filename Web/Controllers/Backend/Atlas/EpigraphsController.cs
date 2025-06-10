@@ -2,7 +2,8 @@
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using MOROPO.CIMAC.Atlas.Camaguey.Persistence.Entities;
-using MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend;
+using MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend.Display;
+using MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend.Input;
 using MOROPO.Framework.Guama.Core.Persistence.Repositories;
 using MOROPO.Framework.Guama.Core.Presentation.Models.View;
 using MOROPO.Framework.Guama.Core.Presentation.Web.Security.Attributes;
@@ -22,19 +23,17 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         private readonly IEntityRepository<Document, System.Guid> documentRepository;
         private readonly IEntityRepository<Video, System.Guid> videoRepository;
         private readonly IEntityRepository<KeyWord, System.Guid> keyWordRepository;
-        private readonly IEntityRepository<Map, string> mapRepository;
         private readonly IImageFileManagerFacade imageFileManager;
         private readonly IDocumentFileManagerFacade documentFileManager;
         private readonly IVideoFileManagerFacade videoFileManager;
 
-        public EpigraphsController(IVideoFileManagerFacade videoFileManager, IDocumentFileManagerFacade documentFileManager, IImageFileManagerFacade imageFileManager, IEntityRepository<Map, string> mapRepository, IEntityRepository<KeyWord, System.Guid> keyWordRepository, IEntityRepository<Video, System.Guid> videoRepository, IEntityRepository<Document, System.Guid> documentRepository, IEntityRepository<Image, System.Guid> imageRepository, IEntityRepository<Section, System.Guid> sectionRepository, IEntityRepository<Epigraph, System.Guid> repository, IStringLocalizer<EpigraphsController> localizer, ILogger<EpigraphsController> logger) : base(repository, localizer, logger)
+        public EpigraphsController(IVideoFileManagerFacade videoFileManager, IDocumentFileManagerFacade documentFileManager, IImageFileManagerFacade imageFileManager, IEntityRepository<KeyWord, System.Guid> keyWordRepository, IEntityRepository<Video, System.Guid> videoRepository, IEntityRepository<Document, System.Guid> documentRepository, IEntityRepository<Image, System.Guid> imageRepository, IEntityRepository<Section, System.Guid> sectionRepository, IEntityRepository<Epigraph, System.Guid> repository, IStringLocalizer<EpigraphsController> localizer, ILogger<EpigraphsController> logger) : base(repository, localizer, logger)
         {
             this.sectionRepository = sectionRepository;
             this.imageRepository = imageRepository;
             this.documentRepository = documentRepository;
             this.videoRepository = videoRepository;
             this.keyWordRepository = keyWordRepository;
-            this.mapRepository = mapRepository;
             this.imageFileManager = imageFileManager;
             this.documentFileManager = documentFileManager;
             this.videoFileManager = videoFileManager;
@@ -233,126 +232,6 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
             }).ToArray();
         }
 
-        #region Maps
-
-        [HttpGet]
-        [Route("edit/{key}/maps")]
-        [RequirePermissions(Constants.Permission.EpigraphEditor)]
-        public ActionResult EditMaps(System.Guid key)
-        {
-            var entity = Repository.Get(key);
-
-            var releatedMaps = entity.MapBridges.Select(bridge => bridge.Stern).ToArray();
-
-            var model = new EpigraphMapsManagementViewModel
-            {
-                Epigraph = new EpigraphDisplayViewModel(),
-                Maps = entity.MapBridges.Select(bridge =>
-                {
-                    var result = new Models.View.MapDisplayViewModel();
-
-                    result.Import(bridge.Stern);
-
-                    return result;
-                }).ToArray(),
-                AvailableMapSelectListItems = mapRepository.GetAll().ToArray().Except(releatedMaps).Select(entity => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
-                {
-                    Value = entity.Id.ToString(),
-                    Text = entity.Name
-                }).ToArray()
-            };
-
-            model.Epigraph.Import(entity);
-
-            return View(model);
-        }
-
-        [HttpPost]
-        [Route("edit/{key}/maps/add")]
-        [ValidateAntiForgeryToken]
-        [RequirePermissions(Constants.Permission.EpigraphEditor)]
-        public IActionResult AddMap(System.Guid key, string mapId)
-        {
-            try
-            {
-                var entity = Repository.Get(key);
-
-                if (mapId != default)
-                {
-                    try
-                    {
-                        entity.MapBridges.Add(new EpigraphMapBridge
-                        {
-                            ProwId = entity.Id,
-                            SternId = mapId
-                        });
-
-                        Repository.Update(entity, User.Identity.Name);
-
-                        SetDefaultNotification(NotificationType.Success, GetCreationSuccessMessage());
-
-                        return RedirectToAction("editmaps", new { key = entity.Id });
-                    }
-                    catch (Framework.Guama.Core.Presentation.Web.Frontend.InvalidModelException e)
-                    {
-                        ModelState.AddModelError(e.ModelKey, e.ErrorMessage);
-                    }
-                }
-
-                SetDefaultNotification(NotificationType.Danger, GetInvalidMessage());
-
-                return RedirectToAction("editmaps", new { key = entity.Id });
-            }
-            catch (System.Exception e)
-            {
-                logger.LogError(e.InnerException, e.Message);
-            }
-
-            SetDefaultNotification(NotificationType.Danger, GetNotFoundMessage());
-
-            return GetDefaultActionResult();
-        }
-
-        [HttpPost]
-        [Route("edit/{key}/maps/delete")]
-        [ValidateAntiForgeryToken]
-        [RequirePermissions(Constants.Permission.EpigraphEditor)]
-        public IActionResult DeleteMap(System.Guid key, string mapId)
-        {
-            try
-            {
-                var entity = Repository.Get(key);
-
-                var bridge = entity.MapBridges.First(b => b.SternId == mapId);
-
-                entity.MapBridges.Remove(bridge);
-
-                Repository.Update(entity, User.Identity.Name);
-
-                SetDefaultNotification(NotificationType.Success, GetDeletionSuccessMessage());
-
-                return RedirectToAction("editmaps", new { key = entity.Id });
-            }
-            catch (Microsoft.EntityFrameworkCore.DbUpdateException e)
-            {
-                logger.LogError(e.InnerException, e.Message);
-
-                SetDefaultNotification(NotificationType.Warning, GetOnDeletionDependecyConstrainErrorMessage());
-
-                return RedirectToAction("editmaps", new { key });
-            }
-            catch (System.Exception e)
-            {
-                logger.LogError(e.InnerException, e.Message);
-            }
-
-            SetDefaultNotification(NotificationType.Danger, GetNotFoundMessage());
-
-            return GetSuccessDeleteActionResult();
-        }
-
-        #endregion
-
         #region KeyWords
 
         [HttpGet]
@@ -364,7 +243,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
 
             var releatedKeyWords = entity.KeyWordBridges.Select(bridge => bridge.Stern).ToArray();
 
-            var model = new EpigraphKeyWordsManagementViewModel
+            var model = new Models.View.Backend.Management.EpigraphKeyWordsManagementViewModel
             {
                 Epigraph = new EpigraphDisplayViewModel(),
                 KeyWords = entity.KeyWordBridges.Select(bridge =>
@@ -482,7 +361,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         {
             var entity = Repository.Get(key);
 
-            var model = new EpigraphImagesManagementViewModel
+            var model = new Models.View.Backend.Management.EpigraphImagesManagementViewModel
             {
                 Epigraph = new EpigraphDisplayViewModel(),
                 Images = entity.ImageBridges.Select(bridge =>
@@ -614,7 +493,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         {
             var entity = Repository.Get(key);
 
-            var model = new EpigraphVideosManagementViewModel
+            var model = new Models.View.Backend.Management.EpigraphVideosManagementViewModel
             {
                 Epigraph = new EpigraphDisplayViewModel(),
                 Videos = entity.VideoBridges.Select(bridge =>
@@ -794,7 +673,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         {
             var entity = Repository.Get(key);
 
-            var model = new EpigraphDocumentsManagementViewModel
+            var model = new Models.View.Backend.Management.EpigraphDocumentsManagementViewModel
             {
                 Epigraph = new EpigraphDisplayViewModel(),
                 Documents = entity.DocumentBridges.Select(item =>

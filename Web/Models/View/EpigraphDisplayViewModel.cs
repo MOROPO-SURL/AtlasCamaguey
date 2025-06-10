@@ -15,6 +15,8 @@
 
         public Camaguey.Persistence.Enumerations.EpigraphLayout Layout { get; set; }
 
+        public ThemeDisplayViewModel[] Themes { get; set; }
+
         public virtual void Import(Camaguey.Persistence.Entities.Epigraph entity)
         {
             Id = entity.Id;

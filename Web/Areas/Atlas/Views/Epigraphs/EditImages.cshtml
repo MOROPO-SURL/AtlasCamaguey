@@ -1,4 +1,4 @@
-﻿@model MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend.EpigraphImagesManagementViewModel
+﻿@model MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend.Management.EpigraphImagesManagementViewModel
 
 @{
     const string HEADER = "Modificar Epígrafe";
@@ -59,9 +59,6 @@
         <ul class="nav nav-tabs card-header-tabs">
             <li class="nav-item">
                 <a class="nav-link" href="@Url.Action("Edit", Model.Epigraph.Id)">Generales</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="@Url.Action("EditMaps", Model.Epigraph.Id)">Mapas</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link active" href="#">Imágenes</a>

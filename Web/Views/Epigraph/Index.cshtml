@@ -145,46 +145,51 @@
 <div style="font-size: 1.5rem;">
     @if (Model.Current.ImageId != null)
     {
-        <img class="img-thumbnail float-left mr-3 w-25" src="~/media/images/@Model.Current.ImageId.@Model.Current.ImageExtension" title="@Model.Current.Name" />
+        <img class="img-thumbnail float-left mr-3 w-25" src="~/media/images/@Model.Current.ImageId@Model.Current.ImageExtension" title="@Model.Current.Name" />
     }
     @Html.Raw(Model.Current.Description)
 </div>
 <div class="clearfix"></div>
 <hr class="my-5" />
 <h2 class="mb-0">Mapas</h2>
-<small class="text-muted lead">y sus contenidos complementarios</small>
-<div class="row mt-4 mb-5">
-    @foreach (var item in Model.Maps)
-    {
+<small class="text-muted lead"> por temática</small>
+@foreach (var item in Model.Themes)
+{
+    <h5 class="mt-3">@item.Name</h5>
+    
+    <div class="row mt-4 mb-5">
+        @foreach (var _item in item.Maps)
+        {
         <div class="col-md-6 col-sm-12 text-center">
-            @if (item.ImageId != null)
+            @if (_item.ImageId != null)
             {
-                <img class="img-fluid mb-2" src="~/media/images/@item.ImageId.@item.ImageExtension" title="@item.Name" />
+                <img class="img-fluid mb-2" src="~/media/images/@_item.ImageId@_item.ImageExtension" title="@_item.Name" />
             }
             else
             {
-                 <h4>@item.Name</h4>
+                <h4>@_item.Name</h4>
             }
-            @if (!string.IsNullOrEmpty(item.Description))
+            @if (!string.IsNullOrEmpty(_item.Description))
             {
                 <div class="text-truncate text-wrap mb-2" style="height: 72px;">
-                    @Html.Raw(@item.Description)
+                    @Html.Raw(@_item.Description)
                 </div>
             }
-            <a class="btn btn-outline-primary" asp-action="index" asp-controller="map" asp-route-key="@item.Id" asp-route-epigraphId="@Model.Current.Id">Detalles</a>
+            <a class="btn btn-outline-primary" asp-action="index" asp-controller="map" asp-route-key="@_item.Id" asp-route-epigraphId="@Model.Current.Id">Detalles</a>
         </div>
-    }
-</div>
+        }
+    </div>
+}
 @if (Model.Images.Length > 0)
 {
     <hr class="mb-5 mt-0" />
     <h3 class="mb-0">Imágenes</h3>
-    <small class="text-muted lead">instantáneas relacionadas a la temática</small>
+    <small class="text-muted lead">instantáneas relacionadas</small>
     <div class="card-columns mt-3">
         @foreach (var item in Model.Images)
         {
             <div class="card shadow-sm" style="margin-bottom: 1.25rem !important;">
-                <img class="card-img" src="~/media/images/@item.Id.@item.Extension" />
+                <img class="card-img" src="~/media/images/@item.Id@item.Extension" />
             </div>
         }
     </div>
@@ -201,7 +206,7 @@
                 <div class="card shadow-sm" style="margin-bottom: 1.25rem !important;">
                     <div class="embed-responsive embed-responsive-16by9">
                         <video controls="controls">
-                            <source src="/media/videos/@item.Id.@item.Extension" type="video/mp4">
+                            <source src="/media/videos/@item.Id@item.Extension" type="video/mp4">
                             Su explorar no soporta nativamente la reproducción de videos.
                         </video>
                     </div>

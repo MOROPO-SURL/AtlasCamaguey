@@ -33,6 +33,11 @@
 		<None Remove="logs\**" />
 		<None Remove="Migrations\**" />
 		<None Remove="wwwroot\media\**" />
+		<None Remove="Models\View\Backend\Display\" />
+		<None Remove="Models\View\Backend\Input\" />
+		<None Remove="Models\View\Backend\Management\" />
+		<None Remove="Models\View\Backend\Management\Contract\" />
+		<None Remove="Areas\Atlas\Views\Themes\" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -56,5 +61,12 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\Persistence\Persistence.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Models\View\Backend\Display\" />
+	  <Folder Include="Models\View\Backend\Input\" />
+	  <Folder Include="Models\View\Backend\Management\" />
+	  <Folder Include="Models\View\Backend\Management\Contract\" />
+	  <Folder Include="Areas\Atlas\Views\Themes\" />
 	</ItemGroup>
 </Project>

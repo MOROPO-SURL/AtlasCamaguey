@@ -188,6 +188,25 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Helpers
             }
             #endregion
 
+            #region Theme
+            if (!permissionDbSet.Any(role => role.Code.Equals(Constants.Permission.ThemeViewer)))
+            {
+                permissionDbSet.Add(Constants.Permission.ThemeViewer.ToPermissionEntity(Constants.PermissionsFamily.ThemeManagement));
+            }
+            if (!permissionDbSet.Any(role => role.Code.Equals(Constants.Permission.ThemeCreator)))
+            {
+                permissionDbSet.Add(Constants.Permission.ThemeCreator.ToPermissionEntity(Constants.PermissionsFamily.ThemeManagement));
+            }
+            if (!permissionDbSet.Any(role => role.Code.Equals(Constants.Permission.ThemeEditor)))
+            {
+                permissionDbSet.Add(Constants.Permission.ThemeEditor.ToPermissionEntity(Constants.PermissionsFamily.ThemeManagement));
+            }
+            if (!permissionDbSet.Any(role => role.Code.Equals(Constants.Permission.ThemeViewer)))
+            {
+                permissionDbSet.Add(Constants.Permission.ThemeViewer.ToPermissionEntity(Constants.PermissionsFamily.ThemeManagement));
+            }
+            #endregion
+
             if (dbContext is Framework.Guama.Core.Persistence.ORM.EF.Context.Contract.ITraceableDbContext)
             {
                 (dbContext as Framework.Guama.Core.Persistence.ORM.EF.Context.Contract.ITraceableDbContext).SaveChanges("system");

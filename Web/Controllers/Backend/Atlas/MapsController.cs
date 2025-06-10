@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using MOROPO.CIMAC.Atlas.Camaguey.Persistence.Entities;
 using MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View;
 using MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend;
+using MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend.Input;
 using MOROPO.Framework.Guama.Core.Persistence.Repositories;
 using MOROPO.Framework.Guama.Core.Presentation.Models.View;
 using MOROPO.Framework.Guama.Core.Presentation.Web.Security.Attributes;
@@ -336,7 +337,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         {
             var entity = Repository.Get(key);
 
-            var model = new MapLayersManagementViewModel
+            var model = new Models.View.Backend.Management.MapLayersManagementViewModel
             {
                 Map = new MapDisplayViewModel(),
                 Layers = entity.Layers.Select(item =>
@@ -415,7 +416,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
 
             var releatedMaps = entity.AuthorBridges.Select(bridge => bridge.Stern).ToArray();
 
-            var model = new MapAuthorsManagementViewModel
+            var model = new Models.View.Backend.Management.MapAuthorsManagementViewModel
             {
                 Map = new MapDisplayViewModel(),
                 Authors = entity.AuthorBridges.Select(bridge =>
@@ -535,7 +536,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
 
             var releatedKeyWords = entity.KeyWordBridges.Select(bridge => bridge.Stern).ToArray();
 
-            var model = new MapKeyWordsManagementViewModel
+            var model = new Models.View.Backend.Management.MapKeyWordsManagementViewModel
             {
                 Map = new MapDisplayViewModel(),
                 KeyWords = entity.KeyWordBridges.Select(bridge =>
@@ -653,7 +654,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         {
             var entity = Repository.Get(key);
 
-            var model = new MapImagesManagementViewModel
+            var model = new Models.View.Backend.Management.MapImagesManagementViewModel
             {
                 Map = new MapDisplayViewModel(),
                 Images = entity.ImageBridges.Select(bridge =>
@@ -785,7 +786,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         {
             var entity = Repository.Get(key);
 
-            var model = new MapVideosManagementViewModel
+            var model = new Models.View.Backend.Management.MapVideosManagementViewModel
             {
                 Map = new MapDisplayViewModel(),
                 Videos = entity.VideoBridges.Select(bridge =>
@@ -965,7 +966,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         {
             var entity = Repository.Get(key);
 
-            var model = new MapDocumentsManagementViewModel
+            var model = new Models.View.Backend.Management.MapDocumentsManagementViewModel
             {
                 Map = new MapDisplayViewModel(),
                 Documents = entity.DocumentBridges.Select(item =>

@@ -1,0 +1,7 @@
+﻿namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend.Management.Contract
+{
+    internal abstract class AbstractImagesManagementViewModel
+    {
+        public ImageDisplayViewModel[] Images { get; set; }
+    }
+}

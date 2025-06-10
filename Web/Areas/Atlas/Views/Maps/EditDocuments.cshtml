@@ -1,6 +1,6 @@
 ﻿@using MOROPO.CIMAC.Atlas.Camaguey.Web.Extensions;
 
-@model MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend.MapDocumentsManagementViewModel
+@model MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend.Management.MapDocumentsManagementViewModel
 
 @{
     const string HEADER = "Modificar Mapa";
@@ -71,7 +71,7 @@
                     </div>
                     @using (Html.BeginForm("adddocument", "maps", new { key = Model.Map.Id }, FormMethod.Post, true, new { enctype = "multipart/form-data" }))
                     {
-                        @await Html.PartialAsync("_DocumentCreationModalBodyPartial", new MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend.DocumentInputViewModel())
+                        @await Html.PartialAsync("_DocumentCreationModalBodyPartial", new MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend.Input.DocumentInputViewModel())
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-primary">Agregar</button>
                             <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
@@ -143,7 +143,7 @@
                                 </div>
                                 @using (Html.BeginForm("editdocument", "maps", new { key = Model.Map.Id }, FormMethod.Post, true, null))
                                 {
-                                    @await Html.PartialAsync("_DocumentEditionModalBodyPartial", new MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend.DocumentInputViewModel
+                                    @await Html.PartialAsync("_DocumentEditionModalBodyPartial", new MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend.Input.DocumentInputViewModel
                                     {
                                         Id = item.Id,
                                         Name = item.Name,

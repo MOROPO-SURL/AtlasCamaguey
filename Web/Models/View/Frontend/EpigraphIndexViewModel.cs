@@ -8,7 +8,7 @@
 
         public SectionDisplayViewModel[] Sections { get; set; }
 
-        public MapDisplayViewModel[] Maps { get; set; }
+        public ThemeDisplayViewModel[] Themes { get; set; }
 
         public DocumentDisplayViewModel[] Documents { get; set; }
 

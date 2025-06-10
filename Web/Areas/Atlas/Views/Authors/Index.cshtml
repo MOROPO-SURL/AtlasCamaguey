@@ -178,7 +178,7 @@
                         <div class="text-center mb-3">
                             @if (item.ImageId != null)
                             {
-                                var imageSource = string.Format("/media/images/{0}.{1}", item.ImageId, item.ImageExtension);
+                                var imageSource = string.Format("/media/images/{0}{1}", item.ImageId, item.ImageExtension);
                             
                                 <div class="text-center">
                                     <img src="@imageSource" class="img-thumbnail w-75 rounded-circle" />

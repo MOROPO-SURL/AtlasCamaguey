@@ -97,7 +97,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Frontend
 
             model.Epigraph.Import(epigraph);
 
-            var section = sectionRepository.Get(epigraph.SectionId.Value);
+            var section = sectionRepository.Get(epigraph.SectionId);
 
             model.Section.Import(section);
             model.Section.Epigraphs = epigraphRepository.FindBy(entity => entity.SectionId == section.Id).OrderBy(entity => entity.Priority).ToArray().Select(entity =>

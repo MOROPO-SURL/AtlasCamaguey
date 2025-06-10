@@ -46,6 +46,14 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Extensions
                 },
                 new ManagementDashboardSectionViewModel
                 {
+                    Title = "Temáticas",
+                    Controller = "themes",
+                    Action = "index",
+                    Area = "atlas",
+                    Role = Constants.Permission.ThemeViewer
+                },
+                new ManagementDashboardSectionViewModel
+                {
                     Title = "Mapas",
                     Controller = "maps",
                     Action = "index",

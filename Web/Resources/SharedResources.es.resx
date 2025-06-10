@@ -807,6 +807,9 @@
   <data name="Section" xml:space="preserve">
     <value>Sección</value>
   </data>
+  <data name="Epigraph" xml:space="preserve">
+    <value>Epígrafe</value>
+  </data>
   <data name="File" xml:space="preserve">
     <value>Archivo</value>
   </data>

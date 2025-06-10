@@ -24,6 +24,8 @@
 
             if (target.Controller == "richtextblocks") return new Microsoft.AspNetCore.Html.HtmlString("<span class=\"mdi mdi-text\"></span>");
 
+            if (target.Controller == "themes") return new Microsoft.AspNetCore.Html.HtmlString("<span class=\"mdi mdi-folder\"></span>");
+
             return new Microsoft.AspNetCore.Html.HtmlString("<span class=\"mdi mdi-toy-brick-outline\"></span>");
         }
     }

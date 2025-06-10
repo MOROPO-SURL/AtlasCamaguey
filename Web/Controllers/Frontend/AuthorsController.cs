@@ -43,7 +43,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Frontend
 
             foreach (var item in group)
             {
-                var epigraphs = dbContext.Set<EpigraphMapBridge>().Where(bridge => bridge.Stern.Id == item.Prow.Id).ToArray();
+                var epigraphs = dbContext.Set<ThemeMapBridge>().Where(bridge => bridge.Stern.Id == item.Prow.Id).ToArray();
 
                 var _model = new Models.View.MapDisplayViewModel();
 

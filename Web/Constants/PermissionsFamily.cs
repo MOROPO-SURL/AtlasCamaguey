@@ -15,5 +15,7 @@
         internal const string InstitutionManagement = "institution-management";
 
         internal const string RichTextBlokManagement = "richtextblock-management";
+
+        internal const string ThemeManagement = "theme-management";
     }
 }

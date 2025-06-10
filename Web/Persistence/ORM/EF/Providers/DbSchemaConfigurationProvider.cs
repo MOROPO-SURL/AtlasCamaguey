@@ -17,7 +17,7 @@
                     new Configurators.EpigraphImageBridgeEntityTypeConfigurator(),
                     new Configurators.EpigraphVideoBridgeEntityTypeConfigurator(),
                     new Configurators.EpigraphDocumentBridgeEntityTypeConfigurator(),
-                    new Configurators.EpigraphMapBridgeEntityTypeConfigurator(),
+                    new Configurators.ThemeMapBridgeEntityTypeConfigurator(),
                     new Configurators.AuthorEntityTypeConfigurator(),
                     new Configurators.InstitutionEntityTypeConfigurator()
                 };

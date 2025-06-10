@@ -124,7 +124,7 @@
 <h4 class="mb-0">Sección</h4>
 <p class="display-4">@Model.Current.Name</p>
 <div style="font-size: 1.5rem;">
-    <img class="img-thumbnail float-left mr-3 w-25" src="~/media/images/@Model.Current.ImageId.@Model.Current.ImageExtension" title="@Model.Current.Name" />
+    <img class="img-thumbnail float-left mr-3 w-25" src="~/media/images/@Model.Current.ImageId@Model.Current.ImageExtension" title="@Model.Current.Name" />
     @Html.Raw(Model.Current.Description)
 </div>
 <div class="clearfix"></div>

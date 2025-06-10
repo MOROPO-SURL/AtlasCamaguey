@@ -2,13 +2,8 @@
 {
     public class Layer : Framework.Guama.Core.Persistence.Entities.Contract.INamedEntity<System.Guid>, Framework.Guama.Core.Persistence.Entities.Contract.IEnableableEntity<System.Guid>
     {
-        public Layer()
-        {
-            Id = System.Guid.NewGuid();
-        }
-
         [System.ComponentModel.DataAnnotations.Key]
-        public System.Guid Id { get; set; }
+        public System.Guid Id { get; set; } = System.Guid.NewGuid();
 
         [System.ComponentModel.DataAnnotations.Required]
         public string Name { get; set; }
@@ -40,7 +35,7 @@
 
         public decimal NorthBoundLatitude { get; set; }
 
-        [System.ComponentModel.DataAnnotations.Schema.ForeignKey("MapId")]
+        [System.ComponentModel.DataAnnotations.Schema.ForeignKey(nameof(MapId))]
         public Map Map { get; set; }
         [System.ComponentModel.DataAnnotations.Required]
         public string MapId { get; set; }
