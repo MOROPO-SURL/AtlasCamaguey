@@ -137,9 +137,11 @@
 
             var drawingLayer = new L.featureGroup().addTo(map);
 
-            var baseLayer = new L.tileLayer('http://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                maxZoom: 19
-                //attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            var baseLayer = new L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', 
+            {
+	            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+	            subdomains: 'abcd',
+	            maxZoom: 19
             }).addTo(map);
 
             @{
@@ -273,9 +275,10 @@
 
             map.addControl(L.control.styleEditor());
             
-            var miniMap = new L.Control.MiniMap(new L.tileLayer('http://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            var miniMap = new L.Control.MiniMap(new L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
                 maxZoom: 19,
-                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+	            subdomains: 'abcd'
             }), { toggleDisplay: true }).addTo(map);
         });
     </script>
