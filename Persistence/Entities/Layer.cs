@@ -15,6 +15,8 @@
 
         public int Priority { get; set; } = 1;
 
+        public Enumerations.LayerPresentationStrategy PresentationStrategy { get; set; }  = Enumerations.LayerPresentationStrategy.WMS;
+
         public string StylePresentantionJSBlock { get; set; }
 
         public string PointToPresentationJSBlock { get; set; }

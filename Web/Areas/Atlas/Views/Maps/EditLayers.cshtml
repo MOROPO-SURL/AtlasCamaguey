@@ -94,13 +94,15 @@
                             {
                                 <div class="modal-body">
                                     @Html.Hidden("layerId", item.Id)
+                                    <div class="checkbox">
+                                        <label>
+                                            @Html.CheckBox("enabled", item.Enabled) Habilitado
+                                        </label>
+                                    </div>
                                     <div class="row">
                                         <div class="col-sm-6 mb-3">
-                                            <div class="checkbox">
-                                                <label>
-                                                    @Html.CheckBox("enabled", item.Enabled) Habilitado
-                                                </label>
-                                            </div>
+                                            @Html.Label("presentationStrategy", "Estrategia de presentación", new { @class = "control-label" })
+                                            @Html.DropDownList("presentationStrategy", new SelectListItem[] { new SelectListItem { Value = MOROPO.CIMAC.Atlas.Camaguey.Persistence.Enumerations.LayerPresentationStrategy.WFS.ToString(), Text = "WFS (GeoJson)", Selected = item.PresentationStrategy == MOROPO.CIMAC.Atlas.Camaguey.Persistence.Enumerations.LayerPresentationStrategy.WFS }, new SelectListItem { Value = MOROPO.CIMAC.Atlas.Camaguey.Persistence.Enumerations.LayerPresentationStrategy.WMS.ToString(), Text = "WMS (Rasters)", Selected = item.PresentationStrategy == MOROPO.CIMAC.Atlas.Camaguey.Persistence.Enumerations.LayerPresentationStrategy.WMS } }, new { @class = "form-control mb-3" })
                                         </div>
                                         <div class="col-sm-6 mb-3">
                                             @Html.Label("priority", "Prioridad", new { @class = "control-label" })

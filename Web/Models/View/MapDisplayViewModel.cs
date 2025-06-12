@@ -36,6 +36,8 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View
 
         public string PostLayersJSBlock { get; set; }
 
+        public System.Guid EphigraphId { get; set; }
+
         public void Import(Map entity)
         {
             Id = entity.Id;

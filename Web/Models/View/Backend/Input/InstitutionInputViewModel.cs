@@ -31,7 +31,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend.Input
 
         public Institution Export()
         {
-            var entity = new Institution();
+            var entity = new Institution { Identity = new Framework.Guama.Identity.Persistence.Entities.OrganizationIdentity() };
 
             Mergue(entity);
 

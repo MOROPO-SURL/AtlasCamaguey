@@ -100,7 +100,7 @@
                 <div class="col-md-4 col-sm-6">
                     <div class="card shadow-sm" style="margin-bottom: 2.0rem!important;">
                         <div class="card-body">
-                            <h4 class="card-title"><a asp-action="index" asp-controller="map" asp-route-key="@item.Id">@item.Name</a></h4>
+                            <h4 class="card-title"><a asp-action="index" asp-controller="map" asp-route-key="@item.Id" asp-route-epigraphId="@item.EphigraphId">@item.Name</a></h4>
                             <div class="text-truncate text-wrap" style="height: 72px;">
                                 @Html.Raw(@item.Description)
                             </div>

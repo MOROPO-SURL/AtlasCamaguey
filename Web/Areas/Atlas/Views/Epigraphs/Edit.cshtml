@@ -76,16 +76,16 @@
                     <a class="nav-link active" href="#">Generales</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="@Url.Action("EditImages", Model.Id)">Imágenes</a>
+                    <a class="nav-link" asp-action="EditImages" asp-route-key="@Model.Id">Imágenes</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="@Url.Action("EditVideos", Model.Id)">Videos</a>
+                    <a class="nav-link" asp-action="EditVideos" asp-route-key="@Model.Id">Videos</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="@Url.Action("EditDocuments", Model.Id)">Documentos</a>
+                    <a class="nav-link" asp-action="EditDocuments" asp-route-key="@Model.Id">Documentos</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="@Url.Action("EditKeyWords", Model.Id)">Palabras Claves</a>
+                    <a class="nav-link" asp-action="EditKeyWords" asp-route-key="@Model.Id">Palabras Claves</a>
                 </li>
             </ul>
         </div>

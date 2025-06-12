@@ -12,6 +12,8 @@
 
         public int Priority { get; set; }
 
+        public Camaguey.Persistence.Enumerations.LayerPresentationStrategy PresentationStrategy { get; set; }
+
         public string StylePresentantionJSBlock { get; set; }
 
         public string PointToPresentationJSBlock { get; set; }
@@ -37,6 +39,7 @@
             Title = entity.Title;
             Enabled = entity.Enabled;
             Priority = entity.Priority;
+            PresentationStrategy = entity.PresentationStrategy;
             StylePresentantionJSBlock = entity.StylePresentantionJSBlock;
             PointToPresentationJSBlock = entity.PointToPresentationJSBlock;
             InteractivePresentantionJSBlock = entity.InteractivePresentantionJSBlock;

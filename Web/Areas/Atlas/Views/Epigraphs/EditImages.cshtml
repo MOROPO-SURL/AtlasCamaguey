@@ -58,19 +58,19 @@
         <h4>@HEADER</h4>
         <ul class="nav nav-tabs card-header-tabs">
             <li class="nav-item">
-                <a class="nav-link" href="@Url.Action("Edit", Model.Epigraph.Id)">Generales</a>
+                <a class="nav-link" asp-action="Edit" asp-route-key="@Model.Epigraph.Id">Generales</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link active" href="#">Imágenes</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="@Url.Action("EditVideos", Model.Epigraph.Id)">Videos</a>
+                <a class="nav-link" asp-action="EditVideos" asp-route-key="@Model.Epigraph.Id">Videos</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="@Url.Action("EditDocuments", Model.Epigraph.Id)">Documentos</a>
+                <a class="nav-link" asp-action="EditDocuments" asp-route-key="@Model.Epigraph.Id">Documentos</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="@Url.Action("EditKeyWords", Model.Epigraph.Id)">Palabras Claves</a>
+                <a class="nav-link" asp-action="EditKeyWords" asp-route-key="@Model.Epigraph.Id">Palabras Claves</a>
             </li>
         </ul>
     </div>

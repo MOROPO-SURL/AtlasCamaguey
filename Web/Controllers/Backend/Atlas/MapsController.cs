@@ -127,7 +127,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
                 
                 var qgisProjectsRootPath = configuration["QGIS:ProjectsPath"];
 
-                var qgisProjectDirectoryInfo = new System.IO.DirectoryInfo(System.IO.Path.Combine(qgisProjectsRootPath, mapId.ToUpperInvariant()));
+                var qgisProjectDirectoryInfo = new System.IO.DirectoryInfo(System.IO.Path.Combine(qgisProjectsRootPath, mapId));
 
                 try
                 {
@@ -145,7 +145,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
                             throw new Framework.Guama.Core.Presentation.Web.Frontend.InvalidModelException("MapArchive", "Estructura del empaqutado incorrecta!!!");
                         }
 
-                        if (!System.IO.File.Exists(System.IO.Path.Combine(qgisProjectDirectoryInfo.FullName, string.Format("{0}.qgz", mapId.ToUpperInvariant()))))
+                        if (!System.IO.File.Exists(System.IO.Path.Combine(qgisProjectDirectoryInfo.FullName, string.Format("{0}.qgz", mapId))))
                         {
                             throw new Framework.Guama.Core.Presentation.Web.Frontend.InvalidModelException("MapArchive", "Archivo de proyecto no encontrado!!!");
                         }
@@ -225,6 +225,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
                                                         Title = globalLayerNodeChild.ChildNodes[1].InnerText,
                                                         Enabled = true,
                                                         Priority = 1,
+                                                        PresentationStrategy = Camaguey.Persistence.Enumerations.LayerPresentationStrategy.WMS,
                                                         CRS = globalLayerNodeChild.ChildNodes[2].InnerText,
                                                         EPSG = globalLayerNodeChild.ChildNodes[3].InnerText,
                                                     };
@@ -359,7 +360,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         [Route("edit/{key}/layers/edit")]
         [ValidateAntiForgeryToken]
         [RequirePermissions(Constants.Permission.MapEditor)]
-        public IActionResult EditLayer(string key, System.Guid layerId, bool enabled, int priority, string stylePresentantionJSBlock, string pointToPresentationJSBlock, string interactivePresentantionJSBlock)
+        public IActionResult EditLayer(string key, System.Guid layerId, bool enabled, int priority, Camaguey.Persistence.Enumerations.LayerPresentationStrategy presentationStrategy, string stylePresentantionJSBlock, string pointToPresentationJSBlock, string interactivePresentantionJSBlock)
         {
             if (ModelState.IsValid)
             {
@@ -373,6 +374,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
 
                         _entity.Enabled = enabled;
                         _entity.Priority = priority;
+                        _entity.PresentationStrategy = presentationStrategy;
                         _entity.StylePresentantionJSBlock = stylePresentantionJSBlock;
                         _entity.PointToPresentationJSBlock = pointToPresentationJSBlock;
                         _entity.InteractivePresentantionJSBlock = interactivePresentantionJSBlock;
@@ -1173,6 +1175,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
                         Title = nodeChild.ChildNodes[1].InnerText,
                         Enabled = true,
                         Priority = 1,
+                        PresentationStrategy = Camaguey.Persistence.Enumerations.LayerPresentationStrategy.WMS,
                         CRS = nodeChild.ChildNodes[2].InnerText,
                         EPSG = nodeChild.ChildNodes[3].InnerText,
                     };

@@ -26,7 +26,7 @@
     Layout = "_BackendLayout";
 }
 
-@using (Html.BeginForm("edit", null, new { key = string.Empty }, FormMethod.Post, true, null))
+@using (Html.BeginForm("edit", "themes", new { Area = "atlas", key = string.Empty }, FormMethod.Post, true, null))
 {
     @Html.HiddenFor(model => model.Id)
 
@@ -39,7 +39,7 @@
                     <a class="nav-link active" href="#">Generales</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="@Url.Action("EditMaps", Model.Id)">Mapas</a>
+                    <a class="nav-link" asp-action="EditMaps" asp-route-key="@Model.Id">Mapas</a>
                 </li>
             </ul>
         </div>

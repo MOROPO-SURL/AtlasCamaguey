@@ -26,7 +26,7 @@
         },
         new BreadcrumbViewModel
         {
-            Caption = string.Format("<b>Mapa</b>: {0}", Model.Current.Name)
+            Caption = string.Format("<b>Mapa</b>: {0}", Model.Current.Id)
         }
     };
 
@@ -135,7 +135,7 @@
                 attributionControl: false
             }).setView([21.3792,-77.9184], 9);
 
-            //var drawingLayer = new L.featureGroup().addTo(map);
+            var drawingLayer = new L.featureGroup().addTo(map);
 
             var baseLayer = new L.tileLayer('http://tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 19
@@ -152,37 +152,44 @@
 
                 foreach (var item in Model.Current.Layers)
                 {
-                    var geoJSONUrl = string.Format("{0}?MAP={1}/{2}/{2}.qgz&SERVICE=WFS&VERSION=1.1.0&REQUEST=GetFeature&TYPENAME={3}&OUTPUTFORMAT=geojson", Model.QgisServerBaseUri, Model.QgisProjectsRootPath.Replace("\\", "/"), Model.Current.Id.ToUpperInvariant(), System.Web.HttpUtility.UrlEncode(item.Name));
-
-                    var layerDefinition = string.Format("var overlayLayer{0} = new L.geoJSON.ajax('{1}'", ++index, geoJSONUrl) + ", { ";
-
-                    if (!string.IsNullOrEmpty(item.StylePresentantionJSBlock) && !string.IsNullOrWhiteSpace(item.StylePresentantionJSBlock))
+                    if (item.PresentationStrategy == MOROPO.CIMAC.Atlas.Camaguey.Persistence.Enumerations.LayerPresentationStrategy.WFS)
                     {
-                        layerDefinition += 
-                            "   style: function(feature) { " +
-                            string.Format("       {0} ", item.StylePresentantionJSBlock) +
-                            "   }, ";
-                    }
+                        var geoJSONUrl = string.Format("{0}?MAP={1}/{2}/{2}.qgz&SERVICE=WFS&VERSION=1.1.0&REQUEST=GetFeature&TYPENAME={3}&OUTPUTFORMAT=geojson", Model.QgisServerBaseUri, Model.QgisProjectsRootPath.Replace("\\", "/"), Model.Current.Id, System.Web.HttpUtility.UrlEncode(item.Name));
 
-                    if (!string.IsNullOrEmpty(item.InteractivePresentantionJSBlock) && !string.IsNullOrWhiteSpace(item.InteractivePresentantionJSBlock))
+                        var layerDefinition = string.Format("var overlayLayer{0} = new L.geoJSON.ajax('{1}'", ++index, geoJSONUrl) + ", { ";
+
+                        if (!string.IsNullOrEmpty(item.StylePresentantionJSBlock) && !string.IsNullOrWhiteSpace(item.StylePresentantionJSBlock))
+                        {
+                            layerDefinition += 
+                                "   style: function(feature) { " +
+                                string.Format("       {0} ", item.StylePresentantionJSBlock) +
+                                "   }, ";
+                        }
+
+                        if (!string.IsNullOrEmpty(item.InteractivePresentantionJSBlock) && !string.IsNullOrWhiteSpace(item.InteractivePresentantionJSBlock))
+                        {
+                            layerDefinition +=  
+                                "   onEachFeature: function(feature, layer) { " +
+                                string.Format("       {0} ", item.InteractivePresentantionJSBlock) +
+                                "   } ";
+                        }
+
+                        if (!string.IsNullOrEmpty(item.PointToPresentationJSBlock) && !string.IsNullOrWhiteSpace(item.PointToPresentationJSBlock))
+                        {
+                            layerDefinition +=  
+                                "   pointToLayer: function(feature, latlng) { " +
+                                string.Format("       {0} ", item.PointToPresentationJSBlock) +
+                                "   } ";
+                        }
+
+                        layerDefinition += "}).addTo(map);";
+
+                        @Html.Raw(layerDefinition)
+                    }
+                    else
                     {
-                        layerDefinition +=  
-                            "   onEachFeature: function(feature, layer) { " +
-                            string.Format("       {0} ", item.InteractivePresentantionJSBlock) +
-                            "   } ";
+                        @Html.Raw($"var overlayLayer{++index} = new L.tileLayer.wms('{Model.QgisServerBaseUri}?MAP={Model.QgisProjectsRootPath.Replace("\\", "/")}/{Model.Current.Id}/{Model.Current.Id}.qgz&SERVICE=WMS&VERSION=1.3.0&', {{ maxZoom: 19, version: '1.3.0', format: 'image/png', transparent: true, srs: L.CRS.EPSG4326, layers: '{System.Web.HttpUtility.UrlEncode(item.Name)}'}}).addTo(map);");
                     }
-
-                    if (!string.IsNullOrEmpty(item.PointToPresentationJSBlock) && !string.IsNullOrWhiteSpace(item.PointToPresentationJSBlock))
-                    {
-                        layerDefinition +=  
-                            "   pointToLayer: function(feature, latlng) { " +
-                            string.Format("       {0} ", item.PointToPresentationJSBlock) +
-                            "   } ";
-                    }
-
-                    layerDefinition += "}).addTo(map);";
-
-                    @Html.Raw(layerDefinition)
                 }
             }
 
@@ -201,7 +208,7 @@
                 },
                 "Capas auxiliares": {
                     'Regilla de coordenadas': grid,
-                    //'Trazos sobre el mapa': drawingLayer
+                    'Trazos sobre el mapa': drawingLayer
                 }
 	        }, {
                 hideSingleBase: true,
@@ -234,25 +241,25 @@
 
             L.control.scale().addTo(map);
 
-            //map.addControl(new L.Control.Draw({
-            //    edit: {
-            //        featureGroup: drawingLayer,
-            //        poly: {
-            //            allowIntersection: false
-            //        }
-            //    },
-            //    draw: {
-            //        polygon: {
-            //            allowIntersection: false,
-            //            showArea: true
-            //        }
-            //    }
-            //}));
-            //map.on(L.Draw.Event.CREATED, function (event) {
-            //    var drawLayer = event.layer;
+            map.addControl(new L.Control.Draw({
+               edit: {
+                   featureGroup: drawingLayer,
+                   poly: {
+                       allowIntersection: false
+                   }
+               },
+               draw: {
+                   polygon: {
+                       allowIntersection: false,
+                       showArea: true
+                   }
+               }
+            }));
+            map.on(L.Draw.Event.CREATED, function (event) {
+               var drawLayer = event.layer;
 
-            //    drawingLayer.addLayer(drawLayer);
-            //});
+               drawingLayer.addLayer(drawLayer);
+            });
 
             var measureControl = L.control.measure({
                 position: 'topleft',
@@ -264,7 +271,7 @@
             
             measureControl.addTo(map);
 
-            //map.addControl(L.control.styleEditor());
+            map.addControl(L.control.styleEditor());
             
             var miniMap = new L.Control.MiniMap(new L.tileLayer('http://tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 19,

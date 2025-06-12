@@ -62,7 +62,7 @@
         <h4>@HEADER</h4>
         <ul class="nav nav-tabs card-header-tabs">
             <li class="nav-item">
-                <a class="nav-link" href="@Url.Action("Edit", Model.Theme.Id)">Generales</a>
+                <a class="nav-link" asp-action="Edit" asp-route-key="@Model.Theme.Id">Generales</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link active" href="#">Mapas</a>
@@ -146,6 +146,6 @@
     </div>
     <div class="card-footer">
         <a class="btn btn-primary" href="#" data-toggle="modal" data-target="#add">Agregar</a>
-        <a class="btn btn-light" href="@Url.Action("index")">Regresar al listado</a>
+        <a class="btn btn-secondary" href="@Url.Action("index")">Regresar al listado</a>
     </div>
 </div>
