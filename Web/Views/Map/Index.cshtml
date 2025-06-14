@@ -215,7 +215,17 @@
 	        }, {
                 hideSingleBase: true,
 		        collapsed: false
-	        }).addTo(map);
+            }).addTo(map);
+
+            var measureControl = L.control.measure({
+                position: 'topleft',
+                primaryLengthUnit: 'kilometers',
+                primaryAreaUnit: 'hectares',
+                activeColor: 'indigo',
+                completedColor: 'indigo'
+            });
+
+            measureControl.addTo(map);
 
             @if (!string.IsNullOrEmpty(Model.Current.PostLayersJSBlock))
             {
@@ -262,16 +272,6 @@
 
                drawingLayer.addLayer(drawLayer);
             });
-
-            var measureControl = L.control.measure({
-                position: 'topleft',
-                primaryLengthUnit: 'kilometers',
-                primaryAreaUnit: 'hectares',
-                activeColor: 'indigo',
-                completedColor: 'indigo'
-            });
-            
-            measureControl.addTo(map);
 
             map.addControl(L.control.styleEditor());
             
@@ -375,11 +375,11 @@
                 <div class="media">
                 @if (item.ImageId != null)
                 {
-                    <img class="w-25 mr-3 img-fluid img-thumbnail" src="~/media/images/@item.ImageId.@item.ImageExtension">
+                    <img class="mr-3 img-fluid img-thumbnail" style="width: 92px; height: 92px;" src="~/media/images/@item.ImageId@item.ImageExtension">
                 }
                 else
                 {
-                    <img class="w-25 mr-3 img-fluid img-thumbnail" src="~/img/default-person-picture.jpg">
+                    <img class="mr-3 img-fluid img-thumbnail" style="width: 92px; height: 92px;" src="~/img/default-person-picture.jpg">
                 }                
                     <div class="media-body">
                         <h4 class="mt-0">                
@@ -453,12 +453,12 @@
     {
         <hr class="my-5" />
         <h3 class="mb-0">Imágenes</h3>
-        <small class="text-muted lead">instantáneas relacionadas a la temática</small>
+        <small class="text-muted lead">instantáneas relacionadas</small>
         <div class="card-columns mt-3">
             @foreach (var item in Model.Images)
             {
                 <div class="card shadow-sm" style="margin-bottom: 1.25rem !important;">
-                    <img class="card-img" src="~/media/images/@item.Id.@item.Extension" />
+                    <img class="card-img" src="~/media/images/@item.Id@item.Extension" />
                 </div>
             }
         </div>

@@ -27,12 +27,13 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         private readonly IEntityRepository<KeyWord, System.Guid> keyWordRepository;
         private readonly IEntityRepository<Author, System.Guid> authorRepository;
         private readonly IEntityRepository<Layer, System.Guid> layerRepository;
+        private readonly IEntityRepository<MapMetadataEntry, long> metadataEntryRepository;
         private readonly IImageFileManagerFacade imageFileManager;
         private readonly IDocumentFileManagerFacade documentFileManager;
         private readonly IVideoFileManagerFacade videoFileManager;
         private readonly Microsoft.Extensions.Configuration.IConfiguration configuration;
 
-        public MapsController(Microsoft.Extensions.Configuration.IConfiguration configuration, IVideoFileManagerFacade videoFileManager, IDocumentFileManagerFacade documentFileManager, IImageFileManagerFacade imageFileManager, IEntityRepository<Layer, System.Guid> layerRepository, IEntityRepository<Author, System.Guid> authorRepository, IEntityRepository<KeyWord, System.Guid> keyWordRepository, IEntityRepository<Video, System.Guid> videoRepository, IEntityRepository<Document, System.Guid> documentRepository, IEntityRepository<Image, System.Guid> imageRepository, IEntityRepository<Map, string> repository, IStringLocalizer<MapsController> localizer, ILogger<MapsController> logger) : base(repository, localizer, logger)
+        public MapsController(Microsoft.Extensions.Configuration.IConfiguration configuration, IVideoFileManagerFacade videoFileManager, IDocumentFileManagerFacade documentFileManager, IImageFileManagerFacade imageFileManager, IEntityRepository<MapMetadataEntry, long> metadataEntryRepository, IEntityRepository<Layer, System.Guid> layerRepository, IEntityRepository<Author, System.Guid> authorRepository, IEntityRepository<KeyWord, System.Guid> keyWordRepository, IEntityRepository<Video, System.Guid> videoRepository, IEntityRepository<Document, System.Guid> documentRepository, IEntityRepository<Image, System.Guid> imageRepository, IEntityRepository<Map, string> repository, IStringLocalizer<MapsController> localizer, ILogger<MapsController> logger) : base(repository, localizer, logger)
         {
             this.imageRepository = imageRepository;
             this.documentRepository = documentRepository;
@@ -40,6 +41,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
             this.keyWordRepository = keyWordRepository;
             this.authorRepository = authorRepository;
             this.layerRepository = layerRepository;
+            this.metadataEntryRepository = metadataEntryRepository;
             this.imageFileManager = imageFileManager;
             this.documentFileManager = documentFileManager;
             this.videoFileManager = videoFileManager;
@@ -1145,6 +1147,157 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
             SetDefaultNotification(notificationType: NotificationType.Danger, GetNotFoundMessage());
 
             return GetDefaultActionResult();
+        }
+
+        #endregion
+
+        #region MetadataEntries
+
+        [HttpGet]
+        [Route("edit/{key}/metadataentries")]
+        [RequirePermissions(Constants.Permission.MapEditor)]
+        public ActionResult EditMetadataEntries(string key)
+        {
+            var entity = Repository.Get(key);
+
+            var model = new Models.View.Backend.Management.MapMetadataEntriesManagementViewModel
+            {
+                Map = new MapDisplayViewModel(),
+                MetadataEntries = metadataEntryRepository.FindBy(_entity => _entity.MapId == key).ToArray().Select(_entity =>
+                {
+                    var result = new MapMetadataEntryDisplayModel();
+
+                    result.Import(_entity);
+
+                    return result;
+                }).ToArray()
+            };
+
+            model.Map.Import(entity);
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [Route("edit/{key}/metadataentries/add")]
+        [ValidateAntiForgeryToken]
+        [RequirePermissions(Constants.Permission.MapEditor)]
+        public IActionResult AddMetadataEntry(string key, [System.ComponentModel.DataAnnotations.Required] string name, [System.ComponentModel.DataAnnotations.Required] string value)
+        {
+            try
+            {
+                var entity = Repository.Get(key);
+
+                if (ModelState.IsValid)
+                {
+                    try
+                    {
+                        metadataEntryRepository.Add(new MapMetadataEntry
+                        {
+                            Name = name,
+                            Value = value,
+                            MapId = entity.Id
+                        }, User.Identity.Name);
+
+                        SetDefaultNotification(NotificationType.Success, GetCreationSuccessMessage());
+
+                        return RedirectToAction("editmetadataentries", new { key = entity.Id });
+                    }
+                    catch (Framework.Guama.Core.Presentation.Web.Frontend.InvalidModelException e)
+                    {
+                        ModelState.AddModelError(e.ModelKey, e.ErrorMessage);
+                    }
+                }
+
+                SetDefaultNotification(NotificationType.Danger, GetInvalidMessage());
+
+                return RedirectToAction("editmetadataentries", new { key = entity.Id });
+            }
+            catch (System.Exception e)
+            {
+                logger.LogError(e.InnerException, e.Message);
+            }
+
+            SetDefaultNotification(NotificationType.Danger, GetNotFoundMessage());
+
+            return GetDefaultActionResult();
+        }
+
+        [HttpPost]
+        [Route("edit/{key}/metadataentries/edit")]
+        [ValidateAntiForgeryToken]
+        [RequirePermissions(Constants.Permission.MapEditor)]
+        public IActionResult EditMetadataEntry(string key, long entryId, [System.ComponentModel.DataAnnotations.Required] string name, [System.ComponentModel.DataAnnotations.Required] string value)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    try
+                    {
+                        var entity = metadataEntryRepository.Get(entryId);
+
+                        entity.Name = name;
+                        entity.Value = value;
+
+                        metadataEntryRepository.Update(entity, User.Identity.Name);
+
+                        SetDefaultNotification(NotificationType.Success, GetCreationSuccessMessage());
+
+                        return RedirectToAction("editmetadataentries", new { key });
+                    }
+                    catch (Framework.Guama.Core.Presentation.Web.Frontend.InvalidModelException e)
+                    {
+                        ModelState.AddModelError(e.ModelKey, e.ErrorMessage);
+                    }
+                }
+
+                SetDefaultNotification(NotificationType.Danger, GetInvalidMessage());
+
+                return RedirectToAction("editmetadataentries", new { key });
+            }
+            catch (System.Exception e)
+            {
+                logger.LogError(e.InnerException, e.Message);
+            }
+
+            SetDefaultNotification(NotificationType.Danger, GetNotFoundMessage());
+
+            return GetDefaultActionResult();
+        }
+
+        [HttpPost]
+        [Route("edit/{key}/metadataentries/delete")]
+        [ValidateAntiForgeryToken]
+        [RequirePermissions(Constants.Permission.MapEditor)]
+        public IActionResult DeleteMetadataEntry(string key, long entryId)
+        {
+            try
+            {
+                var entity = metadataEntryRepository.Get(entryId);
+
+                metadataEntryRepository.Delete(entity, User.Identity.Name);
+
+                SetDefaultNotification(NotificationType.Success, GetDeletionSuccessMessage());
+
+                return RedirectToAction("editmetadataentries", new { key });
+            }
+            catch (Microsoft.EntityFrameworkCore.DbUpdateException e)
+            {
+                logger.LogError(e.InnerException, e.Message);
+
+                SetDefaultNotification(NotificationType.Warning, GetOnDeletionDependecyConstrainErrorMessage());
+
+                return RedirectToAction("editmetadataentries", new { key });
+            }
+            catch (System.Exception e)
+            {
+                logger.LogError(e.InnerException, e.Message);
+            }
+
+            SetDefaultNotification(NotificationType.Danger, GetNotFoundMessage());
+
+            return GetSuccessDeleteActionResult();
         }
 
         #endregion

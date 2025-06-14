@@ -66,8 +66,6 @@
 	<ItemGroup>
 	  <Folder Include="Models\View\Backend\Display\" />
 	  <Folder Include="Models\View\Backend\Input\" />
-	  <Folder Include="Models\View\Backend\Management\" />
-	  <Folder Include="Models\View\Backend\Management\Contract\" />
 	  <Folder Include="Areas\Atlas\Views\Themes\" />
 	</ItemGroup>
 </Project>

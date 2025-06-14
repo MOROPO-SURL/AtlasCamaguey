@@ -53,6 +53,9 @@
             <li class="nav-item">
                 <a class="nav-link" asp-action="EditKeyWords" asp-route-key="@Model.Map.Id">Palabras Claves</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" asp-action="EditMetadataEntries" asp-route-key="@Model.Map.Id">Metadatos</a>
+            </li>
         </ul>
     </div>
     <div class="card-body pb-0">
@@ -86,7 +89,7 @@
                                 }
                             </div>
                             <div class="card-footer">
-                                <button class="btn btn-sm btn-light" data-toggle="modal" data-target="#edit-@item.Id"><span class="mdi mdi-square-edit-outline"></span> Modificar</button>
+                                <button class="btn btn-sm btn-secondary" data-toggle="modal" data-target="#edit-@item.Id"><span class="mdi mdi-square-edit-outline"></span> Modificar</button>
                                 <button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#delete-@item.Id"><span class="mdi mdi-trash-can"></span> Eliminar</button>
                             </div>
                             <div class="modal fade" id="edit-@item.Id" tabindex="-1" role="dialog" aria-labelledby="edit-@item.Id-lable" aria-hidden="true">
@@ -144,7 +147,7 @@
     </div>
     <div class="card-footer">
         <button class="btn btn-primary" data-toggle="modal" data-target="#add-video">Agregar</button>
-        <a class="btn btn-light" href="@Url.Action("index")">Regresar al listado</a>
+        <a class="btn btn-secondary" href="@Url.Action("index")">Regresar al listado</a>
     </div>    
     <div class="modal fade" id="add-video" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">

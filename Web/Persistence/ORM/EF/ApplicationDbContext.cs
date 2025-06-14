@@ -80,5 +80,6 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Persistence.ORM.EF
         public DbSet<RichTextBlock> RichTextBlocks { get; set; }
         public DbSet<Theme> Themes { get; set; }
         public DbSet<ThemeMapBridge> ThemeMapBridges { get; set; }
+        public DbSet<MapMetadataEntry> MapMetadataEntries { get; set; }
     }
 }

@@ -41,11 +41,11 @@
         <div class="media">
         @if (item.Author.ImageId != null)
         {
-            <img class="w-25 mr-3 img-fluid img-thumbnail" src="~/media/images/@item.Author.ImageId.@item.Author.ImageExtension">
+            <img class="mr-3 img-fluid img-thumbnail" style="width: 92px; height: 92px;" src="~/media/images/@item.Author.ImageId@item.Author.ImageExtension">
         }
         else
         {
-            <img class="w-25 mr-3 img-fluid img-thumbnail" src="~/img/default-person-picture.jpg">
+            <img class="mr-3 img-fluid img-thumbnail" src="~/img/default-person-picture.jpg" style="width: 92px; height: 92px;">
         }                
             <div class="media-body">
                 <h4 class="mt-0">                

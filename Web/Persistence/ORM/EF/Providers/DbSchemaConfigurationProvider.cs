@@ -19,7 +19,8 @@
                     new Configurators.EpigraphDocumentBridgeEntityTypeConfigurator(),
                     new Configurators.ThemeMapBridgeEntityTypeConfigurator(),
                     new Configurators.AuthorEntityTypeConfigurator(),
-                    new Configurators.InstitutionEntityTypeConfigurator()
+                    new Configurators.InstitutionEntityTypeConfigurator(),
+                    new Configurators.MapMetadataEntryEntityTypeConfigurator()
                 };
             }
         }

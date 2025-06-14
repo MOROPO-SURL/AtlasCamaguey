@@ -78,6 +78,9 @@
             <li class="nav-item">
                 <a class="nav-link" asp-action="EditKeyWords" asp-route-key="@Model.Map.Id">Palabras Claves</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" asp-action="EditMetadataEntries" asp-route-key="@Model.Map.Id">Metadatos</a>
+            </li>
         </ul>
     </div>
     <div class="card-body pb-0">
@@ -116,7 +119,7 @@
                 @foreach (var item in Model.Images)
                 {
                     <div class="card" style="margin-bottom: 1.25rem !important;">
-                        <img class="card-img" src="~/media/images/@item.Id.@item.Extension" />
+                        <img class="card-img" src="~/media/images/@item.Id@item.Extension" />
                         <div class="card-img-overlay">                        
                             <div class="btn-group btn-group-sm float-right">
                                 <a class="btn btn-danger" href="#" data-toggle="modal" data-target="#delete-image-@item.Id"><span class="mdi mdi-trash-can"></span></a>
