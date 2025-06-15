@@ -41,16 +41,16 @@
 
 @section styles
 {
-    <link rel="stylesheet" href="~/lib/leaflet/leaflet.css" />
-    <link rel="stylesheet" href="~/lib/leaflet/plugins/minimap/Control.MiniMap.min.css" />
-    <link rel="stylesheet" href="~/lib/leaflet/plugins/fullscreen/Control.FullScreen.css" />
-    <link rel="stylesheet" href="~/lib/leaflet/plugins/mouse-position/L.Control.MousePosition.css" />
-    <link rel="stylesheet" href="~/lib/leaflet/plugins/grid/L.Grid.css" />
-    <link rel="stylesheet" href="~/lib/leaflet/plugins/grouped-layers/leaflet.groupedlayercontrol.min.css" />
-    <link rel="stylesheet" href="~/lib/leaflet/plugins/draw/leaflet.draw.css" />
-    <link rel="stylesheet" href="~/lib/leaflet/plugins/draw-style-editor/css/Leaflet.StyleEditor.min.css" />
-    <link rel="stylesheet" href="~/lib/leaflet/plugins/measure/leaflet-measure.css" />
-    <link rel="stylesheet" href="~/lib/apexcharts/apexcharts.css" />
+    <link rel="stylesheet" href="~/lib/leaflet/leaflet.min.css" />
+    <link rel="stylesheet" href="~/lib/leaflet-fullscreen/dist/leaflet.fullscreen.min.css" />
+    <link rel="stylesheet" href="~/lib/leaflet-resetview/dist/L.Control.ResetView.min.css" />
+    <link rel="stylesheet" href="~/lib/leaflet-minimap/Control.MiniMap.min.css" />
+    <link rel="stylesheet" href="~/lib/leaflet-mouse-position/src/L.Control.MousePosition.min.css" />
+    <link rel="stylesheet" href="~/lib/leaflet-grid/L.Grid.css" />
+    <link rel="stylesheet" href="~/lib/leaflet-groupedlayercontrol/leaflet.groupedlayercontrol.min.css" />
+    <link rel="stylesheet" href="~/lib/leaflet-measure-path/leaflet-measure-path.min.css" />
+    <link rel="stylesheet" href="~/lib/leaflet-geoman-free/dist/leaflet-geoman.min.css" />
+    <link rel="stylesheet" href="~/lib/apexcharts/apexcharts.min.css" />
     <style type="text/css">
         #map {
             height: 720px;
@@ -95,33 +95,18 @@
 
 @section scripts
 {
-    <script type="text/javascript" src="~/lib/leaflet/leaflet.js"></script>
-    <script type="text/javascript" src="~/lib/leaflet/plugins/minimap/Control.MiniMap.min.js"></script>
-    <script type="text/javascript" src="~/lib/leaflet/plugins/fullscreen/Control.FullScreen.js"></script>
-    <script type="text/javascript" src="~/lib/leaflet/plugins/mouse-position/L.Control.MousePosition.js"></script>
-    <script type="text/javascript" src="~/lib/leaflet/plugins/grid/L.Grid.js"></script>
-    <script type="text/javascript" src="~/lib/leaflet/plugins/grouped-layers/leaflet.groupedlayercontrol.min.js"></script>
-    <script type="text/javascript" src="~/lib/leaflet/plugins/draw/leaflet.draw.js"></script>
-    <script type="text/javascript" src="~/lib/leaflet/plugins/draw-style-editor/javascript/Leaflet.StyleEditor.min.js"></script>
-    <script type="text/javascript" src="~/lib/leaflet/plugins/measure/leaflet-measure.es.js"></script>
-    <script type="text/javascript" src="~/lib/leaflet/plugins/ajax/leaflet.ajax.min.js"></script>
+    <script type="text/javascript" src="~/lib/leaflet/leaflet.min.js"></script>
+    <script type="text/javascript" src="~/lib/leaflet-fullscreen/dist/leaflet.fullscreen.min.js"></script>
+    <script type="text/javascript" src="~/lib/leaflet-resetview/dist/L.Control.ResetView.min.js"></script>
+    <script type="text/javascript" src="~/lib/leaflet-minimap/Control.MiniMap.min.js"></script>
+    <script type="text/javascript" src="~/lib/leaflet-mouse-position/src/L.Control.MousePosition.min.js"></script>
+    <script type="text/javascript" src="~/lib/leaflet-grid/L.Grid.js"></script>
+    <script type="text/javascript" src="~/lib/leaflet-groupedlayercontrol/leaflet.groupedlayercontrol.min.js"></script>
+    <script type="text/javascript" src="~/lib/leaflet-ajax/leaflet.ajax.min.js"></script>
+    <script type="text/javascript" src="~/lib/leaflet-measure-path/leaflet-measure-path.min.js"></script>
+    <script type="text/javascript" src="~/lib/leaflet-geoman-free/dist/leaflet-geoman.min.js"></script>
     <script type="text/javascript" src="~/lib/apexcharts/apexcharts.min.js"></script>
     <script type="text/javascript">
-        // Workaround Does not work in Leaflet 1.8.0 #171
-        L.Control.Measure.include({
-	        // set icon on the capture marker
-	        _setCaptureMarkerIcon: function () {
-		        // disable autopan
-		        this._captureMarker.options.autoPanOnFocus = false;
-
-		        // default function
-		        this._captureMarker.setIcon(
-			        L.divIcon({
-				        iconSize: this._map.getSize().multiplyBy(2)
-			        })
-		        );
-	        },
-        });
 
         var highlightLayer;
 
@@ -135,7 +120,21 @@
                 attributionControl: false
             }).setView([21.3792,-77.9184], 9);
 
+            L.control.resetView({
+                position: "topleft",
+                title: "Reiniciar vista",
+                latlng: L.latLng([21.3792,-77.9184]),
+                zoom: 9,
+            }).addTo(map);
+
             var drawingLayer = new L.featureGroup().addTo(map);
+
+            drawingLayer.on('add', () =>
+            {
+                drawingLayer.eachLayer(function (layer) {
+                    layer.showMeasurements();
+                });
+            });
 
             var baseLayer = new L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', 
             {
@@ -217,16 +216,6 @@
 		        collapsed: false
             }).addTo(map);
 
-            var measureControl = L.control.measure({
-                position: 'topleft',
-                primaryLengthUnit: 'kilometers',
-                primaryAreaUnit: 'hectares',
-                activeColor: 'indigo',
-                completedColor: 'indigo'
-            });
-
-            measureControl.addTo(map);
-
             @if (!string.IsNullOrEmpty(Model.Current.PostLayersJSBlock))
             {
                 @Html.Raw(Model.Current.PostLayersJSBlock);
@@ -253,27 +242,17 @@
 
             L.control.scale().addTo(map);
 
-            map.addControl(new L.Control.Draw({
-               edit: {
-                   featureGroup: drawingLayer,
-                   poly: {
-                       allowIntersection: false
-                   }
-               },
-               draw: {
-                   polygon: {
-                       allowIntersection: false,
-                       showArea: true
-                   }
-               }
-            }));
-            map.on(L.Draw.Event.CREATED, function (event) {
-               var drawLayer = event.layer;
+            map.pm.addControls({  
+              position: 'bottomleft'
+            });
+            map.pm.setGlobalOptions({ layerGroup: drawingLayer });
+            map.pm.setLang("es");
 
-               drawingLayer.addLayer(drawLayer);
+            map.on('pm:create', ({ shape, layer }) => {
+                layer.showMeasurements();
             });
 
-            map.addControl(L.control.styleEditor());
+            // map.addControl(L.control.styleEditor());
             
             var miniMap = new L.Control.MiniMap(new L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
                 maxZoom: 19,

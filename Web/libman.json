@@ -1,0 +1,115 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "library": "jquery@3.7.1",
+      "destination": "wwwroot/lib/jquery/"
+    },
+    {
+      "library": "leaflet@1.9.4",
+      "destination": "wwwroot/lib/leaflet/"
+    },
+    {
+      "library": "ckeditor@4.25.1",
+      "destination": "wwwroot/lib/ckeditor/"
+    },
+    {
+      "library": "bootstrap@4.6.2",
+      "destination": "wwwroot/lib/bootstrap/"
+    },
+    {
+      "library": "popper.js@2.11.8",
+      "destination": "wwwroot/lib/popper/"
+    },
+    {
+      "library": "MaterialDesign-Webfont@7.4.47",
+      "destination": "wwwroot/lib/MaterialDesign-Webfont/"
+    },
+    {
+      "library": "gijgo@1.9.14",
+      "destination": "wwwroot/lib/gijgo/"
+    },
+    {
+      "library": "bootstrap-combobox@1.2.0",
+      "destination": "wwwroot/lib/bootstrap-combobox/"
+    },
+    {
+      "library": "leaflet-minimap@3.6.1",
+      "destination": "wwwroot/lib/leaflet-minimap/"
+    },
+    {
+      "provider": "jsdelivr",
+      "library": "leaflet-fullscreen@1.0.2",
+      "destination": "wwwroot/lib/leaflet-fullscreen/"
+    },
+    {
+      "provider": "jsdelivr",
+      "library": "@geoman-io/leaflet-geoman-free@2.18.3",
+      "destination": "wwwroot/lib/leaflet-geoman-free/"
+    },
+    {
+      "provider": "jsdelivr",
+      "library": "leaflet-mouse-position@1.2.0",
+      "destination": "wwwroot/lib/leaflet-mouse-position/"
+    },
+    {
+      "provider": "jsdelivr",
+      "library": "leaflet-loading@0.1.24",
+      "destination": "wwwroot/lib/leaflet-loading/"
+    },
+    {
+      "library": "leaflet-contextmenu@1.4.0",
+      "destination": "wwwroot/lib/leaflet-contextmenu/"
+    },
+    {
+      "library": "leaflet-ajax@2.1.0",
+      "destination": "wwwroot/lib/leaflet-ajax/"
+    },
+    {
+      "provider": "jsdelivr",
+      "library": "leaflet-html-legend@0.3.5",
+      "destination": "wwwroot/lib/leaflet-html-legend/"
+    },
+    {
+      "library": "leaflet-groupedlayercontrol@0.6.1",
+      "destination": "wwwroot/lib/leaflet-groupedlayercontrol/"
+    },
+    {
+      "provider": "jsdelivr",
+      "library": "leaflet.sidepanel@1.2.2",
+      "destination": "wwwroot/lib/leaflet-sidepanel/"
+    },
+    {
+      "library": "Chart.js@4.4.1",
+      "destination": "wwwroot/lib/chartjs/"
+    },
+    {
+      "library": "apexcharts@4.5.0",
+      "destination": "wwwroot/lib/apexcharts/"
+    },
+    {
+      "provider": "jsdelivr",
+      "library": "@drustack/leaflet.resetview@1.9.2",
+      "destination": "wwwroot/lib/leaflet-resetview/",
+      "files": [
+        "dist/L.Control.ResetView.min.css",
+        "dist/L.Control.ResetView.min.css.map",
+        "dist/L.Control.ResetView.min.js",
+        "dist/L.Control.ResetView.min.js.map",
+        "dist/redo-solid.svg"
+      ]
+    },
+    {
+      "provider": "jsdelivr",
+      "library": "leaflet-measure-path@1.5.0",
+      "destination": "wwwroot/lib/leaflet-measure-path/",
+      "files": [
+        "leaflet-measure-path.css",
+        "leaflet-measure-path.js",
+        "leaflet-measure-path.min.css",
+        "leaflet-measure-path.min.js"
+      ]
+    }
+  ]
+}

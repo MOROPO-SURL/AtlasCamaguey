@@ -1,14 +1,12 @@
 /*
- * Gijgo DateTimePicker v1.9.13
+ * Gijgo DateTimePicker v1.9.14
  * http://gijgo.com/datetimepicker
  *
- * Copyright 2014, 2019 gijgo.com
+ * Copyright 2014, 2022 gijgo.com
  * Released under the MIT license
  */
 /* global window alert jQuery gj */
-/**
-  */
-gj.datetimepicker = {
+/**  */gj.datetimepicker = {
     plugins: {},
     messages: {
         'en-us': {
@@ -19,43 +17,25 @@ gj.datetimepicker = {
 gj.datetimepicker.config = {
     base: {
 
-        /** The datepicker configuration options. Valid only for datepicker specific configuration options.
-         */
-        datepicker: gj.datepicker.config.base,
+        /** The datepicker configuration options. Valid only for datepicker specific configuration options.         */        datepicker: gj.datepicker.config.base,
 
         timepicker: gj.timepicker.config.base,
 
-        /** The name of the UI library that is going to be in use.
-         */
-        uiLibrary: 'materialdesign',
+        /** The name of the UI library that is going to be in use.         */        uiLibrary: 'materialdesign',
 
-        /** The initial datetimepicker value.
-         */
-        value: undefined,
+        /** The initial datetimepicker value.         */        value: undefined,
 
-        /** Specifies the format, which is used to format the value of the DatePicker displayed in the input.
-         */
-        format: 'HH:MM mm/dd/yyyy',
+        /** Specifies the format, which is used to format the value of the DatePicker displayed in the input.         */        format: 'HH:MM mm/dd/yyyy',
 
-        /** The width of the datetimepicker.
-         */
-        width: undefined,
+        /** The width of the datetimepicker.         */        width: undefined,
 
-        /** If set to true, the datetimepicker will have modal behavior.
-         */
-        modal: false,
+        /** If set to true, the datetimepicker will have modal behavior.         */        modal: false,
 
-        /** If set to true, add footer with ok and cancel buttons to the datetimepicker.
-         */
-        footer: false,
+        /** If set to true, add footer with ok and cancel buttons to the datetimepicker.         */        footer: false,
 
-        /** The size of the datetimepicker input.
-         */
-        size: 'default',
+        /** The size of the datetimepicker input.         */        size: 'default',
         
-        /** The language that needs to be in use.
-         */
-        locale: 'en-us',
+        /** The language that needs to be in use.         */        locale: 'en-us',
 
         icons: {},
 
@@ -72,6 +52,12 @@ gj.datetimepicker.config = {
     },
 
     bootstrap4: {
+        style: {
+            calendar: 'gj-picker gj-picker-bootstrap datetimepicker gj-unselectable'
+        }
+    },
+
+    bootstrap5: {
         style: {
             calendar: 'gj-picker gj-picker-bootstrap datetimepicker gj-unselectable'
         }
@@ -283,9 +269,7 @@ gj.datetimepicker.methods = {
 gj.datetimepicker.events = {
     /**
      * Fires when the datetimepicker value changes as a result of selecting a new value.
-     *
-     */
-    change: function ($datetimepicker) {
+     *     */    change: function ($datetimepicker) {
         return $datetimepicker.triggerHandler('change');
     }
 };
@@ -296,27 +280,19 @@ gj.datetimepicker.widget = function ($element, jsConfig) {
 
     self.mouseMove = false;
 
-    /** Gets or sets the value of the datetimepicker.
-     */
-    self.value = function (value) {
+    /** Gets or sets the value of the datetimepicker.     */    self.value = function (value) {
         return methods.value(this, value);
     };
 
-    /** Open the calendar.
-     */
-    self.open = function () {
+    /** Open the calendar.     */    self.open = function () {
         gj.datepicker.methods.open(this, this.data().datepicker);
     };
 
-    /** Close the calendar.
-     */
-    self.close = function () {
+    /** Close the calendar.     */    self.close = function () {
         gj.datepicker.methods.close(this);
     };
 
-    /** Remove datetimepicker functionality from the element.
-     */
-    self.destroy = function () {
+    /** Remove datetimepicker functionality from the element.     */    self.destroy = function () {
         return methods.destroy(this);
     };
 

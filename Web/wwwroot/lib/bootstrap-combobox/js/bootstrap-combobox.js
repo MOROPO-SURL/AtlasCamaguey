@@ -1,7 +1,7 @@
 /* =============================================================
- * bootstrap-combobox.js v1.1.8
+ * bootstrap-combobox.js v1.2.0
  * =============================================================
- * Copyright 2012 Daniel Farrell
+ * Copyright 2019 Daniel Farrell
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,8 @@
  /* COMBOBOX PUBLIC CLASS DEFINITION
   * ================================ */
 
+  var hasPopper = typeof Popper !== 'undefined';
+
   var Combobox = function ( element, options ) {
     this.options = $.extend({}, $.fn.combobox.defaults, options);
     this.template = this.options.template || this.template
@@ -37,6 +39,8 @@
     this.highlighter = this.options.highlighter || this.highlighter;
     this.shown = false;
     this.selected = false;
+    this.renderLimit = this.options.renderLimit || -1;
+    this.clearIfNoMatch = this.options.clearIfNoMatch;
     this.refresh();
     this.transferAttributes();
     this.listen();
@@ -97,7 +101,7 @@
 
   , transferAttributes: function() {
     this.options.placeholder = this.$source.attr('data-placeholder') || this.options.placeholder
-    if(this.options.appendId !== "undefined") {
+    if(this.options.appendId !== undefined) {
     	this.$element.attr('id', this.$source.attr('id') + this.options.appendId);
     }
     this.$element.attr('placeholder', this.options.placeholder)
@@ -178,9 +182,17 @@
 
   , template: function() {
       if (this.options.bsVersion == '2') {
-        return '<div class="combobox-container"><input type="hidden" /> <div class="input-append"> <input type="text" autocomplete="off" /> <span class="add-on dropdown-toggle" data-dropdown="dropdown"> <span class="caret"/> <i class="icon-remove"/> </span> </div> </div>'
+        return '<div class="combobox-container"><input type="hidden" /> <div class="input-append"> <input type="text" autocomplete="off" /> <span class="add-on dropdown-toggle" data-dropdown="dropdown"> <span class="caret pulldown" style="vertical-align: middle"/> <i class="icon-remove remove"/> </span> </div> </div>'
+      } else if (this.options.bsVersion == '3') {
+        return '<div class="combobox-container"> <input type="hidden" /> <div class="input-group"> <input type="text" autocomplete="off" /> <span class="input-group-addon dropdown-toggle" data-dropdown="dropdown"> <span class="caret pulldown" /> <span class="glyphicon glyphicon-remove remove" /> </span> </div> </div>'
       } else {
-        return '<div class="combobox-container"> <input type="hidden" /> <div class="input-group"> <input type="text" autocomplete="off" /> <span class="input-group-addon dropdown-toggle" data-dropdown="dropdown"> <span class="caret" /> <span class="glyphicon glyphicon-remove" /> </span> </div> </div>'
+        return '<div class="combobox-container"> <input type="hidden" /> <div class="input-group"> <input type="text" autocomplete="off" />'
+          + '<span class="input-group-append"' + (hasPopper ? ' data-toggle="dropdown" data-reference="parent"' : '') + '>'
+            + '<span class="input-group-text dropdown-toggle' + (this.options.iconCaret ? ' custom-icon' : '') + '">'
+              + (this.options.iconCaret ? '<span class="' + this.options.iconCaret + ' pulldown" />' : '')
+              + (this.options.iconRemove ? '<span class="' + this.options.iconRemove + ' remove" />' : '<span class="utf-remove remove" />')
+            + '</span>'
+          + '</span> </div> </div>';
       }
     }
 
@@ -214,6 +226,8 @@
       var that = this;
 
       items = $(items).map(function (i, item) {
+        if(~that.renderLimit && i >= that.renderLimit)
+          return;
         i = $(that.options.item).attr('data-value', item);
         i.find('a').html(that.highlighter(item));
         return i[0];
@@ -414,7 +428,8 @@
       this.focused = false;
       var val = this.$element.val();
       if (!this.selected && val !== '' ) {
-        this.$element.val('');
+        if(that.clearIfNoMatch)
+          this.$element.val('');
         this.$source.val('').trigger('change');
         this.$target.val('').trigger('change');
       }
@@ -455,6 +470,9 @@
     bsVersion: '4'
   , menu: '<ul class="typeahead typeahead-long dropdown-menu"></ul>'
   , item: '<li><a href="#" class="dropdown-item"></a></li>'
+  , iconCaret: undefined
+  , iconRemove: undefined
+  , clearIfNoMatch: true
   };
 
   $.fn.combobox.Constructor = Combobox;
