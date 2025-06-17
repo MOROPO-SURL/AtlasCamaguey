@@ -154,7 +154,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
 
                         using (var httpClient = new System.Net.Http.HttpClient())
                         {
-                            var uri = string.Format("{0}?MAP={1}/{2}.qgz&SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities", configuration["QGIS:ServerBaseUri"], qgisProjectDirectoryInfo.FullName.Replace("\\", "/"), mapId.ToUpperInvariant());
+                            var uri = string.Format("{0}?MAP={1}/{2}.qgz&SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities", configuration["QGIS:ServerBaseUri"], qgisProjectDirectoryInfo.FullName.Replace("\\", "/"), mapId);
 
                             var httpResponseMessage = await httpClient.GetAsync(uri);
 

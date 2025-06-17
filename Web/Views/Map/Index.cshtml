@@ -114,6 +114,18 @@
         .legend-block > .visibility-toggle, .legend-block > .opacity-slider {
             display: none !important;
         }
+        .leaflet-control-layers-expanded {
+            padding: 6px;
+        }
+        .control-implicit-collapse-toogle {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            background-color:black;
+        }
+        .control-implicit-collapse-toogle >  span {
+            font-size: 18px;
+        }
     </style>
 }
 
@@ -228,85 +240,7 @@
 
             var grid = new L.grid().addTo(map);
 
-            // var legendToogleButton = L.easyButton({
-            //      position: 'topright',
-            //      id: 'legend-visibility-switcher-button',
-            //      states: [
-            //          { 
-            //             stateName: 'hide-legend',
-            //             icon: '<span class="mdi mdi-map-minus"></span>',               // and define its properties
-            //             title: 'Ocultar leyenda',      // like its title
-            //             onClick: function(btn, map) {       // and its callback
-            //                 btn.disable();
-            //             }
-            //          },
-            //          { 
-            //              stateName: 'show-legend',
-            //             icon: '<span class="mdi mdi-map-plus"></span>',               // and define its properties
-            //             title: 'Mostrar leyenda',      // like its title
-            //             onClick: function(btn, map) {       // and its callback
-            //                 btn.disable();
-            //             }
-            //          }
-            //      ]
-            //  }).addTo(map);
-
-            var legend = L.control.htmllegend( 
-            {
-                position: 'topright',
-                collapsedOnInit: false,
-                collapseSimple: true,
-                disableVisibilityControls: true,
-                visibleIcon: null,
-                legends: legendItems
-            }).addTo(map);
-
-            const legentHeaderContainer = L.DomUtil.create('div');
-
-            const legendHeader = L.DomUtil.create('h3', 'h4');
-
-            legendHeader.innerText = "Leyenda";
-
-            legentHeaderContainer.append(legendHeader);
-
-            const legendToogleButtonContainer = L.DomUtil.create('a', 'leaflet-bar leaflet-control');
-
-            const legendToogleButton = L.DomUtil.create('a', 'leaflet-bar-part leaflet-bar-part-single');
-            
-            legendToogleButton.innerHTML = '<span class="mdi mdi-arrow-collapse"></span>';
-            legendToogleButton.setAttribute("href", "#");
-            legendToogleButton.setAttribute("title", "Visibilidad de la leyenda");
-
-            legendToogleButtonContainer.append(legendToogleButton);
-
-            legentHeaderContainer.append(legendToogleButtonContainer);
-            
-            legend.getContainer().insertBefore(legentHeaderContainer, legend.getContainer().firstChild);
-
-            // var layerManagerToogleButton = L.easyButton({
-            //      position: 'topright',
-            //      id: 'layer-manager-visibility-switcher-button',
-            //      states: [
-            //          { 
-            //             stateName: 'hide-layer-manager',
-            //             icon: '<span class="mdi mdi-layers-minus"></span>',               // and define its properties
-            //             title: 'Ocultar leyenda',      // like its title
-            //             onClick: function(btn, map) {       // and its callback
-            //                 btn.disable();
-            //             }
-            //          },
-            //          { 
-            //              stateName: 'show-layer-manager',
-            //             icon: '<span class="mdi mdi-layers-plus"></span>',               // and define its properties
-            //             title: 'Mostrar leyenda',      // like its title
-            //             onClick: function(btn, map) {       // and its callback
-            //                 btn.disable();
-            //             }
-            //          }
-            //      ]
-            //  }).addTo(map);
-
-            L.control.groupedLayers(null, { 
+            const layerManager = L.control.groupedLayers(null, { 
                 "Capas de datos": {
                     @{
                         index = 0;
@@ -325,6 +259,58 @@
                 hideSingleBase: true,
 		        collapsed: false
             }).addTo(map);
+
+            const layerManagerHeaderContainer = L.DomUtil.create('div');
+
+            const layerManagerHeader = L.DomUtil.create('h3', 'h3 mb-3');
+
+            layerManagerHeader.innerText = "Capas";
+
+            const layerManagerToogleButtonContainer = L.DomUtil.create('div', 'leaflet-bar leaflet-control m-0');
+
+            const layerManagerToogleButton = L.DomUtil.create('a', 'control-implicit-collapse-toogle');
+            
+            layerManagerToogleButton.innerHTML = '<span class="mdi mdi-arrow-collapse"></span>';
+            layerManagerToogleButton.setAttribute("href", "#");
+            layerManagerToogleButton.setAttribute("title", "Visibilidad del Gestor de capas");
+
+            layerManagerToogleButtonContainer.append(layerManagerToogleButton);
+
+            layerManagerHeaderContainer.append(layerManagerToogleButtonContainer);
+            layerManagerHeaderContainer.append(layerManagerHeader);
+
+            layerManager.getContainer().insertBefore(layerManagerHeaderContainer, layerManager.getContainer().firstChild);
+
+            const legend = L.control.htmllegend(
+            {
+                position: 'topright',
+                collapsedOnInit: false,
+                collapseSimple: true,
+                disableVisibilityControls: true,
+                visibleIcon: null,
+                legends: legendItems
+            }).addTo(map);
+
+            const legendHeaderContainer = L.DomUtil.create('div');
+
+            const legendHeader = L.DomUtil.create('h3', 'h3');
+
+            legendHeader.innerText = "Leyenda";
+
+            const legendToogleButtonContainer = L.DomUtil.create('div', 'leaflet-bar leaflet-control m-0');
+
+            const legendToogleButton = L.DomUtil.create('a', 'control-implicit-collapse-toogle');
+
+            legendToogleButton.innerHTML = '<span class="mdi mdi-arrow-collapse"></span>';
+            legendToogleButton.setAttribute("href", "#");
+            legendToogleButton.setAttribute("title", "Visibilidad de la leyenda");
+
+            legendToogleButtonContainer.append(legendToogleButton);
+
+            legendHeaderContainer.append(legendToogleButtonContainer);
+            legendHeaderContainer.append(legendHeader);
+
+            legend.getContainer().insertBefore(legendHeaderContainer, legend.getContainer().firstChild);
 
             @if (!string.IsNullOrEmpty(Model.Current.PostLayersJSBlock))
             {
