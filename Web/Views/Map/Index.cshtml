@@ -42,7 +42,7 @@
 @section styles
 {
     <link rel="stylesheet" href="~/lib/leaflet/leaflet.min.css" />
-    <link rel="stylesheet" href="~/lib/leaflet-easybutton/src/easy-button.min.css" />
+    @*<link rel="stylesheet" href="~/lib/leaflet-draw-style-editor/css/Leaflet.StyleEditor.min.css" />*@
     <link rel="stylesheet" href="~/lib/leaflet-fullscreen/dist/leaflet.fullscreen.min.css" />
     <link rel="stylesheet" href="~/lib/leaflet-resetview/dist/L.Control.ResetView.min.css" />
     <link rel="stylesheet" href="~/lib/leaflet-minimap/Control.MiniMap.min.css" />
@@ -111,19 +111,25 @@
         .leaflet-control-layers-group > label > span {
             font-size: 1.2em;
         }
+        #layer-manager-control-implicit-collapse-toggle-icon.collapsed::before {
+            content: '\FF75';
+        }
+        #legend-control-implicit-collapse-toggle-icon.collapsed::before {
+            content: '\FA00';
+        }
         .legend-block > .visibility-toggle, .legend-block > .opacity-slider {
             display: none !important;
         }
         .leaflet-control-layers-expanded {
             padding: 6px;
         }
-        .control-implicit-collapse-toogle {
+        .control-implicit-collapse-toggle {
             display: inline-block;
             width: 16px;
             height: 16px;
             background-color:black;
         }
-        .control-implicit-collapse-toogle >  span {
+        .control-implicit-collapse-toggle >  span {
             font-size: 18px;
         }
     </style>
@@ -132,7 +138,7 @@
 @section scripts
 {
     <script type="text/javascript" src="~/lib/leaflet/leaflet.min.js"></script>
-    <script type="text/javascript" src="~/lib/leaflet-easybutton/src/easy-button.min.js"></script>
+    @*<script type="text/javascript" src="~/lib/leaflet-draw-style-editor/javascript/Leaflet.StyleEditor.min.js"></script>*@
     <script type="text/javascript" src="~/lib/leaflet-fullscreen/dist/leaflet.fullscreen.min.js"></script>
     <script type="text/javascript" src="~/lib/leaflet-resetview/dist/L.Control.ResetView.min.js"></script>
     <script type="text/javascript" src="~/lib/leaflet-minimap/Control.MiniMap.min.js"></script>
@@ -183,7 +189,7 @@
 	            maxZoom: 19
             }).addTo(map);
 
-            @Html.Raw("var legendItems = [];")
+            var legendItems = [];
 
             @{
                 var index = 0;
@@ -264,19 +270,38 @@
 
             const layerManagerHeader = L.DomUtil.create('h3', 'h3 mb-3');
 
-            layerManagerHeader.innerText = "Capas";
+            layerManagerHeader.setAttribute("style", "min-width: 164px !important;");
+            layerManagerHeader.innerHTML = '<span class="mdi mdi-layers-triple"></span> Capas';
 
-            const layerManagerToogleButtonContainer = L.DomUtil.create('div', 'leaflet-bar leaflet-control m-0');
+            const layerManagerToggleButtonContainer = L.DomUtil.create('div', 'leaflet-bar leaflet-control m-0');
 
-            const layerManagerToogleButton = L.DomUtil.create('a', 'control-implicit-collapse-toogle');
+            const layerManagerToggleButton = L.DomUtil.create('a', 'control-implicit-collapse-toggle');
+
+            L.DomEvent.on(layerManagerToggleButton, 'click', () => {			    
+			    if (layerManagerHeader.style.display == 'none')
+                    layerManagerHeader.style.display = 'block';
+                else
+                    layerManagerHeader.style.display = 'none';
+
+                var mainInnerTarget = $('form.leaflet-control-layers-list');
+                var icon = $('#layer-manager-control-implicit-collapse-toggle-icon');
+
+                if (mainInnerTarget.hasClass('d-none')) {
+                    mainInnerTarget.removeClass('d-none');
+                    icon.removeClass('collapsed');
+                } else {
+                    mainInnerTarget.addClass('d-none');
+                    icon.addClass('collapsed');
+                }
+		    }, L.DomEvent.stopPropagation);
             
-            layerManagerToogleButton.innerHTML = '<span class="mdi mdi-arrow-collapse"></span>';
-            layerManagerToogleButton.setAttribute("href", "#");
-            layerManagerToogleButton.setAttribute("title", "Visibilidad del Gestor de capas");
+            layerManagerToggleButton.innerHTML = '<span id="layer-manager-control-implicit-collapse-toggle-icon" class="mdi mdi-arrow-collapse"></span>';
+            layerManagerToggleButton.setAttribute("href", "javascript:;");
+            layerManagerToggleButton.setAttribute("title", "Visibilidad del Gestor de capas");
 
-            layerManagerToogleButtonContainer.append(layerManagerToogleButton);
+            layerManagerToggleButtonContainer.append(layerManagerToggleButton);
 
-            layerManagerHeaderContainer.append(layerManagerToogleButtonContainer);
+            layerManagerHeaderContainer.append(layerManagerToggleButtonContainer);
             layerManagerHeaderContainer.append(layerManagerHeader);
 
             layerManager.getContainer().insertBefore(layerManagerHeaderContainer, layerManager.getContainer().firstChild);
@@ -293,21 +318,40 @@
 
             const legendHeaderContainer = L.DomUtil.create('div');
 
-            const legendHeader = L.DomUtil.create('h3', 'h3');
+            const legendHeader = L.DomUtil.create('h3', 'h3 mb-0');
 
-            legendHeader.innerText = "Leyenda";
+            legendHeader.setAttribute("style", "min-width: 192px !important;");
+            legendHeader.innerHTML = '<span class="mdi mdi-map-legend"></span> Leyenda';
 
-            const legendToogleButtonContainer = L.DomUtil.create('div', 'leaflet-bar leaflet-control m-0');
+            const legendToggleButtonContainer = L.DomUtil.create('div', 'leaflet-bar leaflet-control m-0');
 
-            const legendToogleButton = L.DomUtil.create('a', 'control-implicit-collapse-toogle');
+            const legendToggleButton = L.DomUtil.create('a', 'control-implicit-collapse-toggle');
 
-            legendToogleButton.innerHTML = '<span class="mdi mdi-arrow-collapse"></span>';
-            legendToogleButton.setAttribute("href", "#");
-            legendToogleButton.setAttribute("title", "Visibilidad de la leyenda");
+            L.DomEvent.on(legendToggleButton, 'click', () => {			    
+			    if (legendHeader.style.display == 'none')
+                    legendHeader.style.display = 'block';
+                else
+                    legendHeader.style.display = 'none';
 
-            legendToogleButtonContainer.append(legendToogleButton);
+                var mainInnerTarget = $('div.legend-block');
+                var icon = $('#legend-control-implicit-collapse-toggle-icon');
 
-            legendHeaderContainer.append(legendToogleButtonContainer);
+                if (mainInnerTarget.hasClass('d-none')) {
+                    mainInnerTarget.removeClass('d-none');
+                    icon.removeClass('collapsed');
+                } else {
+                    mainInnerTarget.addClass('d-none');
+                    icon.addClass('collapsed');
+                }
+		    }, L.DomEvent.stopPropagation);
+
+            legendToggleButton.innerHTML = '<span id="legend-control-implicit-collapse-toggle-icon" class="mdi mdi-arrow-collapse"></span>';
+            legendToggleButton.setAttribute("href", "javascript:;");
+            legendToggleButton.setAttribute("title", "Visibilidad de la leyenda");
+
+            legendToggleButtonContainer.append(legendToggleButton);
+
+            legendHeaderContainer.append(legendToggleButtonContainer);
             legendHeaderContainer.append(legendHeader);
 
             legend.getContainer().insertBefore(legendHeaderContainer, legend.getContainer().firstChild);
@@ -350,13 +394,24 @@
                 layer.showMeasurements();
             });
 
-            // map.addControl(L.control.styleEditor());
+            @*
+            map.addControl(L.control.styleEditor({
+                strings: {
+                    cancel: 'Cancelar',
+                    cancelTitle: 'Cancelar Persoliazación',
+                    tooltip: 'Seleccione el elemento que desea personalizar',
+                    tooltipNext: 'Seleccione otro elemento que desea personalizar'
+                }
+            }));
+            *@
             
             var miniMap = new L.Control.MiniMap(new L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
                 maxZoom: 19,
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
 	            subdomains: 'abcd'
             }), { toggleDisplay: true }).addTo(map);
+
+            $('.leaflet-control-resetview').children().attr('href', 'javascript:;');
         });
     </script>
 }
