@@ -110,6 +110,18 @@
         "leaflet-measure-path.min.css",
         "leaflet-measure-path.min.js"
       ]
+    },
+    {
+      "provider": "jsdelivr",
+      "library": "leaflet-easybutton@2.4.0",
+      "destination": "wwwroot/lib/leaflet-easybutton/",
+      "files": [
+        "src/easy-button.css",
+        "src/easy-button.d.ts",
+        "src/easy-button.js",
+        "src/easy-button.min.css",
+        "src/easy-button.min.js"
+      ]
     }
   ]
 }
