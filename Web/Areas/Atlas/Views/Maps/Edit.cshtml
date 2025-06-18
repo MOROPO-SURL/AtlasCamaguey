@@ -150,15 +150,22 @@
                 @Html.TextAreaFor(model => model.Description, new { @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.Description, null, new { @class = "text-danger" })
             </div>
-            <div class="mb-3">
-                @Html.LabelFor(model => model.PreLayersJSBlock, new { @class = "control-label" })
-                @Html.TextAreaFor(model => model.PreLayersJSBlock, 6, 1, new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.PreLayersJSBlock, null, new { @class = "text-danger" })
-            </div>
             <div>
-                @Html.LabelFor(model => model.PostLayersJSBlock, new { @class = "control-label" })
-                @Html.TextAreaFor(model => model.PostLayersJSBlock, 6, 1, new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.PostLayersJSBlock, null, new { @class = "text-danger" })
+                @Html.Label(null, "Bloques complementarios para la renderización de Capas", new { @class = "control-label" })
+                <ul class="nav nav-tabs">
+                    <li class="nav-item"><a class="nav-link active" href="#prelayersjsblock" data-toggle="tab">Bloque Javascript Previo</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#postlayersjsblock" data-toggle="tab">Bloque Javascript Posterior</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane pt-3 active" id="prelayersjsblock">
+                        @Html.TextAreaFor(model => model.PreLayersJSBlock, 6, 1, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.PreLayersJSBlock, null, new { @class = "text-danger" })
+                    </div>
+                    <div class="tab-pane pt-3" id="postlayersjsblock">
+                        @Html.TextAreaFor(model => model.PostLayersJSBlock, 6, 1, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.PostLayersJSBlock, null, new { @class = "text-danger" })
+                    </div>
+                </div>
             </div>
         </div>
         <div class="card-footer">

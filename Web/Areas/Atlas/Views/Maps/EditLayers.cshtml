@@ -79,7 +79,7 @@
                                 <div>@item.Name</div>
                             </div>
                             <div class="col-auto mt-3 mt-sm-0">
-                                <a class="btn btn-light" href="#" data-toggle="modal" data-target="#edit-layer-@item.Id">Modificar</a>
+                                <a class="btn btn-light" href="#" data-toggle="modal" data-target="#edit-layer-@item.Id"><span class="mdi mdi-square-edit-outline"></span>Modificar</a>
                             </div>
                         </div>
                     </div>
@@ -112,12 +112,25 @@
                                             @Html.TextBox("priority", item.Priority, new { @class = "form-control mb-3" })
                                         </div>
                                     </div>
-                                    @Html.Label("interactivePresentantionJSBlock", "Bloque Interactivo", new { @class = "control-label" })
-                                    @Html.TextArea("interactivePresentantionJSBlock", item.InteractivePresentantionJSBlock, 12, 0, new { @class = "form-control mb-3" })
-                                    @Html.Label("stylePresentantionJSBlock", "Bloque de Estilos", new { @class = "control-label" })
-                                    @Html.TextArea("stylePresentantionJSBlock", item.StylePresentantionJSBlock, 12, 0, new { @class = "form-control mb-3" })
-                                    @Html.Label("pointToPresentationJSBlock", "Bloque de Marcación", new { @class = "control-label" })
-                                    @Html.TextArea("pointToPresentationJSBlock", item.PointToPresentationJSBlock, 12, 0, new { @class = "form-control" })
+                                    <div>
+                                        @Html.Label(null, "Bloques de personzalización de Capa", new { @class = "control-label" })
+                                        <ul class="nav nav-tabs">
+                                            <li class="nav-item"><a class="nav-link active" href="#interactivejsblock" data-toggle="tab">Bloque Javascript Interactivo</a></li>
+                                            <li class="nav-item"><a class="nav-link" href="#stylesjsblock" data-toggle="tab">Bloque Javascript de Estilos</a></li>
+                                            <li class="nav-item"><a class="nav-link" href="#pointsjsblock" data-toggle="tab">Bloque Javascript de Marcación</a></li>
+                                        </ul>
+                                        <div class="tab-content">
+                                            <div class="tab-pane pt-3 active" id="interactivejsblock">
+                                                @Html.TextArea("interactivePresentantionJSBlock", item.InteractivePresentantionJSBlock, 12, 0, new { @class = "form-control" })
+                                            </div>
+                                            <div class="tab-pane pt-3" id="stylesjsblock">
+                                                @Html.TextArea("stylePresentantionJSBlock", item.StylePresentantionJSBlock, 12, 0, new { @class = "form-control" })
+                                            </div>
+                                            <div class="tab-pane pt-3" id="pointsjsblock">
+                                                @Html.TextArea("pointToPresentationJSBlock", item.PointToPresentationJSBlock, 12, 0, new { @class = "form-control" })
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="submit" class="btn btn-primary">Modificar</button>
