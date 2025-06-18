@@ -122,6 +122,11 @@
         "src/easy-button.min.css",
         "src/easy-button.min.js"
       ]
+    },
+    {
+      "provider": "jsdelivr",
+      "library": "leaflet-navbar@1.0.0",
+      "destination": "wwwroot/lib/leaflet-navbar/"
     }
   ]
 }

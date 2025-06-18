@@ -44,7 +44,8 @@
     <link rel="stylesheet" href="~/lib/leaflet/leaflet.min.css" />
     @*<link rel="stylesheet" href="~/lib/leaflet-draw-style-editor/css/Leaflet.StyleEditor.min.css" />*@
     <link rel="stylesheet" href="~/lib/leaflet-fullscreen/dist/leaflet.fullscreen.min.css" />
-    <link rel="stylesheet" href="~/lib/leaflet-resetview/dist/L.Control.ResetView.min.css" />
+    <link rel="stylesheet" href="~/lib/leaflet-navbar/Leaflet.NavBar.min.css" />
+    @*<link rel="stylesheet" href="~/lib/leaflet-resetview/dist/L.Control.ResetView.min.css" />*@
     <link rel="stylesheet" href="~/lib/leaflet-minimap/Control.MiniMap.min.css" />
     <link rel="stylesheet" href="~/lib/leaflet-mouse-position/src/L.Control.MousePosition.min.css" />
     <link rel="stylesheet" href="~/lib/leaflet-html-legend/dist/L.Control.HtmlLegend.min.css" />
@@ -140,7 +141,8 @@
     <script type="text/javascript" src="~/lib/leaflet/leaflet.min.js"></script>
     @*<script type="text/javascript" src="~/lib/leaflet-draw-style-editor/javascript/Leaflet.StyleEditor.min.js"></script>*@
     <script type="text/javascript" src="~/lib/leaflet-fullscreen/dist/leaflet.fullscreen.min.js"></script>
-    <script type="text/javascript" src="~/lib/leaflet-resetview/dist/L.Control.ResetView.min.js"></script>
+    <script type="text/javascript" src="~/lib/leaflet-navbar/index.min.js"></script>
+    @*<script type="text/javascript" src="~/lib/leaflet-resetview/dist/L.Control.ResetView.min.js"></script>*@
     <script type="text/javascript" src="~/lib/leaflet-minimap/Control.MiniMap.min.js"></script>
     <script type="text/javascript" src="~/lib/leaflet-mouse-position/src/L.Control.MousePosition.min.js"></script>
     <script type="text/javascript" src="~/lib/leaflet-html-legend/dist/L.Control.HtmlLegend.min.js"></script>
@@ -164,12 +166,18 @@
                 attributionControl: false
             }).setView([21.3792,-77.9184], 9);
 
-            L.control.resetView({
+            L.control.navbar({
+                position: 'topleft',
+                center: L.latLng([21.3792,-77.9184]),
+                zoom: 9
+            }).addTo(map);
+
+            @*L.control.resetView({
                 position: "topleft",
                 title: "Reiniciar vista",
                 latlng: L.latLng([21.3792,-77.9184]),
                 zoom: 9,
-            }).addTo(map);
+            }).addTo(map);*@
 
             var drawingLayer = new L.featureGroup().addTo(map);
 
@@ -411,7 +419,7 @@
 	            subdomains: 'abcd'
             }), { toggleDisplay: true }).addTo(map);
 
-            $('.leaflet-control-resetview').children().attr('href', 'javascript:;');
+            @*$('.leaflet-control-resetview').children().attr('href', 'javascript:;');*@
         });
     </script>
 }
