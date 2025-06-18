@@ -90,18 +90,6 @@
     },
     {
       "provider": "jsdelivr",
-      "library": "@drustack/leaflet.resetview@1.9.2",
-      "destination": "wwwroot/lib/leaflet-resetview/",
-      "files": [
-        "dist/L.Control.ResetView.min.css",
-        "dist/L.Control.ResetView.min.css.map",
-        "dist/L.Control.ResetView.min.js",
-        "dist/L.Control.ResetView.min.js.map",
-        "dist/redo-solid.svg"
-      ]
-    },
-    {
-      "provider": "jsdelivr",
       "library": "leaflet-measure-path@1.5.0",
       "destination": "wwwroot/lib/leaflet-measure-path/",
       "files": [

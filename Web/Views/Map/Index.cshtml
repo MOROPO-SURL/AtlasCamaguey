@@ -45,7 +45,6 @@
     @*<link rel="stylesheet" href="~/lib/leaflet-draw-style-editor/css/Leaflet.StyleEditor.min.css" />*@
     <link rel="stylesheet" href="~/lib/leaflet-fullscreen/dist/leaflet.fullscreen.min.css" />
     <link rel="stylesheet" href="~/lib/leaflet-navbar/Leaflet.NavBar.min.css" />
-    @*<link rel="stylesheet" href="~/lib/leaflet-resetview/dist/L.Control.ResetView.min.css" />*@
     <link rel="stylesheet" href="~/lib/leaflet-minimap/Control.MiniMap.min.css" />
     <link rel="stylesheet" href="~/lib/leaflet-mouse-position/src/L.Control.MousePosition.min.css" />
     <link rel="stylesheet" href="~/lib/leaflet-html-legend/dist/L.Control.HtmlLegend.min.css" />
@@ -142,7 +141,6 @@
     @*<script type="text/javascript" src="~/lib/leaflet-draw-style-editor/javascript/Leaflet.StyleEditor.min.js"></script>*@
     <script type="text/javascript" src="~/lib/leaflet-fullscreen/dist/leaflet.fullscreen.min.js"></script>
     <script type="text/javascript" src="~/lib/leaflet-navbar/index.min.js"></script>
-    @*<script type="text/javascript" src="~/lib/leaflet-resetview/dist/L.Control.ResetView.min.js"></script>*@
     <script type="text/javascript" src="~/lib/leaflet-minimap/Control.MiniMap.min.js"></script>
     <script type="text/javascript" src="~/lib/leaflet-mouse-position/src/L.Control.MousePosition.min.js"></script>
     <script type="text/javascript" src="~/lib/leaflet-html-legend/dist/L.Control.HtmlLegend.min.js"></script>
@@ -171,13 +169,6 @@
                 center: L.latLng([21.3792,-77.9184]),
                 zoom: 9
             }).addTo(map);
-
-            @*L.control.resetView({
-                position: "topleft",
-                title: "Reiniciar vista",
-                latlng: L.latLng([21.3792,-77.9184]),
-                zoom: 9,
-            }).addTo(map);*@
 
             var drawingLayer = new L.featureGroup().addTo(map);
 
@@ -541,111 +532,116 @@
 }
 </div>
 
-<div style="font-size: 1.5rem;">
-    @Html.Raw(Model.Current.Description)
-</div>
+<div class="pb-5">
 
-@*
-<hr class="my-5" />
-<h3 class="mb-0">Modelos de datos</h3>
-<small class="text-muted lead">Gráficas y tablas de datos relacionadas a la temática</small>
-<div class="row mt-3">
-    <div class="col-4">
-        <div class="card shadow-sm" style="margin-bottom: 1.25rem !important;">
-            <div id="chart-1"></div>
-        </div>
+    <div style="font-size: 1.5rem;">
+        @Html.Raw(Model.Current.Description)
     </div>
-    <div class="col-4">
-        <div class="card shadow-sm" style="margin-bottom: 1.25rem !important;">
-            <div id="chart-2"></div>
-        </div>
-    </div>
-    <div class="col-4">
-        <div class="card shadow-sm" style="margin-bottom: 1.25rem !important;">
-            <div id="chart-3"></div>
-        </div>
-    </div>
-</div>
-*@
 
-@if (hasImages || hasVideos || hasDocuments)
-{
-    @if (hasImages)
-    {
-        <hr class="my-5" />
-        <h3 class="mb-0">Imágenes</h3>
-        <small class="text-muted lead">instantáneas relacionadas</small>
-        <div class="card-columns mt-3">
-            @foreach (var item in Model.Images)
-            {
-                <div class="card shadow-sm" style="margin-bottom: 1.25rem !important;">
-                    <img class="card-img" src="~/media/images/@item.Id@item.Extension" />
-                </div>
-            }
+    @*
+    <hr class="my-5" />
+    <h3 class="mb-0">Modelos de datos</h3>
+    <small class="text-muted lead">Gráficas y tablas de datos relacionadas a la temática</small>
+    <div class="row mt-3">
+        <div class="col-4">
+            <div class="card shadow-sm" style="margin-bottom: 1.25rem !important;">
+                <div id="chart-1"></div>
+            </div>
         </div>
-    }
-    @if (hasVideos)
+        <div class="col-4">
+            <div class="card shadow-sm" style="margin-bottom: 1.25rem !important;">
+                <div id="chart-2"></div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="card shadow-sm" style="margin-bottom: 1.25rem !important;">
+                <div id="chart-3"></div>
+            </div>
+        </div>
+    </div>
+    *@
+
+    @if (hasImages || hasVideos || hasDocuments)
     {
-        <hr class="my-5" />
-        <h3 class="mb-0">Videos</h3>
-        <small class="text-muted lead">audiovisuales representativos disponibles</small>
-        <div class="row mt-3">
-            @foreach (var item in Model.Videos)
-            {
-                <div class="col-lg-3 col-md-4 col-sm-6">
+        @if (hasImages)
+        {
+            <hr class="my-5" />
+            <h3 class="mb-0">Imágenes</h3>
+            <small class="text-muted lead">instantáneas relacionadas</small>
+            <div class="card-columns mt-3">
+                @foreach (var item in Model.Images)
+                {
                     <div class="card shadow-sm" style="margin-bottom: 1.25rem !important;">
-                        <div class="embed-responsive embed-responsive-16by9">
-                            <video controls="controls">
-                                <source src="/media/videos/@item.Id.@item.Extension" type="video/mp4">
-                                Su explorar no soporta nativamente la reproducción de videos.
-                            </video>
-                        </div>
-                        <div class="card-body">
-                            @if (string.IsNullOrEmpty(item.About))
-                            {
-                                <p class="text-muted mb-0"><i>Acerca de no especificado</i></p>
-                            }
-                            else
-                            {
-                                <p class="mb-0">@item.About</p>
-                            }
+                        <img class="card-img" src="~/media/images/@item.Id@item.Extension" />
+                    </div>
+                }
+            </div>
+        }
+
+        @if (hasVideos)
+        {
+            <hr class="my-5" />
+            <h3 class="mb-0">Videos</h3>
+            <small class="text-muted lead">audiovisuales representativos disponibles</small>
+            <div class="row mt-3">
+                @foreach (var item in Model.Videos)
+                {
+                    <div class="col-lg-3 col-md-4 col-sm-6">
+                        <div class="card shadow-sm" style="margin-bottom: 1.25rem !important;">
+                            <div class="embed-responsive embed-responsive-16by9">
+                                <video controls="controls">
+                                    <source src="/media/videos/@item.Id.@item.Extension" type="video/mp4">
+                                    Su explorar no soporta nativamente la reproducción de videos.
+                                </video>
+                            </div>
+                            <div class="card-body">
+                                @if (string.IsNullOrEmpty(item.About))
+                                {
+                                    <p class="text-muted mb-0"><i>Acerca de no especificado</i></p>
+                                }
+                                else
+                                {
+                                    <p class="mb-0">@item.About</p>
+                                }
+                            </div>
                         </div>
                     </div>
-                </div>
-            }
-        </div>
-    }
-    @if (hasDocuments)
-    {
-        <hr class="my-5" />
-        <h3 class="mb-0">Documentos</h3>
-        <small class="text-muted lead">material de consulta adicional</small>
-        <div class="row mt-3">
-            @foreach (var item in Model.Documents)
-            {
-                <div class="col-lg-3 col-md-4 col-sm-6">
-                    <div class="card shadow-sm" style="margin-bottom: 1.25rem !important;">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-auto pr-0"><span class="mdi mdi-36px @item.Extension.AsExtensionToMDICssClass()"></span></div>
-                                <div class="col">
-                                    <a asp-action="Document" asp-controller="Download" asp-route-key="@item.Id"><b>@item.Name</b></a>
-                                    <p class="mb-0">
-                                        @if (item.Description == null)
-                                        {
-                                            <span class="text-muted italic">Sin descripción</span>
-                                        }
-                                        else
-                                        {
-                                            <span style="color: #6c757d; word-wrap: break-word;">@item.Description</span>
-                                        }
-                                    </p>
+                }
+            </div>
+        }
+
+        @if (hasDocuments)
+        {
+            <hr class="my-5" />
+            <h3 class="mb-0">Documentos</h3>
+            <small class="text-muted lead">material de consulta adicional</small>
+            <div class="row mt-3">
+                @foreach (var item in Model.Documents)
+                {
+                    <div class="col-lg-3 col-md-4 col-sm-6">
+                        <div class="card shadow-sm" style="margin-bottom: 1.25rem !important;">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-auto pr-0"><span class="mdi mdi-36px @item.Extension.AsExtensionToMDICssClass()"></span></div>
+                                    <div class="col">
+                                        <a asp-action="Document" asp-controller="Download" asp-route-key="@item.Id"><b>@item.Name</b></a>
+                                        <p class="mb-0">
+                                            @if (item.Description == null)
+                                            {
+                                                <span class="text-muted italic">Sin descripción</span>
+                                            }
+                                            else
+                                            {
+                                                <span style="color: #6c757d; word-wrap: break-word;">@item.Description</span>
+                                            }
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            }
-        </div>
+                }
+            </div>
+         }
     }
-}
+</div>
