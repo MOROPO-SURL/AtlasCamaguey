@@ -35,17 +35,17 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Persistence.Entities
         public Framework.Guama.Media.Persistence.Entities.Image Image { get; set; }
         public System.Guid? ImageId { get; set; }
 
-        public List<MapKeyWordBridge> KeyWordBridges { get; set; } = new List<MapKeyWordBridge>();
+        public List<MapImage> Images { get; set; } = new List<MapImage>();
 
-        public List<MapImageBridge> ImageBridges { get; set; } = new List<MapImageBridge>();
+        public List<MapVideo> Videos { get; set; } = new List<MapVideo>();
 
-        public List<MapVideoBridge> VideoBridges { get; set; } = new List<MapVideoBridge>();
-
-        public List<MapDocumentBridge> DocumentBridges { get; set; } = new List<MapDocumentBridge>();
-
-        public List<MapAuthorBridge> AuthorBridges { get; set; } = new List<MapAuthorBridge>();
+        public List<MapDocument> Documents { get; set; } = new List<MapDocument>();
 
         public List<Layer> Layers { get; set; } = new List<Layer>();
+
+        public List<MapKeyWordBridge> KeyWordBridges { get; set; } = new List<MapKeyWordBridge>();
+
+        public List<MapAuthorBridge> AuthorBridges { get; set; } = new List<MapAuthorBridge>();
 
         public string PreLayersJSBlock { get; set; }
 

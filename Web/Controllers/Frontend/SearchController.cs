@@ -144,13 +144,13 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Frontend
 
                     if (informationResourceKind == null || informationResourceKind.Value == Enumerations.InformationResourceKind.Image)
                     {
-                        foreach (var bridge in _entity.ImageBridges)
+                        foreach (var __entity in _entity.Images)
                         {
-                            if (!string.IsNullOrEmpty(bridge.Stern.About) && bridge.Stern.About.Contains(key, System.StringComparison.OrdinalIgnoreCase))
+                            if (!string.IsNullOrEmpty(__entity.Image.About) && __entity.Image.About.Contains(key, System.StringComparison.OrdinalIgnoreCase))
                             {
                                 var __model = new ImageDisplayViewModel();
 
-                                __model.Import(bridge.Stern);
+                                __model.Import(__entity.Image);
 
                                 imageModels.Add(__model);
                             }
@@ -159,13 +159,13 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Frontend
 
                     if (informationResourceKind == null || informationResourceKind.Value == Enumerations.InformationResourceKind.Video)
                     {
-                        foreach (var bridge in _entity.VideoBridges)
+                        foreach (var __entity in _entity.Videos)
                         {
-                            if (!string.IsNullOrEmpty(bridge.Stern.About) && bridge.Stern.About.Contains(key, System.StringComparison.OrdinalIgnoreCase))
+                            if (!string.IsNullOrEmpty(__entity.Video.About) && __entity.Video.About.Contains(key, System.StringComparison.OrdinalIgnoreCase))
                             {
                                 var __model = new VideoDisplayViewModel();
 
-                                __model.Import(bridge.Stern);
+                                __model.Import(__entity.Video);
 
                                 videoModels.Add(__model);
                             }
@@ -174,13 +174,13 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Frontend
 
                     if (informationResourceKind == null || informationResourceKind.Value == Enumerations.InformationResourceKind.Document)
                     {
-                        foreach (var bridge in _entity.DocumentBridges)
+                        foreach (var __entity in _entity.Documents)
                         {
-                            if (!string.IsNullOrEmpty(bridge.Stern.Description) && bridge.Stern.Description.Contains(key, System.StringComparison.OrdinalIgnoreCase))
+                            if (!string.IsNullOrEmpty(__entity.Document.Description) && __entity.Document.Description.Contains(key, System.StringComparison.OrdinalIgnoreCase))
                             {
                                 var __model = new DocumentDisplayViewModel();
 
-                                __model.Import(bridge.Stern);
+                                __model.Import(__entity.Document);
 
                                 documentModels.Add(__model);
                             }

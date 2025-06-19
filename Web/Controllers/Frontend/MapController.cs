@@ -38,27 +38,27 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Frontend
 
                     return _model;
                 }).ToArray(),
-                Images = map.ImageBridges.Select(bridge =>
+                Images = map.Images.Select(bridge =>
                 {
                     var _model = new Models.View.ImageDisplayViewModel();
 
-                    _model.Import(bridge.Stern);
+                    _model.Import(bridge.Image);
 
                     return _model;
                 }).ToArray(),
-                Videos = map.VideoBridges.Select(bridge =>
+                Videos = map.Videos.Select(bridge =>
                 {
                     var _model = new Models.View.VideoDisplayViewModel();
 
-                    _model.Import(bridge.Stern);
+                    _model.Import(bridge.Video);
 
                     return _model;
                 }).ToArray(),
-                Documents = map.DocumentBridges.Select(bridge =>
+                Documents = map.Documents.Select(bridge =>
                 {
                     var _model = new Models.View.DocumentDisplayViewModel();
 
-                    _model.Import(bridge.Stern);
+                    _model.Import(bridge.Document);
 
                     return _model;
                 }).ToArray(),

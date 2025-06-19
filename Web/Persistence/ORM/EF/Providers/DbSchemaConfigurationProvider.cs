@@ -8,10 +8,7 @@
             {
                 return new System.Collections.Generic.List<Framework.Guama.Core.Persistence.ORM.EF.Configurators.Contract.IEntityTypeConfigurator>
                 {
-                    new Configurators.MapDocumentBridgeEntityTypeConfigurator(),
-                    new Configurators.MapImageBridgeEntityTypeConfigurator(),
                     new Configurators.MapKeyWordBridgeEntityTypeConfigurator(),
-                    new Configurators.MapVideoBridgeEntityTypeConfigurator(),
                     new Configurators.MapAuthorBridgeEntityTypeConfigurator(),
                     new Configurators.EpigraphKeyWordBridgeEntityTypeConfigurator(),
                     new Configurators.EpigraphImageBridgeEntityTypeConfigurator(),
@@ -20,7 +17,13 @@
                     new Configurators.ThemeMapBridgeEntityTypeConfigurator(),
                     new Configurators.AuthorEntityTypeConfigurator(),
                     new Configurators.InstitutionEntityTypeConfigurator(),
-                    new Configurators.MapMetadataEntryEntityTypeConfigurator()
+                    new Configurators.MapImageEntityTypeConfigurator(),
+                    new Configurators.MapVideoEntityTypeConfigurator(),
+                    new Configurators.MapDocumentEntityTypeConfigurator(),
+                    new Configurators.MapMetadataEntryEntityTypeConfigurator(),
+                    new Configurators.MapImageMetadataEntryEntityTypeConfigurator(),
+                    new Configurators.MapVideoMetadataEntryEntityTypeConfigurator(),
+                    new Configurators.MapDocumentMetadataEntryEntityTypeConfigurator()
                 };
             }
         }

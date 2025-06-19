@@ -66,10 +66,10 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Persistence.ORM.EF
         public DbSet<Author> Authors { get; set; }
         public DbSet<KeyWord> KeyWords { get; set; }
         public DbSet<Map> Maps { get; set; }
+        public DbSet<MapImage> MapImages { get; set; }
+        public DbSet<MapVideo> MapVideos { get; set; }
+        public DbSet<MapDocument> MapDocuments { get; set; }
         public DbSet<MapKeyWordBridge> MapKeyWordBridges { get; set; }
-        public DbSet<MapImageBridge> MapImageBridges { get; set; }
-        public DbSet<MapVideoBridge> MapVideoBridges { get; set; }
-        public DbSet<MapDocumentBridge> MapDocumentBridges { get; set; }
         public DbSet<MapAuthorBridge> MapAuthorBridges { get; set; }
         public DbSet<Section> Sections { get; set; }
         public DbSet<Epigraph> Epigraphs { get; set; }
@@ -81,5 +81,8 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Persistence.ORM.EF
         public DbSet<Theme> Themes { get; set; }
         public DbSet<ThemeMapBridge> ThemeMapBridges { get; set; }
         public DbSet<MapMetadataEntry> MapMetadataEntries { get; set; }
+        public DbSet<MapMetadataEntry> MapImageMetadataEntries { get; set; }
+        public DbSet<MapMetadataEntry> MapVideoMetadataEntries { get; set; }
+        public DbSet<MapMetadataEntry> MapDocumentMetadataEntries { get; set; }
     }
 }

@@ -27,13 +27,16 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         private readonly IEntityRepository<KeyWord, System.Guid> keyWordRepository;
         private readonly IEntityRepository<Author, System.Guid> authorRepository;
         private readonly IEntityRepository<Layer, System.Guid> layerRepository;
+        private readonly IEntityRepository<MapImage, System.Guid> mapImageRepository;
+        private readonly IEntityRepository<MapVideo, System.Guid> mapVideoRepository;
+        private readonly IEntityRepository<MapDocument, System.Guid> mapDocumentRepository;
         private readonly IEntityRepository<MapMetadataEntry, long> metadataEntryRepository;
         private readonly IImageFileManagerFacade imageFileManager;
         private readonly IDocumentFileManagerFacade documentFileManager;
         private readonly IVideoFileManagerFacade videoFileManager;
         private readonly Microsoft.Extensions.Configuration.IConfiguration configuration;
 
-        public MapsController(Microsoft.Extensions.Configuration.IConfiguration configuration, IVideoFileManagerFacade videoFileManager, IDocumentFileManagerFacade documentFileManager, IImageFileManagerFacade imageFileManager, IEntityRepository<MapMetadataEntry, long> metadataEntryRepository, IEntityRepository<Layer, System.Guid> layerRepository, IEntityRepository<Author, System.Guid> authorRepository, IEntityRepository<KeyWord, System.Guid> keyWordRepository, IEntityRepository<Video, System.Guid> videoRepository, IEntityRepository<Document, System.Guid> documentRepository, IEntityRepository<Image, System.Guid> imageRepository, IEntityRepository<Map, string> repository, IStringLocalizer<MapsController> localizer, ILogger<MapsController> logger) : base(repository, localizer, logger)
+        public MapsController(Microsoft.Extensions.Configuration.IConfiguration configuration, IVideoFileManagerFacade videoFileManager, IDocumentFileManagerFacade documentFileManager, IImageFileManagerFacade imageFileManager, IEntityRepository<MapMetadataEntry, long> metadataEntryRepository, IEntityRepository<MapDocument, System.Guid> mapDocumentRepository, IEntityRepository<MapVideo, System.Guid> mapVideoRepository, IEntityRepository<MapImage, System.Guid> mapImageRepository, IEntityRepository<Layer, System.Guid> layerRepository, IEntityRepository<Author, System.Guid> authorRepository, IEntityRepository<KeyWord, System.Guid> keyWordRepository, IEntityRepository<Video, System.Guid> videoRepository, IEntityRepository<Document, System.Guid> documentRepository, IEntityRepository<Image, System.Guid> imageRepository, IEntityRepository<Map, string> repository, IStringLocalizer<MapsController> localizer, ILogger<MapsController> logger) : base(repository, localizer, logger)
         {
             this.imageRepository = imageRepository;
             this.documentRepository = documentRepository;
@@ -41,6 +44,9 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
             this.keyWordRepository = keyWordRepository;
             this.authorRepository = authorRepository;
             this.layerRepository = layerRepository;
+            this.mapImageRepository = mapImageRepository;
+            this.mapVideoRepository = mapVideoRepository;
+            this.mapDocumentRepository = mapDocumentRepository;
             this.metadataEntryRepository = metadataEntryRepository;
             this.imageFileManager = imageFileManager;
             this.documentFileManager = documentFileManager;
@@ -661,11 +667,11 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
             var model = new Models.View.Backend.Management.MapImagesManagementViewModel
             {
                 Map = new MapDisplayViewModel(),
-                Images = entity.ImageBridges.Select(bridge =>
+                Images = entity.Images.Select(_entity =>
                 {
                     var result = new ImageDisplayViewModel();
 
-                    result.Import(bridge.Stern);
+                    result.Import(_entity.Image);
 
                     return result;
                 }).ToArray()
@@ -704,14 +710,12 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
 
                             imageFileManager.SaveImageFileContent(image.Id, memoryStream.ToArray(), imageFile.ContentType);
 
-                            entity.ImageBridges.Add(new MapImageBridge
+                            mapImageRepository.Add(new MapImage
                             {
-                                ProwId = entity.Id,
-                                SternId = image.Id
-                            });
+                                MapId = entity.Id,
+                                ImageId = image.Id
+                            }, User.Identity.Name);
                         }
-
-                        Repository.Update(entity, User.Identity.Name);
 
                         SetDefaultNotification(NotificationType.Success, GetCreationSuccessMessage());
 
@@ -747,15 +751,17 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
             {
                 var entity = Repository.Get(key);
 
-                var bridge = entity.ImageBridges.First(b => b.SternId == imageId);
+                var _entity = entity.Images.First(b => b.ImageId == imageId);
 
-                entity.ImageBridges.Remove(bridge);
+                var deprecatedImage = _entity.Image;
 
-                Repository.Update(entity, User.Identity.Name);
+                imageRepository.Delete(_entity.Image, User.Identity.Name);
 
-                imageRepository.Delete(bridge.Stern, User.Identity.Name);
-
-                imageFileManager.DeleteImageFile(bridge.Stern);
+                try
+                {
+                    imageFileManager.DeleteImageFile(deprecatedImage);
+                }
+                catch { }
 
                 SetDefaultNotification(NotificationType.Success, GetDeletionSuccessMessage());
 
@@ -793,11 +799,11 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
             var model = new Models.View.Backend.Management.MapVideosManagementViewModel
             {
                 Map = new MapDisplayViewModel(),
-                Videos = entity.VideoBridges.Select(bridge =>
+                Videos = entity.Videos.Select(_entity =>
                 {
                     var result = new VideoDisplayViewModel();
 
-                    result.Import(bridge.Stern);
+                    result.Import(_entity.Video);
 
                     return result;
                 }).ToArray()
@@ -848,14 +854,12 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
 
                             videoFileManager.SaveVideoFileContent(video.Id, memoryStream.ToArray(), video.Extension);
 
-                            entity.VideoBridges.Add(new MapVideoBridge
+                            mapVideoRepository.Add(new MapVideo
                             {
-                                ProwId = entity.Id,
-                                SternId = video.Id
-                            });
+                                MapId = entity.Id,
+                                VideoId = video.Id
+                            }, User.Identity.Name);
                         }
-
-                        Repository.Update(entity, User.Identity.Name);
 
                         SetDefaultNotification(NotificationType.Success, GetCreationSuccessMessage());
 
@@ -897,15 +901,17 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
             {
                 var entity = Repository.Get(key);
 
-                var bridge = entity.VideoBridges.First(b => b.SternId == videoId);
+                var _entity = entity.Videos.First(b => b.VideoId == videoId);
 
-                entity.VideoBridges.Remove(bridge);
+                var deprecatedVideo = _entity.Video;
 
-                Repository.Update(entity, User.Identity.Name);
+                videoRepository.Delete(_entity.Video, User.Identity.Name);
 
-                videoRepository.Delete(bridge.Stern, User.Identity.Name);
-
-                videoFileManager.DeleteVideoFile(bridge.SternId, bridge.Stern.Extension);
+                try
+                {
+                    videoFileManager.DeleteVideoFile(deprecatedVideo.Id, deprecatedVideo.Extension);
+                }
+                catch { }
 
                 SetDefaultNotification(NotificationType.Success, GetDeletionSuccessMessage());
 
@@ -939,11 +945,11 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
             {
                 var entity = Repository.Get(key);
 
-                var bridge = entity.VideoBridges.First(b => b.SternId == videoId);
+                var _entity = entity.Videos.First(b => b.VideoId == videoId);
 
-                bridge.Stern.About = about;
+                _entity.Video.About = about;
 
-                Repository.Update(entity, User.Identity.Name);
+                mapVideoRepository.Update(_entity, User.Identity.Name);
 
                 SetDefaultNotification(NotificationType.Success, GetEditionSuccessMessage());
 
@@ -973,11 +979,11 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
             var model = new Models.View.Backend.Management.MapDocumentsManagementViewModel
             {
                 Map = new MapDisplayViewModel(),
-                Documents = entity.DocumentBridges.Select(item =>
+                Documents = entity.Documents.Select(item =>
                 {
                     var result = new DocumentDisplayViewModel();
 
-                    result.Import(item.Stern);
+                    result.Import(item.Document);
 
                     return result;
                 }).ToArray()
@@ -1022,15 +1028,13 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
 
                             documentRepository.Add(document, User.Identity.Name, false);
 
-                            entity.DocumentBridges.Add(new MapDocumentBridge
-                            {
-                                ProwId = entity.Id,
-                                SternId = document.Id
-                            });
-
                             documentFileManager.SaveDocumentFileContent(document.Id, memoryStream.ToArray(), document.ContentType);
 
-                            Repository.Update(entity, User.Identity.Name);
+                            mapDocumentRepository.Add(new MapDocument
+                            {
+                                MapId = entity.Id,
+                                DocumentId = document.Id
+                            }, User.Identity.Name);
                         }
 
                         SetDefaultNotification(NotificationType.Success, GetCreationSuccessMessage());
@@ -1067,15 +1071,15 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
             {
                 var entity = Repository.Get(key);
 
-                var bridge = entity.DocumentBridges.First(b => b.SternId == documentId);
+                var _entity = entity.Documents.First(b => b.DocumentId == documentId);
 
-                entity.DocumentBridges.Remove(bridge);
+                var deprecatedDocument = _entity.Document;
 
-                Repository.Update(entity, User.Identity.Name);
+                documentRepository.Delete(_entity.Document, User.Identity.Name);
 
                 try
                 {
-                    documentFileManager.DeleteDocumentFile(bridge.Stern);
+                    documentFileManager.DeleteDocumentFile(deprecatedDocument);
                 }
                 catch { }
 
@@ -1118,12 +1122,12 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
 
                     try
                     {
-                        var bridge = entity.DocumentBridges.First(b => b.SternId == modelInput.Id);
+                        var _entity = entity.Documents.First(b => b.DocumentId == modelInput.Id);
 
-                        bridge.Stern.Name = modelInput.Name;
-                        bridge.Stern.Description = modelInput.Description;
+                        _entity.Document.Name = modelInput.Name;
+                        _entity.Document.Description = modelInput.Description;
 
-                        Repository.Update(entity, User.Identity.Name);
+                        mapDocumentRepository.Update(_entity, User.Identity.Name);
 
                         SetDefaultNotification(NotificationType.Success, GetEditionSuccessMessage());
 
