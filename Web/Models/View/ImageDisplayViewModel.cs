@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Xml.Linq;
 using MOROPO.Framework.Guama.Media.Persistence.Entities;
 
 namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View
@@ -16,6 +15,8 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View
 
         public int Width { get; set; }
 
+        public string About { get; set; }
+
         public void Import(Image entity)
         {
             Id = entity.Id;
@@ -23,6 +24,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View
             Length = entity.Length;
             Height = entity.Height;
             Width = entity.Width;
+            About = entity.About;
         }
     }
 }

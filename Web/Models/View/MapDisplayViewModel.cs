@@ -32,6 +32,8 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View
 
         public LayerDisplayViewModel[] Layers { get; set; }
 
+        public CommonMetadataEntryDisplayModel[] MetadataEntries { get; set; }
+
         public string PreLayersJSBlock { get; set; }
 
         public string PostLayersJSBlock { get; set; }
@@ -53,6 +55,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View
             NorthBoundLatitude = entity.NorthBoundLatitude;
             ImageId = entity.ImageId;
             ImageExtension = entity.Image == null ? null : MimeTypes.MimeTypeMap.GetExtension(entity.Image.ContentType);
+            MetadataEntries = entity.MetadataEntries.Select(_entity => new CommonMetadataEntryDisplayModel { Id = _entity.Id, Name = _entity.Name, Value = _entity.Value }).ToArray();
             PreLayersJSBlock = entity.PreLayersJSBlock;
             PostLayersJSBlock = entity.PostLayersJSBlock;
 

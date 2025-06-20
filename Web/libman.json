@@ -54,11 +54,6 @@
       "destination": "wwwroot/lib/leaflet-mouse-position/"
     },
     {
-      "provider": "jsdelivr",
-      "library": "leaflet-loading@0.1.24",
-      "destination": "wwwroot/lib/leaflet-loading/"
-    },
-    {
       "library": "leaflet-contextmenu@1.4.0",
       "destination": "wwwroot/lib/leaflet-contextmenu/"
     },
@@ -74,11 +69,6 @@
     {
       "library": "leaflet-groupedlayercontrol@0.6.1",
       "destination": "wwwroot/lib/leaflet-groupedlayercontrol/"
-    },
-    {
-      "provider": "jsdelivr",
-      "library": "leaflet.sidepanel@1.2.2",
-      "destination": "wwwroot/lib/leaflet-sidepanel/"
     },
     {
       "library": "Chart.js@4.4.1",
@@ -115,6 +105,43 @@
       "provider": "jsdelivr",
       "library": "leaflet-navbar@1.0.0",
       "destination": "wwwroot/lib/leaflet-navbar/"
+    },
+    {
+      "provider": "jsdelivr",
+      "library": "leaflet-sidebar@0.2.4",
+      "destination": "wwwroot/lib/leaflet-sidebar/",
+      "files": [
+        "src/L.Control.Sidebar.css",
+        "src/L.Control.Sidebar.js",
+        "src/L.Control.Sidebar.min.css",
+        "src/L.Control.Sidebar.min.js",
+        "src/L.Control.Sidebar.scss"
+      ]
     }
+  ,
+{
+  "provider": "jsdelivr",
+  "library": "leaflet-control-boxzoom@1.5.0",
+  "destination": "wwwroot/lib/leaflet-control-boxzoom/",
+  "files": [
+    "dist/leaflet-control-boxzoom-src.js",
+    "dist/leaflet-control-boxzoom-src.min.js",
+    "dist/leaflet-control-boxzoom.css",
+    "dist/leaflet-control-boxzoom.d.ts",
+    "dist/leaflet-control-boxzoom.js",
+    "dist/leaflet-control-boxzoom.min.css",
+    "dist/leaflet-control-boxzoom.min.js",
+    "dist/leaflet-control-boxzoom.svg"
   ]
+},
+{
+  "provider": "jsdelivr",
+  "library": "leaflet-control-custom@1.0.0",
+  "destination": "wwwroot/lib/leaflet-control-custom/",
+  "files": [
+    "Leaflet.Control.Custom.js",
+    "Leaflet.Control.Custom.min.js"
+  ]
+}
+]
 }

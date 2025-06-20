@@ -43,6 +43,8 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Persistence.Entities
 
         public List<Layer> Layers { get; set; } = new List<Layer>();
 
+        public List<MapMetadataEntry> MetadataEntries { get; set; } = new List<MapMetadataEntry>();
+
         public List<MapKeyWordBridge> KeyWordBridges { get; set; } = new List<MapKeyWordBridge>();
 
         public List<MapAuthorBridge> AuthorBridges { get; set; } = new List<MapAuthorBridge>();

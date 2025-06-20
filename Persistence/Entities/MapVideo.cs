@@ -15,5 +15,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Persistence.Entities
         public Video Video { get; set; }
         public System.Guid VideoId { get; set; }
 
+        public System.Collections.Generic.List<MapVideoMetadataEntry> MetadataEntries { get; set; } = new System.Collections.Generic.List<MapVideoMetadataEntry>();
+
     }
 }

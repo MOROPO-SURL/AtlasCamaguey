@@ -53,9 +53,6 @@
             <li class="nav-item">
                 <a class="nav-link" asp-action="EditKeyWords" asp-route-key="@Model.Map.Id">Palabras Claves</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" asp-action="EditMetadataEntries" asp-route-key="@Model.Map.Id">Metadatos</a>
-            </li>
         </ul>
     </div>
     <div class="card-body pb-0">
@@ -95,20 +92,17 @@
                             <div class="modal fade" id="edit-@item.Id" tabindex="-1" role="dialog" aria-labelledby="edit-@item.Id-lable" aria-hidden="true">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
-                                        @using (Html.BeginForm("EditVideo", "maps", new { key = Model.Map.Id }, FormMethod.Post, true, new { @class = "modal-content" }))
+                                        @using (Html.BeginForm("EditVideo", "maps", new { key = Model.Map.Id }, FormMethod.Post, true, new { @class = "modal-content", enctype = "multipart/form-data" }))
                                         {
-                                            @Html.Hidden("videoId", item.Id)
-
                                             <div class="modal-header">
                                                 <h4 class="modal-title" id="delete-image-@item.Id-lable">Modificar Video</h4>
                                                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                                             </div>
-                                            <div class="modal-body">
-                                                <div>
-                                                    @Html.Label("about", "Acerca de", new { @class = "control-label" })
-                                                    <textarea class="form-control" cols="1" rows="6" name="about">@item.About</textarea>
-                                                </div>
-                                            </div>
+                                            @await Html.PartialAsync("_VideoEditionModalBodyPartial", new MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend.Input.VideoInputViewModel
+                                            {
+                                                Id = item.Id,
+                                                Description = item.About
+                                            })
                                             <div class="modal-footer" style="margin-top: 0;">
                                                 <button type="submit" class="btn btn-primary">Modifcar</button>
                                                 <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
@@ -160,16 +154,8 @@
                 </div>
                 @using (Html.BeginForm("addvideo", "maps", new { key = Model.Map.Id }, FormMethod.Post, true, new { enctype = "multipart/form-data" }))
                 {
-                    <div class="modal-body">                    
-                        <div class="mb-3">
-                            @Html.Label("videoFile", "Archivo", new { @class = "control-label" })
-                            <input type="file" class="form-control" id="videoFile" name="videoFile" />
-                        </div>
-                        <div>
-                            @Html.Label("about", "Acerca de", new { @class = "control-label" })
-                            <textarea class="form-control" cols="1" rows="6" name="about"></textarea>
-                        </div>
-                    </div>
+                    @await Html.PartialAsync("_VideoCreationModalBodyPartial", new MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend.Input.VideoInputViewModel())
+
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-primary">Agregar</button>
                         <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>

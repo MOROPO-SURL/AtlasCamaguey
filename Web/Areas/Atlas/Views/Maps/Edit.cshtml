@@ -34,7 +34,7 @@
             .create( document.querySelector( '#Description' ) )
             .then( editor => {
                 editor.editing.view.change(writer=>{
-                    writer.setStyle('height', '600px', editor.editing.view.document.getRoot());
+                    writer.setStyle('height', '400px', editor.editing.view.document.getRoot());
                 });
             } )
             .catch( error => {
@@ -92,9 +92,6 @@
                 <li class="nav-item">
                     <a class="nav-link" asp-action="EditKeyWords" asp-route-key="@Model.Id">Palabras Claves</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" asp-action="EditMetadataEntries" asp-route-key="@Model.Id">Metadatos</a>
-                </li>
             </ul>
         </div>
         <div class="card-body">
@@ -132,17 +129,46 @@
                     @Html.LabelFor(model => model.ImageFile, new { @class = "control-label" }) <span class="small text-muted">(opcional)</span>
                     <input type="file" class="form-control" id="ImageFile" name="ImageFile" />
                     @Html.ValidationMessageFor(model => model.ImageFile, null, new { @class = "text-danger" })
+                    @if (Model.ImageId != null)
+                    {
+                        var imageSource = string.Format("/media/images/{0}{1}", Model.ImageId, Model.ImageExtension);
+
+                        <img src="@imageSource" class="img-fluid mt-2" id="ImageFilePreview" />
+                    }
+                    else
+                    {
+                        <img class="img-fluid mt-2" id="ImageFilePreview" style="display: none;" />
+                    }
                 </div>
                 <div class="col-md-6 mb-3">
-                @if (Model.ImageId != null) {
-                    var imageSource = string.Format("/media/images/{0}{1}", Model.ImageId, Model.ImageExtension);
-                
-                    <img src="@imageSource" class="img-thumbnail" id="ImageFilePreview" />
-                }
-                else
-                {
-                    <img class="img-thumbnail" id="ImageFilePreview" style="display: none;" />
-                }
+                    <div>
+                        @Html.LabelFor(model => model.MetadataFile, new { @class = "control-label" })
+                        <input type="file" class="form-control" id="MetadataFile" name="MetadataFile" />
+                        <table class="table" style="margin: 0;">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Valor</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.MetadataEntries.Length <= 0)
+                                {
+                                    <tr><td colspan="3"><p style="margin: 0 5px;" class="text-muted">Sin elementos que mostrar</p></td></tr>
+                                }
+                                else
+                                {
+                                    @foreach (var item in Model.MetadataEntries)
+                                    {
+                                        <tr>
+                                            <td style="vertical-align: middle;">@item.Name</td>
+                                            <td style="vertical-align: middle;">@item.Value</td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
             <div class="mb-3">

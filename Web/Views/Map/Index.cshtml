@@ -44,11 +44,14 @@
     <link rel="stylesheet" href="~/lib/leaflet/leaflet.min.css" />
     @*<link rel="stylesheet" href="~/lib/leaflet-draw-style-editor/css/Leaflet.StyleEditor.min.css" />*@
     <link rel="stylesheet" href="~/lib/leaflet-fullscreen/dist/leaflet.fullscreen.min.css" />
+    <link rel="stylesheet" href="~/lib/leaflet-control-boxzoom/dist/leaflet-control-boxzoom.min.css" />
     <link rel="stylesheet" href="~/lib/leaflet-navbar/Leaflet.NavBar.min.css" />
     <link rel="stylesheet" href="~/lib/leaflet-minimap/Control.MiniMap.min.css" />
     <link rel="stylesheet" href="~/lib/leaflet-mouse-position/src/L.Control.MousePosition.min.css" />
     <link rel="stylesheet" href="~/lib/leaflet-html-legend/dist/L.Control.HtmlLegend.min.css" />
     <link rel="stylesheet" href="~/lib/leaflet-grid/L.Grid.css" />
+    <link rel="stylesheet" href="~/lib/leaflet-easybutton/src/easy-button.min.css" />
+    <link rel="stylesheet" href="~/lib/leaflet-sidebar/src/L.Control.Sidebar.css" />
     <link rel="stylesheet" href="~/lib/leaflet-groupedlayercontrol/leaflet.groupedlayercontrol.min.css" />
     <link rel="stylesheet" href="~/lib/leaflet-measure-path/leaflet-measure-path.min.css" />
     <link rel="stylesheet" href="~/lib/leaflet-geoman-free/dist/leaflet-geoman.min.css" />
@@ -112,7 +115,7 @@
             font-size: 1.2em;
         }
         #layer-manager-control-implicit-collapse-toggle-icon.collapsed::before {
-            content: '\FF75';
+            content: '\F0F58';
         }
         #legend-control-implicit-collapse-toggle-icon.collapsed::before {
             content: '\FA00';
@@ -129,8 +132,17 @@
             height: 16px;
             background-color:black;
         }
-        .control-implicit-collapse-toggle >  span {
+        .control-implicit-collapse-toggle > span::before, .easy-button-button > span.button-state > span.mdi::before {
             font-size: 18px;
+        }
+        .leaflet-control-boxzoom {
+            border: 2px solid rgba(0, 0, 0, .2);
+            background-clip: padding-box;
+            width: 34px;
+            height: 34px;
+            line-height: 34px;
+            background-position: 5px 4px;
+            box-shadow: none;
         }
     </style>
 }
@@ -140,10 +152,14 @@
     <script type="text/javascript" src="~/lib/leaflet/leaflet.min.js"></script>
     @*<script type="text/javascript" src="~/lib/leaflet-draw-style-editor/javascript/Leaflet.StyleEditor.min.js"></script>*@
     <script type="text/javascript" src="~/lib/leaflet-fullscreen/dist/leaflet.fullscreen.min.js"></script>
+    <script type="text/javascript" src="~/lib/leaflet-control-boxzoom/dist/leaflet-control-boxzoom.min.js"></script>
     <script type="text/javascript" src="~/lib/leaflet-navbar/index.min.js"></script>
+    <script type="text/javascript" src="~/lib/leaflet-control-custom/Leaflet.Control.Custom.min.js"></script>
     <script type="text/javascript" src="~/lib/leaflet-minimap/Control.MiniMap.min.js"></script>
     <script type="text/javascript" src="~/lib/leaflet-mouse-position/src/L.Control.MousePosition.min.js"></script>
     <script type="text/javascript" src="~/lib/leaflet-html-legend/dist/L.Control.HtmlLegend.min.js"></script>
+    <script type="text/javascript" src="~/lib/leaflet-sidebar/src/L.Control.Sidebar.min.js"></script>
+    <script type="text/javascript" src="~/lib/leaflet-easybutton/src/easy-button.min.js"></script>
     <script type="text/javascript" src="~/lib/leaflet-grid/L.Grid.js"></script>
     <script type="text/javascript" src="~/lib/leaflet-groupedlayercontrol/leaflet.groupedlayercontrol.min.js"></script>
     <script type="text/javascript" src="~/lib/leaflet-ajax/leaflet.ajax.min.js"></script>
@@ -154,7 +170,29 @@
 
         var highlightLayer;
 
+        function validateCoordinates(lat, lng) {
+            if (typeof lat !== 'number' || typeof lng !== 'number') {
+                return false; // Ensure input is a number
+            }
+            if (lat == NaN || lng == NaN) {
+                return false; // Ensure input is a number
+            }
+            if (lat < -90 || lat > 90) {
+                return false; // Invalid latitude
+            }
+            if (lng < -180 || lng > 180) {
+                return false; // Invalid longitude
+            }
+
+            return true; // Valid coordinates
+        }
+
         $(document).ready(function () {
+            var sidebar = L.control.sidebar('sidebar', {
+                closeButton: true,
+                position: 'left'
+            });        
+
             var map = L.map('map', {
                 fullscreenControl: true,
                 fullscreenControlOptions: {
@@ -164,11 +202,56 @@
                 attributionControl: false
             }).setView([21.3792,-77.9184], 9);
 
+            L.control.custom({
+                position: 'topleft',
+                content : '<div style="border: 2px solid rgba(0, 0, 0, .2); background-clip: padding-box; border-radius: 4px;">' +
+                          '  <div class="input-group input-group-sm">' +
+                          '    <input type="text" aria-label="Latitud" class="form-control" placeholder="lat: ej. 22.00031" id="set-map-view-lat-input">' +
+                          '    <input type="text" aria-label="Longitud" class="form-control" placeholder="lng: ej. -77.00321" id="set-map-view-lng-input">' +
+                          '    <div class="input-group-append">' +
+                          '      <button class="btn btn-secondary" type="button" id="set-map-view-button"><span class="mdi mdi-target-variant"></span> Ir</button>' +
+                          '    </div>' +
+                          '  </div>' +
+                          '</div>',
+                classes : '',
+                style   :
+                {
+                    position: 'absolute',
+                    left: '48px',
+                    top: '0px',
+                    width: '320px',
+                },
+            })
+            .addTo(map);
+
+            $('#set-map-view-button').click(function() {
+                var latitude = parseFloat(document.getElementById('set-map-view-lat-input').value);
+                var longitude = parseFloat(document.getElementById('set-map-view-lng-input').value);
+
+                if (validateCoordinates(latitude, longitude)) {
+                    try {
+                        map.setView([latitude, longitude], map.getZoom());
+
+                        document.getElementById('set-map-view-lat-input').value = null;
+                        document.getElementById('set-map-view-lng-input').value = null;
+                    }
+                    catch {
+                        alert("Por favor, especifique valores válidos para las coordenadas.");
+                    }
+                } else {
+                    alert("Por favor, especifique valores válidos para las coordenadas.");
+                }
+            });
+
+            map.addControl(sidebar);
+
             L.control.navbar({
                 position: 'topleft',
                 center: L.latLng([21.3792,-77.9184]),
                 zoom: 9
             }).addTo(map);
+
+            L.Control.boxzoom({ position:'topleft' }).addTo(map);
 
             var drawingLayer = new L.featureGroup().addTo(map);
 
@@ -408,9 +491,19 @@
                 maxZoom: 19,
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
 	            subdomains: 'abcd'
-            }), { toggleDisplay: true }).addTo(map);
+            }), { toggleDisplay: true }).addTo(map);            
 
-            @*$('.leaflet-control-resetview').children().attr('href', 'javascript:;');*@
+            L.easyButton({
+                position: 'bottomright',
+                states: [{
+                    stateName: 'to-show-sidebar',
+                    icon: '<span class="mdi mdi-file-table-box-outline"></span>',
+                    title: 'Mostrar metadatos',
+                    onClick: function(btn, map) {
+                        sidebar.toggle();
+                    }
+                }]
+            }).addTo(map);
         });
     </script>
 }
@@ -488,6 +581,33 @@
 
 <h4 class="mb-0">Mapa</h4>
 <p class="display-4">@Model.Current.Name</p>
+<div id="sidebar">
+    <h3 class="my-3">Metadatos</h3>
+    <table class="table" style="margin: 0;">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Valor</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Current.MetadataEntries.Length <= 0)
+            {
+                <tr><td colspan="3"><p style="margin: 0 5px;" class="text-muted">Sin elementos que mostrar</p></td></tr>
+            }
+            else
+            {
+                @foreach (var item in Model.Current.MetadataEntries)
+                {
+                    <tr>
+                        <td style="vertical-align: middle;">@item.Name</td>
+                        <td style="vertical-align: middle;">@item.Value</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
 <div class="border rounded">
     <div id="map"></div>
 </div>
@@ -573,6 +693,39 @@
                 {
                     <div class="card shadow-sm" style="margin-bottom: 1.25rem !important;">
                         <img class="card-img" src="~/media/images/@item.Id@item.Extension" />
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col">
+                                    @if (string.IsNullOrEmpty(item.About))
+                                    {
+                                        <p class="text-muted mb-0"><i>Acerca de no especificado</i></p>
+                                    }
+                                    else
+                                    {
+                                        <p class="mb-0">@item.About</p>
+                                    }
+                                </div>
+                                <div class="col-auto">
+                                    <div class="btn-group">
+                                        <a title="Ver metadatos" href="javascript:;" class="btn btn-sm btn-light" data-toggle="modal" data-target="#metadata-image-@item.Id"><span class="mdi mdi-24px mdi-file-table-box-outline"></span></a>
+                                        <a title="Descargar" target="_self" download="@item.Id@item.Extension" href="~/media/images/@item.Id@item.Extension" class="btn btn-sm btn-light"><span class="mdi mdi-24px mdi-download-outline"></span></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal fade" id="metadata-image-@item.Id" tabindex="-1" role="dialog" aria-labelledby="metadata-image-@item.Id-lable" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title" id="delete-image-@item.Id-lable">Metadatos</h4>
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                    </div>
+                                    <div class="modal-body">
+                                        @await Component.InvokeAsync("MapImageMetadataEntries", new { mapId = Model.Current.Id, imageId = item.Id })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 }
             </div>

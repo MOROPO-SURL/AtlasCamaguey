@@ -1,6 +1,4 @@
-﻿using MOROPO.Framework.Guama.Media.Persistence.Entities;
-
-namespace MOROPO.CIMAC.Atlas.Camaguey.Persistence.Entities
+﻿namespace MOROPO.CIMAC.Atlas.Camaguey.Persistence.Entities
 {
     public class MapDocument : Framework.Guama.Core.Persistence.Entities.Contract.IEntity<System.Guid>
     {
@@ -12,8 +10,9 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Persistence.Entities
         [System.ComponentModel.DataAnnotations.Required]
         public string MapId { get; set; }
 
-        public Document Document { get; set; }
+        public Framework.Guama.Media.Persistence.Entities.Document Document { get; set; }
         public System.Guid DocumentId { get; set; }
 
+        public System.Collections.Generic.List<MapDocumentMetadataEntry> MetadataEntries { get; set; } = new System.Collections.Generic.List<MapDocumentMetadataEntry>();
     }
 }

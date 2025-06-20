@@ -7,8 +7,12 @@
         @Html.LabelFor(model => model.Name, new { @class = "control-label" })
         @Html.TextBoxFor(model => model.Name, new { @class = "form-control" })
     </div>
-    <div>
+    <div class="mb-3">
         @Html.LabelFor(model => model.Description, new { @class = "control-label" })
         @Html.TextAreaFor(model => model.Description, 4, 0, new { @class = "form-control" })
+    </div>
+    <div>
+        @Html.LabelFor(model => model.MatadataFile, new { @class = "control-label" })
+        @Html.EditorFor(model => model.MatadataFile, new { @class = "form-control" })
     </div>
 </div>

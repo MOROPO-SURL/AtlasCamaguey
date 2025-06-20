@@ -16,5 +16,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Persistence.Entities
         public System.Guid ImageId { get; set; }
 
         public Enumerations.MapImageKind ImageKind { get; set; }
+
+        public System.Collections.Generic.List<MapImageMetadataEntry> MetadataEntries { get; set; } = new System.Collections.Generic.List<MapImageMetadataEntry>();
     }
 }

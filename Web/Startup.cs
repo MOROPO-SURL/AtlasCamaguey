@@ -54,8 +54,11 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web
             services.AddScoped<IEntityRepository<Theme, System.Guid>, Persistence.ORM.EF.Repositories.ThemeRepository>();
             services.AddScoped<IEntityRepository<MapMetadataEntry, long>, Persistence.ORM.EF.Repositories.MapMetadataEntryRepository>();
             services.AddScoped<IEntityRepository<MapImage, System.Guid>, Persistence.ORM.EF.Repositories.MapImageRepository>();
+            services.AddScoped<IEntityRepository<MapImageMetadataEntry, long>, Persistence.ORM.EF.Repositories.MapImageMetadataEntryRepository>();
             services.AddScoped<IEntityRepository<MapVideo, System.Guid>, Persistence.ORM.EF.Repositories.MapVideoRepository>();
+            services.AddScoped<IEntityRepository<MapVideoMetadataEntry, long>, Persistence.ORM.EF.Repositories.MapVideoMetadataEntryRepository>();
             services.AddScoped<IEntityRepository<MapDocument, System.Guid>, Persistence.ORM.EF.Repositories.MapDocumentRepository>();
+            services.AddScoped<IEntityRepository<MapDocumentMetadataEntry, long>, Persistence.ORM.EF.Repositories.MapDocumentMetadataEntryRepository>();
 
             services.AddSingleton<Framework.Guama.Core.Persistence.ORM.EF.Providers.Facade.IDbSchemaConfigurationProviderFacade, Persistence.ORM.EF.Providers.DbSchemaConfigurationProvider>();
 

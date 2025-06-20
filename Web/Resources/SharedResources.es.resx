@@ -864,4 +864,10 @@
   <data name="Home" xml:space="preserve">
     <value>Inicio</value>
   </data>
+  <data name="MatadataFile" xml:space="preserve">
+    <value>Fichero de Metadatos</value>
+  </data>
+  <data name="MetadataFile" xml:space="preserve">
+    <value>Metadatos</value>
+  </data>
 </root>

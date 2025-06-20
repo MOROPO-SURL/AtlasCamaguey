@@ -13,6 +13,7 @@ using MOROPO.Framework.Guama.Media.Presentation.Web.Common.Managers.Facade;
 using System.Collections.Generic;
 using System.IO.Compression;
 using System.Linq;
+using System.Text;
 
 namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
 {
@@ -30,13 +31,12 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         private readonly IEntityRepository<MapImage, System.Guid> mapImageRepository;
         private readonly IEntityRepository<MapVideo, System.Guid> mapVideoRepository;
         private readonly IEntityRepository<MapDocument, System.Guid> mapDocumentRepository;
-        private readonly IEntityRepository<MapMetadataEntry, long> metadataEntryRepository;
         private readonly IImageFileManagerFacade imageFileManager;
         private readonly IDocumentFileManagerFacade documentFileManager;
         private readonly IVideoFileManagerFacade videoFileManager;
         private readonly Microsoft.Extensions.Configuration.IConfiguration configuration;
 
-        public MapsController(Microsoft.Extensions.Configuration.IConfiguration configuration, IVideoFileManagerFacade videoFileManager, IDocumentFileManagerFacade documentFileManager, IImageFileManagerFacade imageFileManager, IEntityRepository<MapMetadataEntry, long> metadataEntryRepository, IEntityRepository<MapDocument, System.Guid> mapDocumentRepository, IEntityRepository<MapVideo, System.Guid> mapVideoRepository, IEntityRepository<MapImage, System.Guid> mapImageRepository, IEntityRepository<Layer, System.Guid> layerRepository, IEntityRepository<Author, System.Guid> authorRepository, IEntityRepository<KeyWord, System.Guid> keyWordRepository, IEntityRepository<Video, System.Guid> videoRepository, IEntityRepository<Document, System.Guid> documentRepository, IEntityRepository<Image, System.Guid> imageRepository, IEntityRepository<Map, string> repository, IStringLocalizer<MapsController> localizer, ILogger<MapsController> logger) : base(repository, localizer, logger)
+        public MapsController(Microsoft.Extensions.Configuration.IConfiguration configuration, IVideoFileManagerFacade videoFileManager, IDocumentFileManagerFacade documentFileManager, IImageFileManagerFacade imageFileManager, IEntityRepository<MapDocument, System.Guid> mapDocumentRepository, IEntityRepository<MapVideo, System.Guid> mapVideoRepository, IEntityRepository<MapImage, System.Guid> mapImageRepository, IEntityRepository<Layer, System.Guid> layerRepository, IEntityRepository<Author, System.Guid> authorRepository, IEntityRepository<KeyWord, System.Guid> keyWordRepository, IEntityRepository<Video, System.Guid> videoRepository, IEntityRepository<Document, System.Guid> documentRepository, IEntityRepository<Image, System.Guid> imageRepository, IEntityRepository<Map, string> repository, IStringLocalizer<MapsController> localizer, ILogger<MapsController> logger) : base(repository, localizer, logger)
         {
             this.imageRepository = imageRepository;
             this.documentRepository = documentRepository;
@@ -47,7 +47,6 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
             this.mapImageRepository = mapImageRepository;
             this.mapVideoRepository = mapVideoRepository;
             this.mapDocumentRepository = mapDocumentRepository;
-            this.metadataEntryRepository = metadataEntryRepository;
             this.imageFileManager = imageFileManager;
             this.documentFileManager = documentFileManager;
             this.videoFileManager = videoFileManager;
@@ -89,16 +88,23 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
 
             if (Request.Form.Files.Count > 0)
             {
-                var formFile = Request.Form.Files[0];
-
-                if (formFile.Length > 0)
+                foreach (var formFile in Request.Form.Files)
                 {
-                    model.ImageFile = formFile;
+                    switch (formFile.Name)
+                    {
+                        case "ImageFile":
+                            model.ImageFile = formFile;
 
-                    var updateModelTask = TryUpdateModelAsync(model);
+                            break;
 
-                    updateModelTask.Wait();
+                        case "MetadataFile":
+                            model.MetadataFile = formFile;
+
+                            break;
+                    }
                 }
+
+                TryValidateModel(model);
             }
 
             return base.Edit(model);
@@ -291,6 +297,26 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         protected override void PreEdit(Map entity, MapInputViewModel model)
         {
             base.PreEdit(entity, model);
+
+            if (model.MetadataFile != null)
+            {
+                using (var streamReader = new System.IO.StreamReader(model.MetadataFile.OpenReadStream(), Encoding.UTF8))
+                {
+                    while (!streamReader.EndOfStream)
+                    {
+                        var line = streamReader.ReadLine();
+                        var values = line.Split(";");
+
+                        entity.MetadataEntries.Add(new MapMetadataEntry
+                        {
+                            MapId = entity.Id,
+                            Map = entity,
+                            Name = values[0],
+                            Value = values[1]
+                        });
+                    }
+                };
+            }
 
             if (model.ImageFile == null)
             {
@@ -686,40 +712,69 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         [Route("edit/{key}/images/add")]
         [ValidateAntiForgeryToken]
         [RequirePermissions(Constants.Permission.MapEditor)]
-        public IActionResult AddImage(string key)
+        public IActionResult AddImage(string key, ImageInputViewModel model)
         {
             try
             {
-                var imageFile = Request.Form.Files[0];
-
                 var entity = Repository.Get(key);
 
-                // TODO Validate imageFile
+                ModelState.ClearValidationState("File");
 
-                if (ModelState.IsValid)
+                model.File = Request.Form.Files[0];
+
+                if (Request.Form.Files.Count > 1)
+                {
+                    model.MatadataFile = Request.Form.Files[1];
+                }
+
+                TryValidateModel(model);
+
+                if(ModelState.IsValid)
                 {
                     try
                     {
                         using (var memoryStream = new System.IO.MemoryStream())
                         {
-                            imageFile.CopyTo(memoryStream);
+                            model.File.CopyTo(memoryStream);
 
-                            var image = new Image { ContentType = imageFile.ContentType, Length = imageFile.Length, About = "Map Compl. " + entity.Id };
+                            var image = new Image { ContentType = model.File.ContentType, Length = model.File.Length, About = model.Description };
 
                             imageRepository.Add(image, User.Identity.Name, false);
 
-                            imageFileManager.SaveImageFileContent(image.Id, memoryStream.ToArray(), imageFile.ContentType);
+                            imageFileManager.SaveImageFileContent(image.Id, memoryStream.ToArray(), model.File.ContentType);
 
-                            mapImageRepository.Add(new MapImage
+                            var _entity = new MapImage
                             {
                                 MapId = entity.Id,
                                 ImageId = image.Id
-                            }, User.Identity.Name);
+                            };
+
+                            if (model.MatadataFile != null)
+                            {
+                                using (var streamReader = new System.IO.StreamReader(model.MatadataFile.OpenReadStream(), Encoding.UTF8))
+                                {
+                                    while (!streamReader.EndOfStream)
+                                    {
+                                        var line = streamReader.ReadLine();
+                                        var values = line.Split(";");
+
+                                        _entity.MetadataEntries.Add(new MapImageMetadataEntry
+                                        {
+                                            MapImageId = _entity.Id,
+                                            MapImage = _entity,
+                                            Name = values[0],
+                                            Value = values[1]
+                                        });
+                                    }
+                                };
+                            }
+
+                            mapImageRepository.Add(_entity, User.Identity.Name);
                         }
 
                         SetDefaultNotification(NotificationType.Success, GetCreationSuccessMessage());
 
-                        return RedirectToAction("editimages", new { key = entity.Id });
+                        return RedirectToAction("editimages", new { key });
                     }
                     catch (Framework.Guama.Core.Presentation.Web.Frontend.InvalidModelException e)
                     {
@@ -729,7 +784,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
 
                 SetDefaultNotification(NotificationType.Danger, GetInvalidMessage());
 
-                return RedirectToAction("editimages", new { key = entity.Id });
+                return RedirectToAction("editimages", new { key });
             }
             catch (System.Exception e)
             {
@@ -765,13 +820,88 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
 
                 SetDefaultNotification(NotificationType.Success, GetDeletionSuccessMessage());
 
-                return RedirectToAction("editimages", new { key = entity.Id });
+                return RedirectToAction("editimages", new { key });
             }
             catch (Microsoft.EntityFrameworkCore.DbUpdateException e)
             {
                 logger.LogError(e.InnerException, e.Message);
 
                 SetDefaultNotification(NotificationType.Warning, GetOnDeletionDependecyConstrainErrorMessage());
+
+                return RedirectToAction("editimages", new { key });
+            }
+            catch (System.Exception e)
+            {
+                logger.LogError(e.InnerException, e.Message);
+            }
+
+            SetDefaultNotification(NotificationType.Danger, GetNotFoundMessage());
+
+            return GetSuccessDeleteActionResult();
+        }
+
+        [HttpPost]
+        [Route("edit/{key}/images/edit")]
+        [ValidateAntiForgeryToken]
+        [RequirePermissions(Constants.Permission.MapEditor)]
+        public IActionResult EditImage(string key, ImageInputViewModel model)
+        {
+            try
+            {
+                ModelState.ClearValidationState("File");
+                ModelState.MarkFieldValid("File");
+
+                if (Request.Form.Files.Count > 0)
+                {
+                    model.MatadataFile = Request.Form.Files[0];
+
+                    TryValidateModel(model);
+                }
+
+                if (ModelState.IsValid)
+                {
+                    try
+                    {
+                        var entity = mapImageRepository.FindOneBy(_entity => _entity.ImageId == model.Id && _entity.MapId == key);
+
+                        entity.Image.About = model.Description;
+
+                        entity.MetadataEntries.Clear();
+
+                        if (model.MatadataFile != null)
+                        {
+                            using (var streamReader = new System.IO.StreamReader(model.MatadataFile.OpenReadStream(), Encoding.UTF8))
+                            {
+                                while (!streamReader.EndOfStream)
+                                {
+                                    var line = streamReader.ReadLine();
+
+                                    var values = line.Split(";");
+
+                                    entity.MetadataEntries.Add(new MapImageMetadataEntry
+                                    {
+                                        MapImageId = entity.Id,
+                                        MapImage = entity,
+                                        Name = values[0],
+                                        Value = values[1]
+                                    });
+                                }
+                            };
+                        }
+
+                        mapImageRepository.Update(entity, User.Identity.Name);
+
+                        SetDefaultNotification(NotificationType.Success, GetEditionSuccessMessage());
+
+                        return RedirectToAction("editimages", new { key });
+                    }
+                    catch (Framework.Guama.Core.Presentation.Web.Frontend.InvalidModelException e)
+                    {
+                        ModelState.AddModelError(e.ModelKey, e.ErrorMessage);
+                    }
+                }
+
+                SetDefaultNotification(NotificationType.Danger, GetInvalidMessage());
 
                 return RedirectToAction("editimages", new { key });
             }
@@ -818,24 +948,31 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         [Route("edit/{key}/videos/add")]
         [ValidateAntiForgeryToken]
         [RequirePermissions(Constants.Permission.MapEditor)]
-        public IActionResult AddVideo(string key, string about)
+        public IActionResult AddVideo(string key, VideoInputViewModel model)
         {
             try
             {
-                var videoFile = Request.Form.Files[0];
-
                 var entity = Repository.Get(key);
 
-                // TODO Validate videoFile & ...
+                ModelState.ClearValidationState("File");
+
+                model.File = Request.Form.Files[0];
+
+                if (Request.Form.Files.Count > 1)
+                {
+                    model.MatadataFile = Request.Form.Files[1];
+                }
+
+                TryValidateModel(model);
 
                 if (ModelState.IsValid)
                 {
                     var video = new Video
                     {
-                        Extension = videoFile.ContentType.Split("/")[1],
-                        Length = videoFile.Length,
-                        About = about,
-                        Format = videoFile.ContentType,
+                        Extension = model.File.ContentType.Split("/")[1],
+                        Length = model.File.Length,
+                        About = model.Description,
+                        Format = model.File.ContentType,
                         FrameSize = "unknown",
                         AudioChannelOutput = "unknown",
                         AudioFormat = "unknown",
@@ -848,22 +985,44 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
                     {
                         using (var memoryStream = new System.IO.MemoryStream())
                         {
-                            videoFile.CopyTo(memoryStream);
+                            model.File.CopyTo(memoryStream);
 
                             videoRepository.Add(video, User.Identity.Name, false);
 
                             videoFileManager.SaveVideoFileContent(video.Id, memoryStream.ToArray(), video.Extension);
 
-                            mapVideoRepository.Add(new MapVideo
+                            var _entity = new MapVideo
                             {
                                 MapId = entity.Id,
                                 VideoId = video.Id
-                            }, User.Identity.Name);
+                            };
+
+                            if (model.MatadataFile != null)
+                            {
+                                using (var streamReader = new System.IO.StreamReader(model.MatadataFile.OpenReadStream(), Encoding.UTF8))
+                                {
+                                    while (!streamReader.EndOfStream)
+                                    {
+                                        var line = streamReader.ReadLine();
+                                        var values = line.Split(";");
+
+                                        _entity.MetadataEntries.Add(new MapVideoMetadataEntry
+                                        {
+                                            MapVideoId = _entity.Id,
+                                            MapVideo = _entity,
+                                            Name = values[0],
+                                            Value = values[1]
+                                        });
+                                    }
+                                };
+                            }
+
+                            mapVideoRepository.Add(_entity, User.Identity.Name);
                         }
 
                         SetDefaultNotification(NotificationType.Success, GetCreationSuccessMessage());
 
-                        return RedirectToAction("editvideos", new { key = entity.Id });
+                        return RedirectToAction("editvideos", new { key });
                     }
                     catch (Framework.Guama.Core.Presentation.Web.Frontend.InvalidModelException e)
                     {
@@ -879,7 +1038,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
 
                 SetDefaultNotification(NotificationType.Danger, GetInvalidMessage());
 
-                return RedirectToAction("editvideos", new { key = entity.Id });
+                return RedirectToAction("editvideos", new { key });
             }
             catch (System.Exception e)
             {
@@ -939,19 +1098,64 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         [Route("edit/{key}/videos/edit")]
         [ValidateAntiForgeryToken]
         [RequirePermissions(Constants.Permission.MapEditor)]
-        public IActionResult EditVideo(string key, System.Guid videoId, string about)
+        public IActionResult EditVideo(string key, VideoInputViewModel model)
         {
             try
             {
-                var entity = Repository.Get(key);
+                ModelState.ClearValidationState("File");
+                ModelState.MarkFieldValid("File");
 
-                var _entity = entity.Videos.First(b => b.VideoId == videoId);
+                if (Request.Form.Files.Count > 0)
+                {
+                    model.MatadataFile = Request.Form.Files[0];
 
-                _entity.Video.About = about;
+                    TryValidateModel(model);
+                }
 
-                mapVideoRepository.Update(_entity, User.Identity.Name);
+                if (ModelState.IsValid)
+                {
+                    try
+                    {
+                        var entity = mapVideoRepository.FindOneBy(_entity => _entity.VideoId == model.Id && _entity.MapId == key);
 
-                SetDefaultNotification(NotificationType.Success, GetEditionSuccessMessage());
+                        entity.Video.About = model.Description;
+
+                        entity.MetadataEntries.Clear();
+
+                        if (model.MatadataFile != null)
+                        {
+                            using (var streamReader = new System.IO.StreamReader(model.MatadataFile.OpenReadStream(), Encoding.UTF8))
+                            {
+                                while (!streamReader.EndOfStream)
+                                {
+                                    var line = streamReader.ReadLine();
+
+                                    var values = line.Split(";");
+
+                                    entity.MetadataEntries.Add(new MapVideoMetadataEntry
+                                    {
+                                        MapVideoId = entity.Id,
+                                        MapVideo = entity,
+                                        Name = values[0],
+                                        Value = values[1]
+                                    });
+                                }
+                            };
+                        }
+
+                        mapVideoRepository.Update(entity, User.Identity.Name);
+
+                        SetDefaultNotification(NotificationType.Success, GetEditionSuccessMessage());
+
+                        return RedirectToAction("editvideos", new { key });
+                    }
+                    catch (Framework.Guama.Core.Presentation.Web.Frontend.InvalidModelException e)
+                    {
+                        ModelState.AddModelError(e.ModelKey, e.ErrorMessage);
+                    }
+                }
+
+                SetDefaultNotification(NotificationType.Danger, GetInvalidMessage());
 
                 return RedirectToAction("editvideos", new { key });
             }
@@ -1008,6 +1212,11 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
 
                 model.File = Request.Form.Files[0];
 
+                if (Request.Form.Files.Count > 1)
+                {
+                    model.MatadataFile = Request.Form.Files[1];
+                }
+
                 TryValidateModel(model);
 
                 if (ModelState.IsValid)
@@ -1030,16 +1239,39 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
 
                             documentFileManager.SaveDocumentFileContent(document.Id, memoryStream.ToArray(), document.ContentType);
 
-                            mapDocumentRepository.Add(new MapDocument
+                            var _entity = new MapDocument
                             {
                                 MapId = entity.Id,
                                 DocumentId = document.Id
-                            }, User.Identity.Name);
+                            };
+
+                            if (model.MatadataFile != null)
+                            {
+                                using (var streamReader = new System.IO.StreamReader(model.MatadataFile.OpenReadStream(), Encoding.UTF8))
+                                {
+                                    while (!streamReader.EndOfStream)
+                                    {
+                                        var line = streamReader.ReadLine();
+
+                                        var values = line.Split(";");
+                                        
+                                        _entity.MetadataEntries.Add(new MapDocumentMetadataEntry
+                                        {
+                                            MapDocumentId = _entity.Id,
+                                            MapDocument = _entity,
+                                            Name = values[0],
+                                            Value = values[1]
+                                        });
+                                    }
+                                };
+                            }
+
+                            mapDocumentRepository.Add(_entity, User.Identity.Name);
                         }
 
                         SetDefaultNotification(NotificationType.Success, GetCreationSuccessMessage());
 
-                        return RedirectToAction("editdocuments", new { key = entity.Id });
+                        return RedirectToAction("editdocuments", new { key });
                     }
                     catch (Framework.Guama.Core.Presentation.Web.Frontend.InvalidModelException e)
                     {
@@ -1049,7 +1281,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
 
                 SetDefaultNotification(NotificationType.Danger, GetInvalidMessage());
 
-                return RedirectToAction("editdocuments", new { key = entity.Id });
+                return RedirectToAction("editdocuments", new { key });
             }
             catch (System.Exception e)
             {
@@ -1109,199 +1341,76 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         [Route("edit/{key}/documents/edit")]
         [ValidateAntiForgeryToken]
         [RequirePermissions(Constants.Permission.MapEditor)]
-        public IActionResult EditDocument(string key, DocumentInputViewModel modelInput)
+        public IActionResult EditDocument(string key, DocumentInputViewModel model)
         {
-            ModelState.ClearValidationState("File");
-            ModelState.MarkFieldValid("File");
-
-            if (ModelState.IsValid)
+            try
             {
-                try
-                {
-                    var entity = Repository.Get(key);
+                ModelState.ClearValidationState("File");
+                ModelState.MarkFieldValid("File");
 
+                if (Request.Form.Files.Count > 0)
+                {
+                    model.MatadataFile = Request.Form.Files[0];
+
+                    TryValidateModel(model);
+                }
+
+                if (ModelState.IsValid)
+                {
                     try
                     {
-                        var _entity = entity.Documents.First(b => b.DocumentId == modelInput.Id);
+                        var entity = mapDocumentRepository.FindOneBy(_entity => _entity.DocumentId == model.Id && _entity.MapId == key);
 
-                        _entity.Document.Name = modelInput.Name;
-                        _entity.Document.Description = modelInput.Description;
+                        entity.Document.Name = model.Name;
+                        entity.Document.Description = model.Description;
 
-                        mapDocumentRepository.Update(_entity, User.Identity.Name);
+                        entity.MetadataEntries.Clear();
+
+                        if (model.MatadataFile != null)
+                        {
+                            using (var streamReader = new System.IO.StreamReader(model.MatadataFile.OpenReadStream(), Encoding.UTF8))
+                            {
+                                while (!streamReader.EndOfStream)
+                                {
+                                    var line = streamReader.ReadLine();
+
+                                    var values = line.Split(";");
+
+                                    entity.MetadataEntries.Add(new MapDocumentMetadataEntry
+                                    {
+                                        MapDocumentId = entity.Id,
+                                        MapDocument = entity,
+                                        Name = values[0],
+                                        Value = values[1]
+                                    });
+                                }
+                            };
+                        }
+
+                        mapDocumentRepository.Update(entity, User.Identity.Name);
 
                         SetDefaultNotification(NotificationType.Success, GetEditionSuccessMessage());
 
-                        return RedirectToAction("editdocuments", new { key = entity.Id });
+                        return RedirectToAction("editdocuments", new { key });
                     }
                     catch (Framework.Guama.Core.Presentation.Web.Frontend.InvalidModelException e)
                     {
                         ModelState.AddModelError(e.ModelKey, e.ErrorMessage);
                     }
-
-                    SetDefaultNotification(NotificationType.Danger, GetInvalidMessage());
-
-                    return RedirectToAction("editdocuments", new { key = entity.Id });
                 }
-                catch (System.Exception e)
-                {
-                    logger.LogError(e.InnerException, e.Message);
-                }
+
+                SetDefaultNotification(NotificationType.Danger, GetInvalidMessage());
+
+                return RedirectToAction("editdocuments", new { key });
+            }
+            catch (System.Exception e)
+            {
+                logger.LogError(e.InnerException, e.Message);
             }
 
             SetDefaultNotification(notificationType: NotificationType.Danger, GetNotFoundMessage());
 
             return GetDefaultActionResult();
-        }
-
-        #endregion
-
-        #region MetadataEntries
-
-        [HttpGet]
-        [Route("edit/{key}/metadataentries")]
-        [RequirePermissions(Constants.Permission.MapEditor)]
-        public ActionResult EditMetadataEntries(string key)
-        {
-            var entity = Repository.Get(key);
-
-            var model = new Models.View.Backend.Management.MapMetadataEntriesManagementViewModel
-            {
-                Map = new MapDisplayViewModel(),
-                MetadataEntries = metadataEntryRepository.FindBy(_entity => _entity.MapId == key).ToArray().Select(_entity =>
-                {
-                    var result = new MapMetadataEntryDisplayModel();
-
-                    result.Import(_entity);
-
-                    return result;
-                }).ToArray()
-            };
-
-            model.Map.Import(entity);
-
-            return View(model);
-        }
-
-        [HttpPost]
-        [Route("edit/{key}/metadataentries/add")]
-        [ValidateAntiForgeryToken]
-        [RequirePermissions(Constants.Permission.MapEditor)]
-        public IActionResult AddMetadataEntry(string key, [System.ComponentModel.DataAnnotations.Required] string name, [System.ComponentModel.DataAnnotations.Required] string value)
-        {
-            try
-            {
-                var entity = Repository.Get(key);
-
-                if (ModelState.IsValid)
-                {
-                    try
-                    {
-                        metadataEntryRepository.Add(new MapMetadataEntry
-                        {
-                            Name = name,
-                            Value = value,
-                            MapId = entity.Id
-                        }, User.Identity.Name);
-
-                        SetDefaultNotification(NotificationType.Success, GetCreationSuccessMessage());
-
-                        return RedirectToAction("editmetadataentries", new { key = entity.Id });
-                    }
-                    catch (Framework.Guama.Core.Presentation.Web.Frontend.InvalidModelException e)
-                    {
-                        ModelState.AddModelError(e.ModelKey, e.ErrorMessage);
-                    }
-                }
-
-                SetDefaultNotification(NotificationType.Danger, GetInvalidMessage());
-
-                return RedirectToAction("editmetadataentries", new { key = entity.Id });
-            }
-            catch (System.Exception e)
-            {
-                logger.LogError(e.InnerException, e.Message);
-            }
-
-            SetDefaultNotification(NotificationType.Danger, GetNotFoundMessage());
-
-            return GetDefaultActionResult();
-        }
-
-        [HttpPost]
-        [Route("edit/{key}/metadataentries/edit")]
-        [ValidateAntiForgeryToken]
-        [RequirePermissions(Constants.Permission.MapEditor)]
-        public IActionResult EditMetadataEntry(string key, long entryId, [System.ComponentModel.DataAnnotations.Required] string name, [System.ComponentModel.DataAnnotations.Required] string value)
-        {
-            try
-            {
-                if (ModelState.IsValid)
-                {
-                    try
-                    {
-                        var entity = metadataEntryRepository.Get(entryId);
-
-                        entity.Name = name;
-                        entity.Value = value;
-
-                        metadataEntryRepository.Update(entity, User.Identity.Name);
-
-                        SetDefaultNotification(NotificationType.Success, GetCreationSuccessMessage());
-
-                        return RedirectToAction("editmetadataentries", new { key });
-                    }
-                    catch (Framework.Guama.Core.Presentation.Web.Frontend.InvalidModelException e)
-                    {
-                        ModelState.AddModelError(e.ModelKey, e.ErrorMessage);
-                    }
-                }
-
-                SetDefaultNotification(NotificationType.Danger, GetInvalidMessage());
-
-                return RedirectToAction("editmetadataentries", new { key });
-            }
-            catch (System.Exception e)
-            {
-                logger.LogError(e.InnerException, e.Message);
-            }
-
-            SetDefaultNotification(NotificationType.Danger, GetNotFoundMessage());
-
-            return GetDefaultActionResult();
-        }
-
-        [HttpPost]
-        [Route("edit/{key}/metadataentries/delete")]
-        [ValidateAntiForgeryToken]
-        [RequirePermissions(Constants.Permission.MapEditor)]
-        public IActionResult DeleteMetadataEntry(string key, long entryId)
-        {
-            try
-            {
-                var entity = metadataEntryRepository.Get(entryId);
-
-                metadataEntryRepository.Delete(entity, User.Identity.Name);
-
-                SetDefaultNotification(NotificationType.Success, GetDeletionSuccessMessage());
-
-                return RedirectToAction("editmetadataentries", new { key });
-            }
-            catch (Microsoft.EntityFrameworkCore.DbUpdateException e)
-            {
-                logger.LogError(e.InnerException, e.Message);
-
-                SetDefaultNotification(NotificationType.Warning, GetOnDeletionDependecyConstrainErrorMessage());
-
-                return RedirectToAction("editmetadataentries", new { key });
-            }
-            catch (System.Exception e)
-            {
-                logger.LogError(e.InnerException, e.Message);
-            }
-
-            SetDefaultNotification(NotificationType.Danger, GetNotFoundMessage());
-
-            return GetSuccessDeleteActionResult();
         }
 
         #endregion
