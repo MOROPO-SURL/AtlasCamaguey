@@ -1,9 +1,9 @@
-﻿@model MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend.Management.MapImagesManagementViewModel
+﻿@model MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend.Management.MapGraphsManagementViewModel
 
 @{
     const string HEADER = "Modificar Mapa";
 
-    var title = string.Format("{0} (Imágenes)", HEADER);
+    var title = string.Format("{0} (Gráficas)", HEADER);
 
     ViewData["Title"] = title;
 
@@ -67,7 +67,10 @@
                 <a class="nav-link" asp-action="EditAuthors" asp-route-key="@Model.Map.Id">Autores</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link active" href="#">Imágenes</a>
+                <a class="nav-link active" href="#">Gráficas</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" asp-action="EditPictures" asp-route-key="@Model.Map.Id">Imágenes</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" asp-action="EditVideos" asp-route-key="@Model.Map.Id">Videos</a>
@@ -92,7 +95,7 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    @using (Html.BeginForm("addimage", "maps", new { key = Model.Map.Id }, FormMethod.Post, true, new { enctype = "multipart/form-data" }))
+                    @using (Html.BeginForm("AddGraph", "maps", new { key = Model.Map.Id }, FormMethod.Post, true, new { enctype = "multipart/form-data" }))
                     {
                         @await Html.PartialAsync("_ImageCreationModalBodyPartial", new MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend.Input.ImageInputViewModel())
 
@@ -147,7 +150,7 @@
                             <div class="modal fade" id="edit-@item.Id" tabindex="-1" role="dialog" aria-labelledby="edit-@item.Id-lable" aria-hidden="true">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
-                                        @using (Html.BeginForm("EditImage", "maps", new { key = Model.Map.Id }, FormMethod.Post, true, new { @class = "modal-content", enctype = "multipart/form-data" }))
+                                        @using (Html.BeginForm("EditGraph", "maps", new { key = Model.Map.Id }, FormMethod.Post, true, new { @class = "modal-content", enctype = "multipart/form-data" }))
                                         {
                                             <div class="modal-header">
                                                 <h4 class="modal-title" id="delete-image-@item.Id-lable">Modificar Video</h4>
@@ -169,7 +172,7 @@
                             <div class="modal fade" id="delete-@item.Id" tabindex="-1" role="dialog" aria-labelledby="delete-@item.Id-lable" aria-hidden="true">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
-                                        @using (Html.BeginForm("deleteimage", "maps", new { key = Model.Map.Id }, FormMethod.Post, true, new { @class = "modal-content" }))
+                                        @using (Html.BeginForm("DeleteGraph", "maps", new { key = Model.Map.Id }, FormMethod.Post, true, new { @class = "modal-content" }))
                                         {
                                             @Html.Hidden("imageId", item.Id)
 
@@ -178,7 +181,7 @@
                                                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                                             </div>
                                             <div class="modal-body">
-                                                <p class="mb-0">Esta seguro que desea eliminar la imagen seleccionada?</p>
+                                                <p class="mb-0">Esta seguro que desea eliminar la gráfica seleccionada?</p>
                                             </div>
                                             <div class="modal-footer" style="margin-top: 0;">
                                                 <button type="submit" class="btn btn-danger">Eliminar</button>

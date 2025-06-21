@@ -681,19 +681,19 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
 
         #endregion
 
-        #region Images
+        #region Graphs
 
         [HttpGet]
-        [Route("edit/{key}/images")]
+        [Route("edit/{key}/graphs")]
         [RequirePermissions(Constants.Permission.MapEditor)]
-        public ActionResult EditImages(string key)
+        public ActionResult EditGraphs(string key)
         {
             var entity = Repository.Get(key);
 
-            var model = new Models.View.Backend.Management.MapImagesManagementViewModel
+            var model = new Models.View.Backend.Management.MapGraphsManagementViewModel
             {
                 Map = new MapDisplayViewModel(),
-                Images = entity.Images.Select(_entity =>
+                Images = entity.Images.Where(_entity => _entity.ImageKind == Camaguey.Persistence.Enumerations.MapImageKind.Chart).Select(_entity =>
                 {
                     var result = new ImageDisplayViewModel();
 
@@ -709,10 +709,247 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         }
 
         [HttpPost]
-        [Route("edit/{key}/images/add")]
+        [Route("edit/{key}/graphs/add")]
         [ValidateAntiForgeryToken]
         [RequirePermissions(Constants.Permission.MapEditor)]
-        public IActionResult AddImage(string key, ImageInputViewModel model)
+        public IActionResult AddGraph(string key, ImageInputViewModel model)
+        {
+            try
+            {
+                var entity = Repository.Get(key);
+
+                ModelState.ClearValidationState("File");
+
+                model.File = Request.Form.Files[0];
+
+                if (Request.Form.Files.Count > 1)
+                {
+                    model.MatadataFile = Request.Form.Files[1];
+                }
+
+                TryValidateModel(model);
+
+                if (ModelState.IsValid)
+                {
+                    try
+                    {
+                        using (var memoryStream = new System.IO.MemoryStream())
+                        {
+                            model.File.CopyTo(memoryStream);
+
+                            var image = new Image { ContentType = model.File.ContentType, Length = model.File.Length, About = model.Description };
+
+                            imageRepository.Add(image, User.Identity.Name, false);
+
+                            imageFileManager.SaveImageFileContent(image.Id, memoryStream.ToArray(), model.File.ContentType);
+
+                            var _entity = new MapImage
+                            {
+                                MapId = entity.Id,
+                                ImageId = image.Id,
+                                ImageKind = Camaguey.Persistence.Enumerations.MapImageKind.Chart
+                            };
+
+                            if (model.MatadataFile != null)
+                            {
+                                using (var streamReader = new System.IO.StreamReader(model.MatadataFile.OpenReadStream(), Encoding.UTF8))
+                                {
+                                    while (!streamReader.EndOfStream)
+                                    {
+                                        var line = streamReader.ReadLine();
+                                        var values = line.Split(";");
+
+                                        _entity.MetadataEntries.Add(new MapImageMetadataEntry
+                                        {
+                                            MapImageId = _entity.Id,
+                                            MapImage = _entity,
+                                            Name = values[0],
+                                            Value = values[1]
+                                        });
+                                    }
+                                };
+                            }
+
+                            mapImageRepository.Add(_entity, User.Identity.Name);
+                        }
+
+                        SetDefaultNotification(NotificationType.Success, GetCreationSuccessMessage());
+
+                        return RedirectToAction("EditGraphs", new { key });
+                    }
+                    catch (Framework.Guama.Core.Presentation.Web.Frontend.InvalidModelException e)
+                    {
+                        ModelState.AddModelError(e.ModelKey, e.ErrorMessage);
+                    }
+                }
+
+                SetDefaultNotification(NotificationType.Danger, GetInvalidMessage());
+
+                return RedirectToAction("EditGraphs", new { key });
+            }
+            catch (System.Exception e)
+            {
+                logger.LogError(e.InnerException, e.Message);
+            }
+
+            SetDefaultNotification(NotificationType.Danger, GetNotFoundMessage());
+
+            return GetDefaultActionResult();
+        }
+
+        [HttpPost]
+        [Route("edit/{key}/graphs/delete")]
+        [ValidateAntiForgeryToken]
+        [RequirePermissions(Constants.Permission.MapEditor)]
+        public IActionResult DeleteGraph(string key, System.Guid imageId)
+        {
+            try
+            {
+                var entity = Repository.Get(key);
+
+                var _entity = entity.Images.First(__entity => __entity.ImageId == imageId && __entity.ImageKind == Camaguey.Persistence.Enumerations.MapImageKind.Chart);
+
+                var deprecatedImage = _entity.Image;
+
+                imageRepository.Delete(_entity.Image, User.Identity.Name);
+
+                try
+                {
+                    imageFileManager.DeleteImageFile(deprecatedImage);
+                }
+                catch { }
+
+                SetDefaultNotification(NotificationType.Success, GetDeletionSuccessMessage());
+
+                return RedirectToAction("EditGraphs", new { key });
+            }
+            catch (Microsoft.EntityFrameworkCore.DbUpdateException e)
+            {
+                logger.LogError(e.InnerException, e.Message);
+
+                SetDefaultNotification(NotificationType.Warning, GetOnDeletionDependecyConstrainErrorMessage());
+
+                return RedirectToAction("EditGraphs", new { key });
+            }
+            catch (System.Exception e)
+            {
+                logger.LogError(e.InnerException, e.Message);
+            }
+
+            SetDefaultNotification(NotificationType.Danger, GetNotFoundMessage());
+
+            return GetSuccessDeleteActionResult();
+        }
+
+        [HttpPost]
+        [Route("edit/{key}/graphs/edit")]
+        [ValidateAntiForgeryToken]
+        [RequirePermissions(Constants.Permission.MapEditor)]
+        public IActionResult EditGraph(string key, ImageInputViewModel model)
+        {
+            try
+            {
+                ModelState.ClearValidationState("File");
+                ModelState.MarkFieldValid("File");
+
+                if (Request.Form.Files.Count > 0)
+                {
+                    model.MatadataFile = Request.Form.Files[0];
+
+                    TryValidateModel(model);
+                }
+
+                if (ModelState.IsValid)
+                {
+                    try
+                    {
+                        var entity = mapImageRepository.FindOneBy(_entity => _entity.ImageId == model.Id && _entity.MapId == key && _entity.ImageKind == Camaguey.Persistence.Enumerations.MapImageKind.Chart);
+
+                        entity.Image.About = model.Description;
+
+                        if (model.MatadataFile != null)
+                        {
+                            entity.MetadataEntries.Clear();
+
+                            using (var streamReader = new System.IO.StreamReader(model.MatadataFile.OpenReadStream(), Encoding.UTF8))
+                            {
+                                while (!streamReader.EndOfStream)
+                                {
+                                    var line = streamReader.ReadLine();
+
+                                    var values = line.Split(";");
+
+                                    entity.MetadataEntries.Add(new MapImageMetadataEntry
+                                    {
+                                        MapImageId = entity.Id,
+                                        MapImage = entity,
+                                        Name = values[0],
+                                        Value = values[1]
+                                    });
+                                }
+                            };
+                        }
+
+                        mapImageRepository.Update(entity, User.Identity.Name);
+
+                        SetDefaultNotification(NotificationType.Success, GetEditionSuccessMessage());
+
+                        return RedirectToAction("EditGraphs", new { key });
+                    }
+                    catch (Framework.Guama.Core.Presentation.Web.Frontend.InvalidModelException e)
+                    {
+                        ModelState.AddModelError(e.ModelKey, e.ErrorMessage);
+                    }
+                }
+
+                SetDefaultNotification(NotificationType.Danger, GetInvalidMessage());
+
+                return RedirectToAction("EditGraphs", new { key });
+            }
+            catch (System.Exception e)
+            {
+                logger.LogError(e.InnerException, e.Message);
+            }
+
+            SetDefaultNotification(NotificationType.Danger, GetNotFoundMessage());
+
+            return GetSuccessDeleteActionResult();
+        }
+
+        #endregion
+
+        #region Pictures
+
+        [HttpGet]
+        [Route("edit/{key}/pictures")]
+        [RequirePermissions(Constants.Permission.MapEditor)]
+        public ActionResult EditPictures(string key)
+        {
+            var entity = Repository.Get(key);
+
+            var model = new Models.View.Backend.Management.MapPicturesManagementViewModel
+            {
+                Map = new MapDisplayViewModel(),
+                Images = entity.Images.Where(_entity => _entity.ImageKind == Camaguey.Persistence.Enumerations.MapImageKind.Picture).Select(_entity =>
+                {
+                    var result = new ImageDisplayViewModel();
+
+                    result.Import(_entity.Image);
+
+                    return result;
+                }).ToArray()
+            };
+
+            model.Map.Import(entity);
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [Route("edit/{key}/pictures/add")]
+        [ValidateAntiForgeryToken]
+        [RequirePermissions(Constants.Permission.MapEditor)]
+        public IActionResult AddPicture(string key, ImageInputViewModel model)
         {
             try
             {
@@ -746,7 +983,8 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
                             var _entity = new MapImage
                             {
                                 MapId = entity.Id,
-                                ImageId = image.Id
+                                ImageId = image.Id,
+                                ImageKind = Camaguey.Persistence.Enumerations.MapImageKind.Picture
                             };
 
                             if (model.MatadataFile != null)
@@ -774,7 +1012,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
 
                         SetDefaultNotification(NotificationType.Success, GetCreationSuccessMessage());
 
-                        return RedirectToAction("editimages", new { key });
+                        return RedirectToAction("EditPictures", new { key });
                     }
                     catch (Framework.Guama.Core.Presentation.Web.Frontend.InvalidModelException e)
                     {
@@ -784,7 +1022,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
 
                 SetDefaultNotification(NotificationType.Danger, GetInvalidMessage());
 
-                return RedirectToAction("editimages", new { key });
+                return RedirectToAction("EditPictures", new { key });
             }
             catch (System.Exception e)
             {
@@ -797,16 +1035,16 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         }
 
         [HttpPost]
-        [Route("edit/{key}/images/delete")]
+        [Route("edit/{key}/pictures/delete")]
         [ValidateAntiForgeryToken]
         [RequirePermissions(Constants.Permission.MapEditor)]
-        public IActionResult DeleteImage(string key, System.Guid imageId)
+        public IActionResult DeletePicture(string key, System.Guid imageId)
         {
             try
             {
                 var entity = Repository.Get(key);
 
-                var _entity = entity.Images.First(b => b.ImageId == imageId);
+                var _entity = entity.Images.First(__entity => __entity.ImageId == imageId && __entity.ImageKind == Camaguey.Persistence.Enumerations.MapImageKind.Picture);
 
                 var deprecatedImage = _entity.Image;
 
@@ -820,7 +1058,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
 
                 SetDefaultNotification(NotificationType.Success, GetDeletionSuccessMessage());
 
-                return RedirectToAction("editimages", new { key });
+                return RedirectToAction("EditPictures", new { key });
             }
             catch (Microsoft.EntityFrameworkCore.DbUpdateException e)
             {
@@ -828,7 +1066,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
 
                 SetDefaultNotification(NotificationType.Warning, GetOnDeletionDependecyConstrainErrorMessage());
 
-                return RedirectToAction("editimages", new { key });
+                return RedirectToAction("EditPictures", new { key });
             }
             catch (System.Exception e)
             {
@@ -841,10 +1079,10 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         }
 
         [HttpPost]
-        [Route("edit/{key}/images/edit")]
+        [Route("edit/{key}/pictures/edit")]
         [ValidateAntiForgeryToken]
         [RequirePermissions(Constants.Permission.MapEditor)]
-        public IActionResult EditImage(string key, ImageInputViewModel model)
+        public IActionResult EditPicture(string key, ImageInputViewModel model)
         {
             try
             {
@@ -862,14 +1100,14 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
                 {
                     try
                     {
-                        var entity = mapImageRepository.FindOneBy(_entity => _entity.ImageId == model.Id && _entity.MapId == key);
+                        var entity = mapImageRepository.FindOneBy(_entity => _entity.ImageId == model.Id && _entity.MapId == key && _entity.ImageKind == Camaguey.Persistence.Enumerations.MapImageKind.Picture);
 
                         entity.Image.About = model.Description;
 
-                        entity.MetadataEntries.Clear();
-
                         if (model.MatadataFile != null)
                         {
+                            entity.MetadataEntries.Clear();
+
                             using (var streamReader = new System.IO.StreamReader(model.MatadataFile.OpenReadStream(), Encoding.UTF8))
                             {
                                 while (!streamReader.EndOfStream)
@@ -893,7 +1131,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
 
                         SetDefaultNotification(NotificationType.Success, GetEditionSuccessMessage());
 
-                        return RedirectToAction("editimages", new { key });
+                        return RedirectToAction("EditPictures", new { key });
                     }
                     catch (Framework.Guama.Core.Presentation.Web.Frontend.InvalidModelException e)
                     {
@@ -903,7 +1141,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
 
                 SetDefaultNotification(NotificationType.Danger, GetInvalidMessage());
 
-                return RedirectToAction("editimages", new { key });
+                return RedirectToAction("EditPictures", new { key });
             }
             catch (System.Exception e)
             {
@@ -1120,10 +1358,10 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
 
                         entity.Video.About = model.Description;
 
-                        entity.MetadataEntries.Clear();
-
                         if (model.MatadataFile != null)
                         {
+                            entity.MetadataEntries.Clear();
+
                             using (var streamReader = new System.IO.StreamReader(model.MatadataFile.OpenReadStream(), Encoding.UTF8))
                             {
                                 while (!streamReader.EndOfStream)
@@ -1364,10 +1602,10 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
                         entity.Document.Name = model.Name;
                         entity.Document.Description = model.Description;
 
-                        entity.MetadataEntries.Clear();
-
                         if (model.MatadataFile != null)
                         {
+                            entity.MetadataEntries.Clear();
+
                             using (var streamReader = new System.IO.StreamReader(model.MatadataFile.OpenReadStream(), Encoding.UTF8))
                             {
                                 while (!streamReader.EndOfStream)

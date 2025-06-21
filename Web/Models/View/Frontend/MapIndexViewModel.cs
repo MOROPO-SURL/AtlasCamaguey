@@ -16,11 +16,13 @@
 
         public AuthorDisplayViewModel[] Authors { get; set; }
 
-        public DocumentDisplayViewModel[] Documents { get; set; }
+        public ImageDisplayViewModel[] Graphs { get; set; }
 
-        public ImageDisplayViewModel[] Images { get; set; }
+        public ImageDisplayViewModel[] Pictures { get; set; }
 
         public VideoDisplayViewModel[] Videos { get; set; }
+
+        public DocumentDisplayViewModel[] Documents { get; set; }
 
         public KeyWordDisplayViewModel[] KeyWords { get; set; }
     }

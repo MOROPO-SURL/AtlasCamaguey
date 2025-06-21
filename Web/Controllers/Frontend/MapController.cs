@@ -38,7 +38,15 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Frontend
 
                     return _model;
                 }).ToArray(),
-                Images = map.Images.Select(bridge =>
+                Graphs = map.Images.Where(entity => entity.ImageKind == Camaguey.Persistence.Enumerations.MapImageKind.Chart).Select(bridge =>
+                {
+                    var _model = new Models.View.ImageDisplayViewModel();
+
+                    _model.Import(bridge.Image);
+
+                    return _model;
+                }).ToArray(),
+                Pictures = map.Images.Where(entity => entity.ImageKind == Camaguey.Persistence.Enumerations.MapImageKind.Picture).Select(bridge =>
                 {
                     var _model = new Models.View.ImageDisplayViewModel();
 

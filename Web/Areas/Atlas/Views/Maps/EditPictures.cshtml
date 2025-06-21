@@ -1,0 +1,204 @@
+﻿@model MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend.Management.MapPicturesManagementViewModel
+
+@{
+    const string HEADER = "Modificar Mapa";
+
+    var title = string.Format("{0} (Imágenes)", HEADER);
+
+    ViewData["Title"] = title;
+
+    ViewData[BreadcrumbViewModel.BREADCRUMBS_MAP_KEY] = new List<BreadcrumbViewModel>
+    {
+        new BreadcrumbViewModel
+        {
+            Caption = "<span class=\"mdi mdi-desktop-mac-dashboard\" style=\"margin-right: 4px;\"></span>" + GlobalViewLocalizationHelper.Localize("Dashboard", ViewLocalizer),
+            Url = Url.Action("index", "dashboard", new { area = "management" })
+        },
+        new BreadcrumbViewModel
+        {
+            Caption = "Gestionar Mapas",
+            Url = Url.Action("index")
+        },
+        new BreadcrumbViewModel
+        {
+            Caption = title
+        }
+    };
+
+    Layout = "_BackendLayout";
+}
+
+@section scripts
+{
+    <script>
+        $(function() {
+            $(document).on("change", "#File", function() {
+                var files = !!this.files ? this.files : [];
+
+                if (!files.length || !window.FileReader) return; // no file selected, or no FileReader support
+
+                if (/^image/.test(files[0].type)) {
+                    var reader = new FileReader();
+
+                    reader.readAsDataURL(files[0]);
+
+                    reader.onloadend = function() {
+                        $('#ImageFilePreview').attr('src', this.result);
+                        $('#ImageFilePreview').show();
+                    }
+                }
+
+            });
+        });
+    </script>
+}
+
+<div class="card mb-3 mt-4">
+    <div class="card-header">
+        <h4>@HEADER</h4>
+        <ul class="nav nav-tabs card-header-tabs">
+            <li class="nav-item">
+                <a class="nav-link" asp-action="Edit" asp-route-key="@Model.Map.Id">Generales</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" asp-action="EditLayers" asp-route-key="@Model.Map.Id">Capas</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" asp-action="EditAuthors" asp-route-key="@Model.Map.Id">Autores</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" asp-action="EditGraphs" asp-route-key="@Model.Map.Id">Gráficas</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="#">Imágenes</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" asp-action="EditVideos" asp-route-key="@Model.Map.Id">Videos</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" asp-action="EditDocuments" asp-route-key="@Model.Map.Id">Documentos</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" asp-action="EditKeyWords" asp-route-key="@Model.Map.Id">Palabras Claves</a>
+            </li>
+        </ul>
+    </div>
+    <div class="card-body pb-0">
+        @await Html.PartialAsync("_SummaryPartial", Model.Map)
+
+        <div class="modal fade" id="add-image" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="add-image-title">Agregar Imagen</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    @using (Html.BeginForm("AddPicture", "maps", new { key = Model.Map.Id }, FormMethod.Post, true, new { enctype = "multipart/form-data" }))
+                    {
+                        @await Html.PartialAsync("_ImageCreationModalBodyPartial", new MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend.Input.ImageInputViewModel())
+
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Agregar</button>
+                            <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        @if (Model.Images.Length <= 0)
+        {
+            <p class="text-muted mb-3">Sin elementos que mostrar</p>
+        }
+        else
+        {
+            <div class="row">
+                @foreach (var item in Model.Images)
+                {
+                    <div class="col-md-6 mb-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <img class="card-img" src="~/media/images/@item.Id@item.Extension" />
+                                @if (string.IsNullOrEmpty(item.About))
+                                {
+                                    <h5 class="text-muted mb-0 mt-3"><i>Acerca de no especificado</i></h5>
+                                }
+                                    else
+                                {
+                                    <h5 class="mb-0 mt-3">@item.About</h5>
+                                }
+                            </div>
+                            <div class="card-footer">
+                                <button class="btn btn-sm btn-secondary" data-toggle="modal" data-target="#metadata-@item.Id"><span class="mdi mdi-eye"></span> Metadatos</button>
+                                <button class="btn btn-sm btn-secondary" data-toggle="modal" data-target="#edit-@item.Id"><span class="mdi mdi-square-edit-outline"></span> Modificar</button>
+                                <button class="btn btn-sm btn-danger float-right" data-toggle="modal" data-target="#delete-@item.Id"><span class="mdi mdi-trash-can"></span> Eliminar</button>
+                            </div>
+                            <div class="modal fade" id="metadata-@item.Id" tabindex="-1" role="dialog" aria-labelledby="metadata-@item.Id-lable" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title" id="delete-image-@item.Id-lable">Metadatos</h4>
+                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                        </div>
+                                        <div class="modal-body">
+                                            @await Component.InvokeAsync("MapImageMetadataEntries", new { mapId = Model.Map.Id, imageId = item.Id })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal fade" id="edit-@item.Id" tabindex="-1" role="dialog" aria-labelledby="edit-@item.Id-lable" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        @using (Html.BeginForm("EditPicture", "maps", new { key = Model.Map.Id }, FormMethod.Post, true, new { @class = "modal-content", enctype = "multipart/form-data" }))
+                                        {
+                                            <div class="modal-header">
+                                                <h4 class="modal-title" id="delete-image-@item.Id-lable">Modificar Video</h4>
+                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                            </div>
+                                            @await Html.PartialAsync("_ImageEditionModalBodyPartial", new MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend.Input.ImageInputViewModel
+                                            {
+                                                Id = item.Id,
+                                                Description = item.About
+                                            })
+                                            <div class="modal-footer" style="margin-top: 0;">
+                                                <button type="submit" class="btn btn-primary">Modifcar</button>
+                                                <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal fade" id="delete-@item.Id" tabindex="-1" role="dialog" aria-labelledby="delete-@item.Id-lable" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        @using (Html.BeginForm("DeletePicture", "maps", new { key = Model.Map.Id }, FormMethod.Post, true, new { @class = "modal-content" }))
+                                        {
+                                            @Html.Hidden("imageId", item.Id)
+
+                                            <div class="modal-header">
+                                                <h4 class="modal-title" id="delete-image-@item.Id-lable">Eliminar Imagen</h4>
+                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p class="mb-0">Esta seguro que desea eliminar la imagen seleccionada?</p>
+                                            </div>
+                                            <div class="modal-footer" style="margin-top: 0;">
+                                                <button type="submit" class="btn btn-danger">Eliminar</button>
+                                                <button type="button" class="btn btn-light" data-dismiss="modal">Cancelar</button>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+    <div class="card-footer">
+        <a class="btn btn-primary" href="#" data-toggle="modal" data-target="#add-image">Agregar</a>
+        <a class="btn btn-light" href="@Url.Action("index")">Regresar al listado</a>
+    </div>
+</div>
