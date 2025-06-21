@@ -709,7 +709,7 @@
     {
         <hr class="my-5" />
         <h3 class="mb-0">Gráficas</h3>
-        <small class="text-muted lead">modelos de datos adicionales</small>
+        <small class="text-muted lead">modelos de datos complementarios</small>
         <div class="card-columns mt-3">
             @foreach (var item in Model.Graphs)
             {
@@ -818,14 +818,37 @@
                             </video>
                         </div>
                         <div class="card-body">
-                            @if (string.IsNullOrEmpty(item.About))
-                            {
-                                <p class="text-muted mb-0"><i>Acerca de no especificado</i></p>
-                            }
-                            else
-                            {
-                                <p class="mb-0">@item.About</p>
-                            }
+                            <div class="row">
+                                <div class="col">
+                                    @if (string.IsNullOrEmpty(item.About))
+                                    {
+                                        <p class="text-muted mb-0"><i>Acerca de no especificado</i></p>
+                                    }
+                                    else
+                                    {
+                                        <p class="mb-0">@item.About</p>
+                                    }
+                                </div>                                
+                                <div class="col-auto">
+                                    <div class="btn-group">
+                                        <a title="Ver metadatos" href="javascript:;" class="btn btn-sm btn-light" data-toggle="modal" data-target="#metadata-video-@item.Id"><span class="mdi mdi-24px mdi-file-table-box-outline"></span></a>
+                                        <a title="Descargar" target="_self" download="@item.Id.@item.Extension" href="~/media/videos/@item.Id.@item.Extension" class="btn btn-sm btn-light"><span class="mdi mdi-24px mdi-download-outline"></span></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal fade" id="metadata-video-@item.Id" tabindex="-1" role="dialog" aria-labelledby="metadata-video-@item.Id-lable" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title" id="delete-image-@item.Id-lable">Metadatos</h4>
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                    </div>
+                                    <div class="modal-body">
+                                        @await Component.InvokeAsync("MapVideoMetadataEntries", new { mapId = Model.Current.Id, videoId = item.Id })
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -847,17 +870,38 @@
                             <div class="row">
                                 <div class="col-auto pr-0"><span class="mdi mdi-36px @item.Extension.AsExtensionToMDICssClass()"></span></div>
                                 <div class="col">
-                                    <a asp-action="Document" asp-controller="Download" asp-route-key="@item.Id"><b>@item.Name</b></a>
-                                    <p class="mb-0">
-                                        @if (item.Description == null)
-                                        {
-                                            <span class="text-muted italic">Sin descripción</span>
-                                        }
-                                        else
-                                        {
-                                            <span style="color: #6c757d; word-wrap: break-word;">@item.Description</span>
-                                        }
-                                    </p>
+                                    <h4>@item.Name</h4>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    @if (string.IsNullOrEmpty(item.Description))
+                                    {
+                                        <p class="text-muted mb-0"><i>Descripción no especificada</i></p>
+                                    }
+                                    else
+                                    {
+                                        <p class="mb-0">@item.Description</p>
+                                    }
+                                </div>                                
+                                <div class="col-auto">
+                                    <div class="btn-group">
+                                        <a title="Ver metadatos" href="javascript:;" class="btn btn-sm btn-light" data-toggle="modal" data-target="#metadata-video-@item.Id"><span class="mdi mdi-24px mdi-file-table-box-outline"></span></a>
+                                        <a title="Descargar" asp-action="Document" asp-controller="Download" asp-route-key="@item.Id" class="btn btn-sm btn-light"><span class="mdi mdi-24px mdi-download-outline"></span></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>                        
+                        <div class="modal fade" id="metadata-document-@item.Id" tabindex="-1" role="dialog" aria-labelledby="metadata-document-@item.Id-lable" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title" id="delete-image-@item.Id-lable">Metadatos</h4>
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                    </div>
+                                    <div class="modal-body">
+                                        @await Component.InvokeAsync("MapDocumentMetadataEntries", new { mapId = Model.Current.Id, documentId = item.Id })
+                                    </div>
                                 </div>
                             </div>
                         </div>

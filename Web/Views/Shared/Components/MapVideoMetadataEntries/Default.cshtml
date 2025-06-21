@@ -1,0 +1,26 @@
+﻿@model MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.CommonMetadataEntryDisplayModel[]
+
+<table class="table" style="margin: 0;">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Valor</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Length <= 0)
+        {
+            <tr><td colspan="3"><p style="margin: 0 5px;" class="text-muted">Sin elementos que mostrar</p></td></tr>
+        }
+        else
+        {
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td style="vertical-align: middle;">@item.Name</td>
+                    <td style="vertical-align: middle;">@item.Value</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

@@ -7,7 +7,7 @@
             switch (target)
             {
                 case string x when x.Contains("pdf"):
-                    return "mdi-file-pdf";
+                    return "mdi-file-document";
 
                 case string x when x.Contains("doc"):
                     return "mdi-file-word";
