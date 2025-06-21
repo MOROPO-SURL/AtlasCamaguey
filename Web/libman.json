@@ -117,31 +117,39 @@
         "src/L.Control.Sidebar.min.js",
         "src/L.Control.Sidebar.scss"
       ]
+    },
+    {
+      "provider": "jsdelivr",
+      "library": "leaflet-control-boxzoom@1.5.0",
+      "destination": "wwwroot/lib/leaflet-control-boxzoom/",
+      "files": [
+        "dist/leaflet-control-boxzoom-src.js",
+        "dist/leaflet-control-boxzoom-src.min.js",
+        "dist/leaflet-control-boxzoom.css",
+        "dist/leaflet-control-boxzoom.d.ts",
+        "dist/leaflet-control-boxzoom.js",
+        "dist/leaflet-control-boxzoom.min.css",
+        "dist/leaflet-control-boxzoom.min.js",
+        "dist/leaflet-control-boxzoom.svg"
+      ]
+    },
+    {
+      "provider": "jsdelivr",
+      "library": "leaflet-control-custom@1.0.0",
+      "destination": "wwwroot/lib/leaflet-control-custom/",
+      "files": [
+        "Leaflet.Control.Custom.js",
+        "Leaflet.Control.Custom.min.js"
+      ]
+    },
+    {
+      "provider": "jsdelivr",
+      "library": "leaflet.browser.print@2.0.2",
+      "destination": "wwwroot/lib/leaflet-browser-print/",
+      "files": [
+        "dist/leaflet.browser.print.js",
+        "dist/leaflet.browser.print.min.js"
+      ]
     }
-  ,
-{
-  "provider": "jsdelivr",
-  "library": "leaflet-control-boxzoom@1.5.0",
-  "destination": "wwwroot/lib/leaflet-control-boxzoom/",
-  "files": [
-    "dist/leaflet-control-boxzoom-src.js",
-    "dist/leaflet-control-boxzoom-src.min.js",
-    "dist/leaflet-control-boxzoom.css",
-    "dist/leaflet-control-boxzoom.d.ts",
-    "dist/leaflet-control-boxzoom.js",
-    "dist/leaflet-control-boxzoom.min.css",
-    "dist/leaflet-control-boxzoom.min.js",
-    "dist/leaflet-control-boxzoom.svg"
   ]
-},
-{
-  "provider": "jsdelivr",
-  "library": "leaflet-control-custom@1.0.0",
-  "destination": "wwwroot/lib/leaflet-control-custom/",
-  "files": [
-    "Leaflet.Control.Custom.js",
-    "Leaflet.Control.Custom.min.js"
-  ]
-}
-]
 }

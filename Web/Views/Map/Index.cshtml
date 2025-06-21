@@ -144,6 +144,9 @@
             background-position: 5px 4px;
             box-shadow: none;
         }
+        .leaflet--printing .leaflet-control-fullscreen {
+            display: none !important;
+        }
     </style>
 }
 
@@ -160,6 +163,7 @@
     <script type="text/javascript" src="~/lib/leaflet-html-legend/dist/L.Control.HtmlLegend.min.js"></script>
     <script type="text/javascript" src="~/lib/leaflet-sidebar/src/L.Control.Sidebar.min.js"></script>
     <script type="text/javascript" src="~/lib/leaflet-easybutton/src/easy-button.min.js"></script>
+    <script type="text/javascript" src="~/lib/leaflet-browser-print/dist/leaflet.browser.print.min.js"></script>
     <script type="text/javascript" src="~/lib/leaflet-grid/L.Grid.js"></script>
     <script type="text/javascript" src="~/lib/leaflet-groupedlayercontrol/leaflet.groupedlayercontrol.min.js"></script>
     <script type="text/javascript" src="~/lib/leaflet-ajax/leaflet.ajax.min.js"></script>
@@ -188,6 +192,20 @@
         }
 
         $(document).ready(function () {
+            L.BrowserPrint.Utils.registerLayer(
+	            // Actual typeof object to compare with
+	            L.Marker.Measurement,
+	            // Any string you would like for current function for print events
+	            'L.Marker.Measurement',
+	            function (layer, utils) {
+		            // We need to recreate cluster object with available options
+		            // Here we use function, but we can use object aswell,
+		            // example: new L.MarkerClusterGroup(layer._group.options);
+		            var cluster = L.marker.measurement(layer._latlng, layer._measurement, layer._title, layer._rotation, layer.options);
+
+		            return cluster;
+	            });
+
             var sidebar = L.control.sidebar('sidebar', {
                 closeButton: true,
                 position: 'left'
@@ -252,6 +270,28 @@
             }).addTo(map);
 
             L.Control.boxzoom({ position:'topleft' }).addTo(map);
+
+            L.easyButton({
+                position: 'topleft',
+                states: [{
+                    stateName: 'to-show-sidebar',
+                    icon: '<span class="mdi mdi-file-table-box-outline"></span>',
+                    title: 'Mostrar metadatos',
+                    onClick: function(btn, map) {
+                        sidebar.toggle();
+                    }
+                }]
+            }).addTo(map);
+
+            L.control.browserPrint({
+                position: 'topleft', 
+                title: '@Model.Current.Name',
+                printModes: [
+                    L.BrowserPrint.Mode.Landscape("Letter", {title: "Mapa Horizontal"}),
+                    L.BrowserPrint.Mode.Portrait("Letter", {title: "Mapa Vertical"}),
+                    L.BrowserPrint.Mode.Custom("Letter", {title:"Área del Mapa"})
+	            ]
+            }).addTo(map);
 
             var drawingLayer = new L.featureGroup().addTo(map);
 
@@ -491,19 +531,7 @@
                 maxZoom: 19,
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
 	            subdomains: 'abcd'
-            }), { toggleDisplay: true }).addTo(map);            
-
-            L.easyButton({
-                position: 'bottomright',
-                states: [{
-                    stateName: 'to-show-sidebar',
-                    icon: '<span class="mdi mdi-file-table-box-outline"></span>',
-                    title: 'Mostrar metadatos',
-                    onClick: function(btn, map) {
-                        sidebar.toggle();
-                    }
-                }]
-            }).addTo(map);
+            }), { toggleDisplay: true }).addTo(map);
         });
     </script>
 }
