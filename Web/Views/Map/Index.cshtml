@@ -710,40 +710,42 @@
         <hr class="my-5" />
         <h3 class="mb-0">Gráficas</h3>
         <small class="text-muted lead">modelos de datos complementarios</small>
-        <div class="card-columns mt-3">
+        <div class="row row-cols-1 row-cols-lg-3 row-cols-md-2 mt-3">
             @foreach (var item in Model.Graphs)
             {
-                <div class="card shadow-sm" style="margin-bottom: 1.25rem !important;">
-                    <img class="card-img" src="~/media/images/@item.Id@item.Extension" />
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col">
-                                @if (string.IsNullOrEmpty(item.About))
-                                {
-                                    <p class="text-muted mb-0"><i>Acerca de no especificado</i></p>
-                                }
-                                else
-                                {
-                                    <p class="mb-0">@item.About</p>
-                                }
-                            </div>
-                            <div class="col-auto">
-                                <div class="btn-group">
-                                    <a title="Ver metadatos" href="javascript:;" class="btn btn-sm btn-light" data-toggle="modal" data-target="#metadata-graph-@item.Id"><span class="mdi mdi-24px mdi-file-table-box-outline"></span></a>
-                                    <a title="Descargar" target="_self" download="@item.Id@item.Extension" href="~/media/images/@item.Id@item.Extension" class="btn btn-sm btn-light"><span class="mdi mdi-24px mdi-download-outline"></span></a>
+                <div class="col" style="padding-bottom: 2.0rem!important;">
+                    <div class="card shadow-sm h-100" style="margin-bottom: 1.25rem !important;">
+                        <img class="card-img" src="~/media/images/@item.Id@item.Extension" />
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col">
+                                    @if (string.IsNullOrEmpty(item.About))
+                                    {
+                                        <p class="text-muted mb-0"><i>Acerca de no especificado</i></p>
+                                    }
+                                    else
+                                    {
+                                        <p class="mb-0">@item.About</p>
+                                    }
+                                </div>
+                                <div class="col-auto">
+                                    <div class="btn-group">
+                                        <a title="Ver metadatos" href="javascript:;" class="btn btn-sm btn-light" data-toggle="modal" data-target="#metadata-graph-@item.Id"><span class="mdi mdi-24px mdi-file-table-box-outline"></span></a>
+                                        <a title="Descargar" target="_self" download="@item.Id@item.Extension" href="~/media/images/@item.Id@item.Extension" class="btn btn-sm btn-light"><span class="mdi mdi-24px mdi-download-outline"></span></a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="modal fade" id="metadata-graph-@item.Id" tabindex="-1" role="dialog" aria-labelledby="metadata-graph-@item.Id-lable" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h4 class="modal-title" id="delete-image-@item.Id-lable">Metadatos</h4>
-                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                                </div>
-                                <div class="modal-body">
-                                    @await Component.InvokeAsync("MapImageMetadataEntries", new { mapId = Model.Current.Id, imageId = item.Id })
+                        <div class="modal fade" id="metadata-graph-@item.Id" tabindex="-1" role="dialog" aria-labelledby="metadata-graph-@item.Id-lable" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title" id="delete-image-@item.Id-lable">Metadatos</h4>
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                    </div>
+                                    <div class="modal-body">
+                                        @await Component.InvokeAsync("MapImageMetadataEntries", new { mapId = Model.Current.Id, imageId = item.Id })
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -758,40 +760,42 @@
         <hr class="my-5" />
         <h3 class="mb-0">Imágenes</h3>
         <small class="text-muted lead">instantáneas relacionadas</small>
-        <div class="card-columns mt-3">
+        <div class="row row-cols-1 row-cols-lg-3 row-cols-md-2 mt-3">
             @foreach (var item in Model.Pictures)
             {
-                <div class="card shadow-sm" style="margin-bottom: 1.25rem !important;">
-                    <img class="card-img" src="~/media/images/@item.Id@item.Extension" />
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col">
-                                @if (string.IsNullOrEmpty(item.About))
-                                {
-                                    <p class="text-muted mb-0"><i>Acerca de no especificado</i></p>
-                                }
-                                else
-                                {
-                                    <p class="mb-0">@item.About</p>
-                                }
-                            </div>
-                            <div class="col-auto">
-                                <div class="btn-group">
-                                    <a title="Ver metadatos" href="javascript:;" class="btn btn-sm btn-light" data-toggle="modal" data-target="#metadata-picture-@item.Id"><span class="mdi mdi-24px mdi-file-table-box-outline"></span></a>
-                                    <a title="Descargar" target="_self" download="@item.Id@item.Extension" href="~/media/images/@item.Id@item.Extension" class="btn btn-sm btn-light"><span class="mdi mdi-24px mdi-download-outline"></span></a>
+                <div class="col" style="padding-bottom: 2.0rem!important;">
+                    <div class="card shadow-sm h-100" style="margin-bottom: 1.25rem !important;">
+                        <img class="card-img" src="~/media/images/@item.Id@item.Extension" />
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col">
+                                    @if (string.IsNullOrEmpty(item.About))
+                                    {
+                                        <p class="text-muted mb-0"><i>Acerca de no especificado</i></p>
+                                    }
+                                    else
+                                    {
+                                        <p class="mb-0">@item.About</p>
+                                    }
+                                </div>
+                                <div class="col-auto">
+                                    <div class="btn-group">
+                                        <a title="Ver metadatos" href="javascript:;" class="btn btn-sm btn-light" data-toggle="modal" data-target="#metadata-picture-@item.Id"><span class="mdi mdi-24px mdi-file-table-box-outline"></span></a>
+                                        <a title="Descargar" target="_self" download="@item.Id@item.Extension" href="~/media/images/@item.Id@item.Extension" class="btn btn-sm btn-light"><span class="mdi mdi-24px mdi-download-outline"></span></a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="modal fade" id="metadata-picture-@item.Id" tabindex="-1" role="dialog" aria-labelledby="metadata-picture-@item.Id-lable" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h4 class="modal-title" id="delete-image-@item.Id-lable">Metadatos</h4>
-                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                                </div>
-                                <div class="modal-body">
-                                    @await Component.InvokeAsync("MapImageMetadataEntries", new { mapId = Model.Current.Id, imageId = item.Id })
+                        <div class="modal fade" id="metadata-picture-@item.Id" tabindex="-1" role="dialog" aria-labelledby="metadata-picture-@item.Id-lable" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title" id="delete-image-@item.Id-lable">Metadatos</h4>
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                    </div>
+                                    <div class="modal-body">
+                                        @await Component.InvokeAsync("MapImageMetadataEntries", new { mapId = Model.Current.Id, imageId = item.Id })
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -810,7 +814,7 @@
             @foreach (var item in Model.Videos)
             {
                 <div class="col-lg-3 col-md-4 col-sm-6">
-                    <div class="card shadow-sm" style="margin-bottom: 1.25rem !important;">
+                    <div class="card shadow-sm h-100" style="margin-bottom: 1.25rem !important;">
                         <div class="embed-responsive embed-responsive-16by9">
                             <video controls="controls">
                                 <source src="/media/videos/@item.Id.@item.Extension" type="video/mp4">
@@ -865,7 +869,7 @@
             @foreach (var item in Model.Documents)
             {
                 <div class="col-lg-3 col-md-4 col-sm-6">
-                    <div class="card shadow-sm" style="margin-bottom: 1.25rem !important;">
+                    <div class="card shadow-sm h-100" style="margin-bottom: 1.25rem !important;">
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-auto pr-0"><span class="mdi mdi-36px @item.Extension.AsExtensionToMDICssClass()"></span></div>
