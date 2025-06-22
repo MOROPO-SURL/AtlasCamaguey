@@ -7,10 +7,6 @@
       "destination": "wwwroot/lib/jquery/"
     },
     {
-      "library": "leaflet@1.9.4",
-      "destination": "wwwroot/lib/leaflet/"
-    },
-    {
       "library": "ckeditor@4.25.1",
       "destination": "wwwroot/lib/ckeditor/"
     },
@@ -54,10 +50,6 @@
       "destination": "wwwroot/lib/leaflet-mouse-position/"
     },
     {
-      "library": "leaflet-contextmenu@1.4.0",
-      "destination": "wwwroot/lib/leaflet-contextmenu/"
-    },
-    {
       "library": "leaflet-ajax@2.1.0",
       "destination": "wwwroot/lib/leaflet-ajax/"
     },
@@ -71,12 +63,8 @@
       "destination": "wwwroot/lib/leaflet-groupedlayercontrol/"
     },
     {
-      "library": "Chart.js@4.4.1",
+      "library": "Chart.js@3.9.1",
       "destination": "wwwroot/lib/chartjs/"
-    },
-    {
-      "library": "apexcharts@4.5.0",
-      "destination": "wwwroot/lib/apexcharts/"
     },
     {
       "provider": "jsdelivr",
@@ -149,6 +137,28 @@
       "files": [
         "dist/leaflet.browser.print.js",
         "dist/leaflet.browser.print.min.js"
+      ]
+    },
+    {
+      "provider": "cdnjs",
+      "library": "leaflet-dvf@0.3.1",
+      "destination": "wwwroot/lib/leaflet-dvf/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "leaflet@1.9.4",
+      "destination": "wwwroot/lib/leaflet/",
+      "files": [
+        "leaflet.js",
+        "leaflet.min.css",
+        "leaflet.css",
+        "leaflet.min.js",
+        "images/layers-2x.png",
+        "images/layers.png",
+        "images/marker-icon-2x.png",
+        "images/marker-icon.png",
+        "images/marker-shadow.png",
+        "leaflet.js.map"
       ]
     }
   ]

@@ -39,6 +39,7 @@
 {
     <link rel="stylesheet" href="~/lib/leaflet/leaflet.min.css" />
     @*<link rel="stylesheet" href="~/lib/leaflet-draw-style-editor/css/Leaflet.StyleEditor.min.css" />*@
+    @*<link rel="stylesheet" href="~/lib/leaflet-dvf/css/dvf.min.css" />*@
     <link rel="stylesheet" href="~/lib/leaflet-fullscreen/dist/leaflet.fullscreen.min.css" />
     <link rel="stylesheet" href="~/lib/leaflet-control-boxzoom/dist/leaflet-control-boxzoom.min.css" />
     <link rel="stylesheet" href="~/lib/leaflet-navbar/Leaflet.NavBar.min.css" />
@@ -150,6 +151,7 @@
 {
     <script type="text/javascript" src="~/lib/leaflet/leaflet.min.js"></script>
     @*<script type="text/javascript" src="~/lib/leaflet-draw-style-editor/javascript/Leaflet.StyleEditor.min.js"></script>*@
+    <script type="text/javascript" src="~/lib/leaflet-dvf/leaflet-dvf.markers.js"></script>
     <script type="text/javascript" src="~/lib/leaflet-fullscreen/dist/leaflet.fullscreen.min.js"></script>
     <script type="text/javascript" src="~/lib/leaflet-control-boxzoom/dist/leaflet-control-boxzoom.min.js"></script>
     <script type="text/javascript" src="~/lib/leaflet-navbar/index.min.js"></script>
@@ -165,7 +167,7 @@
     <script type="text/javascript" src="~/lib/leaflet-ajax/leaflet.ajax.min.js"></script>
     <script type="text/javascript" src="~/lib/leaflet-measure-path/leaflet-measure-path.min.js"></script>
     <script type="text/javascript" src="~/lib/leaflet-geoman-free/dist/leaflet-geoman.min.js"></script>
-    <script type="text/javascript" src="~/lib/apexcharts/apexcharts.min.js"></script>
+    <script type="text/javascript" src="~/lib/chartjs/chart.min.js"></script>
     <script type="text/javascript">
 
         var highlightLayer;
@@ -323,7 +325,7 @@
                     {
                         var geoJSONUrl = string.Format("{0}?MAP={1}/{2}/{2}.qgz&SERVICE=WFS&VERSION=1.1.0&REQUEST=GetFeature&TYPENAME={3}&OUTPUTFORMAT=geojson", Model.QgisServerBaseUri, Model.QgisProjectsRootPath.Replace("\\", "/"), Model.Current.Id, System.Web.HttpUtility.UrlEncode(item.Name));
 
-                        var layerDefinition = string.Format("       var overlayLayer{0} = new L.geoJSON.ajax('{1}'", ++index, geoJSONUrl) + ", { ";
+                        var layerDefinition = string.Format("       var overlayGeoJSONLayer{0} = new L.geoJSON.ajax('{1}'", ++index, geoJSONUrl) + ", { ";
 
                         if (!string.IsNullOrEmpty(item.StylePresentantionJSBlock) && !string.IsNullOrWhiteSpace(item.StylePresentantionJSBlock))
                         {
@@ -349,7 +351,9 @@
                                 "   } ";
                         }
 
-                        layerDefinition += "}).addTo(map);";
+                        layerDefinition += $"}});var overlayMarkerLayer{index} = new L.layerGroup({{interactive: true}});var overlayLayer{index} = new L.layerGroup([overlayMarkerLayer{index}, overlayGeoJSONLayer{index}], {{interactive: true}}).addTo(map);";
+
+
 
                         @Html.Raw(layerDefinition)
                     }
@@ -528,6 +532,8 @@
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
 	            subdomains: 'abcd'
             }), { toggleDisplay: true }).addTo(map);
+
+            @*L.minichart([21.3792,-77.9184], {type: 'pie', data: [8,5,3,1], colors: ['#35673f', '#ff871f', '#4bd859', '#ffc280']}).addTo(map);*@
         });
     </script>
 }

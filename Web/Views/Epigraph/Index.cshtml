@@ -160,23 +160,23 @@
     <div class="row mt-4 mb-5">
         @foreach (var _item in item.Maps)
         {
-        <div class="col-lg-4 col-md-6 col-sm-12 text-center">
-            @if (_item.ImageId != null)
-            {
-                <img class="img-fluid mb-2" src="~/media/images/@_item.ImageId@_item.ImageExtension" title="@_item.Name" />
-            }
-            else
-            {
-                <h4>@_item.Name</h4>
-            }
-            @if (!string.IsNullOrEmpty(_item.Description))
-            {
-                <div class="text-left text-truncate text-wrap mb-2" style="height: 72px;">
-                    @Html.Raw(@_item.Description)
-                </div>
-            }
-            <a class="btn btn-outline-primary" asp-action="index" asp-controller="map" asp-route-key="@_item.Id" asp-route-epigraphId="@Model.Current.Id">Detalles</a>
-        </div>
+            <div class="col-lg-4 col-md-6 col-sm-12 text-center" style="padding-bottom: 2.0rem!important;">
+                @if (_item.ImageId != null)
+                {
+                    <img class="img-fluid mb-2" src="~/media/images/@_item.ImageId@_item.ImageExtension" title="@_item.Name" />
+                }
+                else
+                {
+                    <h4>@_item.Name</h4>
+                }
+                @if (!string.IsNullOrEmpty(_item.Description))
+                {
+                    <div class="text-left text-truncate text-wrap mb-2" style="height: 72px;">
+                        @Html.Raw(@_item.Description)
+                    </div>
+                }
+                <a class="btn btn-outline-primary" asp-action="index" asp-controller="map" asp-route-key="@_item.Id" asp-route-epigraphId="@Model.Current.Id">Detalles</a>
+            </div>
         }
     </div>
 }

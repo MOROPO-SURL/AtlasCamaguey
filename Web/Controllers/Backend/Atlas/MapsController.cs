@@ -59,11 +59,6 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
             return View();
         }
 
-        protected override System.Func<Map, object> GetOrderSelector()
-        {
-            return entity => entity.Name;
-        }
-
         public override IActionResult Create()
         {
             return NotFound();

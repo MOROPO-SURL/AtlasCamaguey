@@ -112,25 +112,33 @@
                                             @Html.TextBox("priority", item.Priority, new { @class = "form-control mb-3" })
                                         </div>
                                     </div>
+                                    @*
                                     <div>
                                         @Html.Label(null, "Bloques de personzalización de Capa", new { @class = "control-label" })
-                                        <ul class="nav nav-tabs">
-                                            <li class="nav-item"><a class="nav-link active" href="#interactivejsblock" data-toggle="tab">Bloque Javascript Interactivo</a></li>
-                                            <li class="nav-item"><a class="nav-link" href="#stylesjsblock" data-toggle="tab">Bloque Javascript de Estilos</a></li>
-                                            <li class="nav-item"><a class="nav-link" href="#pointsjsblock" data-toggle="tab">Bloque Javascript de Marcación</a></li>
+                                        <ul class="nav nav-pills" role="tablist">
+                                            <li class="nav-item" role="presentation"><button type="button" class="nav-link active" id="interactivejsblock-tab" data-toggle="tab" data-target="#interactivejsblock" role="tab" aria-controls="interactivejsblock" aria-selected="true">Bloque Javascript Interactivo</button></li>
+                                            <li class="nav-item" role="presentation"><button type="button" class="nav-link" id="stylesjsblock-tab" data-toggle="tab" data-target="#stylesjsblock" role="tab" aria-controls="stylesjsblock" aria-selected="false">Bloque Javascript de Estilos</button></li>
+                                            <li class="nav-item" role="presentation"><button type="button" class="nav-link" id="pointsjsblock-tab" data-toggle="tab" data-target="#pointsjsblock" role="tab" aria-controls="pointsjsblock" aria-selected="false">Bloque Javascript de Marcación</button></li>
                                         </ul>
-                                        <div class="tab-content">
-                                            <div class="tab-pane pt-3 active" id="interactivejsblock">
+                                        <div class="tab-content mt-3">
+                                            <div class="tab-pane fade show active" id="interactivejsblock" role="tabpanel" aria-labelledby="interactivejsblock-tab">
                                                 @Html.TextArea("interactivePresentantionJSBlock", item.InteractivePresentantionJSBlock, 12, 0, new { @class = "form-control" })
                                             </div>
-                                            <div class="tab-pane pt-3" id="stylesjsblock">
+                                            <div class="tab-pane fade" id="stylesjsblock" role="tabpanel" aria-labelledby="stylesjsblock-tab">
                                                 @Html.TextArea("stylePresentantionJSBlock", item.StylePresentantionJSBlock, 12, 0, new { @class = "form-control" })
                                             </div>
-                                            <div class="tab-pane pt-3" id="pointsjsblock">
+                                            <div class="tab-pane fade" id="pointsjsblock" role="tabpanel" aria-labelledby="pointsjsblock-tab">
                                                 @Html.TextArea("pointToPresentationJSBlock", item.PointToPresentationJSBlock, 12, 0, new { @class = "form-control" })
                                             </div>
                                         </div>
                                     </div>
+                                    *@
+                                    @Html.Label("interactivePresentantionJSBlock", "Bloque Interactivo", new { @class = "control-label" })
+                                    @Html.TextArea("interactivePresentantionJSBlock", item.InteractivePresentantionJSBlock, 12, 0, new { @class = "form-control mb-3" })
+                                    @Html.Label("stylePresentantionJSBlock", "Bloque de Estilos", new { @class = "control-label" })
+                                    @Html.TextArea("stylePresentantionJSBlock", item.StylePresentantionJSBlock, 12, 0, new { @class = "form-control mb-3" })
+                                    @Html.Label("pointToPresentationJSBlock", "Bloque de Marcación", new { @class = "control-label" })
+                                    @Html.TextArea("pointToPresentationJSBlock", item.PointToPresentationJSBlock, 12, 0, new { @class = "form-control" })
                                 </div>
                                 <div class="modal-footer">
                                     <button type="submit" class="btn btn-primary">Modificar</button>

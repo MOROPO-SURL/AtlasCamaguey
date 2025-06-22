@@ -109,7 +109,14 @@
                 @foreach (var item in Model.Maps)
                 {
                     <div class="col-lg-3 col-md-4 col-sm-6 text-center mt-1 mb-3">
-                        <img title="@item.Name" class="img-thumbnail img-fluid" src="~/img/default-undefined-map.png?MAP=/home/cloud/qgisprojetcs/@item.Id/@item.Id..qgs" />
+                        @if (item.ImageId == null)
+                        {
+                            <img title="@item.Name" class="img-thumbnail img-fluid" src="~/img/default-undefined-map.png" />
+                        }
+                        else
+                        {
+                            <img title="@item.Name" class="img-thumbnail img-fluid" src="~/media/images/@item.ImageId@item.ImageExtension" />
+                        }
                         <div class="mt-2">
                             <div>@item.Name</div>
                             <div class="mt-2">
