@@ -7,10 +7,6 @@
       "destination": "wwwroot/lib/jquery/"
     },
     {
-      "library": "ckeditor@4.25.1",
-      "destination": "wwwroot/lib/ckeditor/"
-    },
-    {
       "library": "bootstrap@4.6.2",
       "destination": "wwwroot/lib/bootstrap/"
     },
