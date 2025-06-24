@@ -264,7 +264,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
                 }
                 catch (Framework.Guama.Core.Presentation.Web.Frontend.InvalidModelException e)
                 {
-                    logger.LogWarning(e, "Problemas cargando archivo de proyecto QGIS.");
+                    logger.LogError(e, "Problemas cargando archivo de proyecto QGIS.");
 
                     ModelState.AddModelError(e.ModelKey, e.ErrorMessage);
 
