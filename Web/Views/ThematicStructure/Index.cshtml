@@ -39,6 +39,10 @@
     <span class="badge badge-info"><span class="mdi mdi-label"> Epígrafes</span></span>
     <span class="badge badge-info"><span class="mdi mdi-folder"> Temáticas</span></span>
     <span class="badge badge-info"><span class="mdi mdi-earth-box"> Mapas</span></span>
+    <span class="badge badge-info"><span class="mdi mdi-chart-areaspline"> Gráficas</span></span>
+    <span class="badge badge-info"><span class="mdi mdi-image"> Imágenes</span></span>
+    <span class="badge badge-info"><span class="mdi mdi-youtube"> Videos</span></span>
+    <span class="badge badge-info"><span class="mdi mdi-file"> Documentos</span></span>
 </div>
 
 @foreach (var item in Model.Structure)
@@ -65,11 +69,44 @@
 
                     @foreach (var ___item in __item.Value)
                     {
-                        <div class="ml-5 mt-3 mb-1">
-                            <h4><span class="mdi mdi-earth-box"></span> <a asp-action="index" asp-controller="map" asp-route-key="@___item.Id" asp-route-epigraphId="@_item.Key.Id">@___item.Name</a></h4>
+                        <div class="ml-5 mt-2 mb-1">
+                            <h4><span class="mdi mdi-earth-box"></span> <a asp-action="index" asp-controller="map" asp-route-key="@___item.Current.Id" asp-route-epigraphId="@_item.Key.Id">@___item.Current.Name</a></h4>
                             <div class="text-truncate text-wrap" style="max-height: 72px;">
-                                @Html.Raw(@___item.Description)
+                                @Html.Raw(@___item.Current.Description)
                             </div>
+
+                            @if (___item.Graphs.Length > 0 || ___item.Pictures.Length > 0 || ___item.Videos.Length > 0 || ___item.Documents.Length > 0)
+                            {
+                                <div class="mb-4">
+                                    @foreach (var ____item in ___item.Graphs)
+                                    {
+                                        <div class="ml-5 mt-2 mb-1">
+                                            <h5><span class="mdi mdi-chart-areaspline"></span> <span>@Html.Raw(____item.About ?? "Gráfica sin descripción.")</span></h5>
+                                        </div>
+                                    }
+
+                                    @foreach (var ____item in ___item.Pictures)
+                                    {
+                                        <div class="ml-5 mt-2 mb-1">
+                                            <h5><span class="mdi mdi-image"></span> <span>@Html.Raw(____item.About ?? "Imágen sin descripción.")</span></h5>
+                                        </div>
+                                    }
+
+                                    @foreach (var ____item in ___item.Videos)
+                                    {
+                                        <div class="ml-5 mt-2 mb-1">
+                                            <h5><span class="mdi mdi-youtube"></span> <span>@Html.Raw(____item.About ?? "Video sin descripción.")</span></h5>
+                                        </div>
+                                    }
+
+                                    @foreach (var ____item in ___item.Documents)
+                                    {
+                                        <div class="ml-5 mt-2 mb-1">
+                                            <h5><span class="mdi mdi-file"></span> <span>@Html.Raw(____item.Description ?? "Documento sin descripción.")</span></h5>
+                                        </div>
+                                    }
+                                </div>
+                            }
                         </div>
                     }
                 </div>

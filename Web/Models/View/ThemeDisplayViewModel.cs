@@ -1,6 +1,6 @@
 ﻿namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View
 {
-	public class ThemeDisplayViewModel : Framework.Guama.Core.Persistence.Presentation.Models.Contract.IEntityDisplayModel<Camaguey.Persistence.Entities.Theme, System.Guid>
+    public class ThemeDisplayViewModel : Framework.Guama.Core.Persistence.Presentation.Models.Contract.IEntityDisplayModel<Camaguey.Persistence.Entities.Theme, System.Guid>
     {
         public System.Guid Id { get; set; }
 

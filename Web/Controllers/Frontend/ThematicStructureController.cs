@@ -11,13 +11,15 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Frontend
         private readonly IEntityRepository<Camaguey.Persistence.Entities.Section, System.Guid> sectionRepository;
         private readonly IEntityRepository<Camaguey.Persistence.Entities.Epigraph, System.Guid> epigraphRepository;
         private readonly IEntityRepository<Camaguey.Persistence.Entities.Theme, System.Guid> themeRepository;
+        private readonly IEntityRepository<Camaguey.Persistence.Entities.Map, string> mapRepository;
 
-        public ThematicStructureController(IEntityRepository<Camaguey.Persistence.Entities.Theme, System.Guid> themeRepository, IEntityRepository<Camaguey.Persistence.Entities.Epigraph, System.Guid> epigraphRepository, IEntityRepository<Camaguey.Persistence.Entities.Section, System.Guid> sectionRepository, IEntityRepository<Camaguey.Persistence.Entities.RichTextBlock, Camaguey.Persistence.Enumerations.RichTextBlockKind> richTextBlockRepository)
+        public ThematicStructureController(IEntityRepository<Camaguey.Persistence.Entities.Map, string> mapRepository, IEntityRepository<Camaguey.Persistence.Entities.Theme, System.Guid> themeRepository, IEntityRepository<Camaguey.Persistence.Entities.Epigraph, System.Guid> epigraphRepository, IEntityRepository<Camaguey.Persistence.Entities.Section, System.Guid> sectionRepository, IEntityRepository<Camaguey.Persistence.Entities.RichTextBlock, Camaguey.Persistence.Enumerations.RichTextBlockKind> richTextBlockRepository)
         {
             this.richTextBlockRepository = richTextBlockRepository;
             this.sectionRepository = sectionRepository;
             this.epigraphRepository = epigraphRepository;
             this.themeRepository = themeRepository;
+            this.mapRepository = mapRepository;
         }
 
         public Microsoft.AspNetCore.Mvc.ActionResult<Models.View.Frontend.ThematicStructureIndexViewModel> Index()
@@ -29,7 +31,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Frontend
             var model = new Models.View.Frontend.ThematicStructureIndexViewModel
             {
                 Intro = richTextBlockRepository.Get(Camaguey.Persistence.Enumerations.RichTextBlockKind.PageThematicStructureIntro).Content,
-                Structure = new Dictionary<SectionDisplayViewModel, Dictionary<EpigraphDisplayViewModel, Dictionary<ThemeDisplayViewModel, MapDisplayViewModel[]>>>()
+                Structure = []
             };
 
             foreach (var item in sections)
@@ -40,7 +42,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Frontend
 
                 var sectionEpigraphModels = new List<EpigraphDisplayViewModel>();
 
-                var ephigraphThemesDictionary = new Dictionary<EpigraphDisplayViewModel, Dictionary<ThemeDisplayViewModel, MapDisplayViewModel[]>>();
+                var ephigraphThemesDictionary = new Dictionary<EpigraphDisplayViewModel, Dictionary<ThemeDisplayViewModel, Models.View.Frontend.MapIndexViewModel[]>>();
 
                 var epigraphs = epigraphRepository.FindBy(entity => entity.SectionId == item.Id).OrderBy(_model => _model.Priority).ToArray();
 
@@ -50,7 +52,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Frontend
 
                     epigraph.Import(_item);
 
-                    var themeMapDictionary = new Dictionary<ThemeDisplayViewModel, MapDisplayViewModel[]>();
+                    var themeMapDictionary = new Dictionary<ThemeDisplayViewModel, Models.View.Frontend.MapIndexViewModel[]>();
 
                     var themes = themeRepository.FindBy(entity => entity.EpigraphId == _item.Id).OrderBy(_model => _model.Priority).ToArray();
 
@@ -60,18 +62,53 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Frontend
 
                         theme.Import(__item);
 
-                        var maps = new List<MapDisplayViewModel>();
+                        var maps = new List<Models.View.Frontend.MapIndexViewModel>();
 
                         foreach (var bridge in __item.MapBridges)
                         {
-                            var mapModel = new MapDisplayViewModel();
+                            var entity = mapRepository.Get(bridge.SternId);
 
-                            mapModel.Import(bridge.Stern);
+                            var _model = new Models.View.Frontend.MapIndexViewModel { Current = new MapDisplayViewModel() };
 
-                            maps.Add(mapModel);
+                            _model.Current.Import(entity);
+
+                            _model.Graphs = entity.Images.Where(entity => entity.ImageKind == Camaguey.Persistence.Enumerations.MapImageKind.Chart).Select(bridge =>
+                            {
+                                var _model = new ImageDisplayViewModel();
+
+                                _model.Import(bridge.Image);
+
+                                return _model;
+                            }).ToArray();
+                            _model.Pictures = entity.Images.Where(entity => entity.ImageKind == Camaguey.Persistence.Enumerations.MapImageKind.Picture).Select(bridge =>
+                            {
+                                var _model = new ImageDisplayViewModel();
+
+                                _model.Import(bridge.Image);
+
+                                return _model;
+                            }).ToArray();
+                            _model.Videos = entity.Videos.Select(bridge =>
+                            {
+                                var _model = new VideoDisplayViewModel();
+
+                                _model.Import(bridge.Video);
+
+                                return _model;
+                            }).ToArray();
+                            _model.Documents = entity.Documents.Select(bridge =>
+                            {
+                                var _model = new DocumentDisplayViewModel();
+
+                                _model.Import(bridge.Document);
+
+                                return _model;
+                            }).ToArray();
+
+                            maps.Add(_model);
                         }
 
-                        themeMapDictionary.Add(theme, maps.OrderBy(_model => _model.Priority).ToArray());
+                        themeMapDictionary.Add(theme, maps.OrderBy(_model => _model.Current.Priority).ToArray());
                     }
 
                     ephigraphThemesDictionary.Add(epigraph, themeMapDictionary);
