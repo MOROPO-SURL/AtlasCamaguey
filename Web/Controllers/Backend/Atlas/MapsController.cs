@@ -297,6 +297,8 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
             {
                 using (var streamReader = new System.IO.StreamReader(model.MetadataFile.OpenReadStream(), Encoding.UTF8))
                 {
+                    entity.MetadataEntries.Clear();
+
                     while (!streamReader.EndOfStream)
                     {
                         var line = streamReader.ReadLine();
