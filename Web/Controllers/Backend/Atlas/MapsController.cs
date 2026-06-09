@@ -264,7 +264,11 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
                 }
                 catch (Framework.Guama.Core.Presentation.Web.Frontend.InvalidModelException e)
                 {
-                    logger.LogError(e, "Problemas cargando archivo de proyecto QGIS.");
+                    string message = $"Problemas cargando archivo de proyecto QGIS : {e.ErrorMessage}";
+                    
+                    logger.LogError(e, message);
+
+                    SetDefaultNotification(NotificationType.Danger, message);
 
                     ModelState.AddModelError(e.ModelKey, e.ErrorMessage);
 
@@ -277,14 +281,18 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
                 {
                     logger.LogError(e, "Excepción no esperada cargando archivo de proyect QGIS!!!");
 
+                    SetDefaultNotification(NotificationType.Danger, "Error no esperado cargando archivo de proyect QGIS!!!");
+
                     if (qgisProjectDirectoryInfo.Exists)
                     {
                         qgisProjectDirectoryInfo.Delete(true);
                     }
                 }
             }
-
-            SetDefaultNotification(NotificationType.Danger, GetInvalidMessage());
+            else
+            {
+                SetDefaultNotification(NotificationType.Danger, GetInvalidMessage());
+            }
 
             return RedirectToAction("Index");
         }

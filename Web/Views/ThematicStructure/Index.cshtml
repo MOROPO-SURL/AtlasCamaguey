@@ -102,7 +102,7 @@
                                     @foreach (var ____item in ___item.Documents)
                                     {
                                         <div class="ml-5 mt-2 mb-1">
-                                            <h5><span class="mdi mdi-file"></span> <span>@Html.Raw(____item.Description ?? "Documento sin descripción.")</span></h5>
+                                            <h5><span class="mdi mdi-file"></span> <span>@____item.Name</span></h5>
                                         </div>
                                     }
                                 </div>
