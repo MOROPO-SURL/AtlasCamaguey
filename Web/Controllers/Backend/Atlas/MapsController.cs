@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using MOROPO.CIMAC.Atlas.Camaguey.Persistence.Entities;
+using MOROPO.CIMAC.Atlas.Camaguey.Web.Constants;
 using MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View;
 using MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend;
 using MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend.Input;
@@ -295,6 +296,233 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
             }
 
             return RedirectToAction("Index");
+        }
+
+        [RequestSizeLimit(52428800)] // 50 mb
+        [HttpPost]
+        [Route("[action]/{key}")]
+        [ValidateAntiForgeryToken]
+        [RequirePermissions(Permission.MapEditor)]
+        public async System.Threading.Tasks.Task<IActionResult> ReplaceAsync(string key, MapUploadViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var fileMapId = System.IO.Path.GetFileNameWithoutExtension(model.MapArchive.FileName).ToLowerInvariant();
+
+                if (key != fileMapId)
+                {
+                    SetDefaultNotification(NotificationType.Danger, "El archivo de proyecto QGIS especificado no coincide con la entrada de mapa actual.");
+
+                    return RedirectToAction("Edit", new { key });
+                }
+
+                Map entity = Repository.Get(key);
+
+                var qgisProjectsRootPath = configuration["QGIS:ProjectsPath"];
+
+                string projectPath = System.IO.Path.Combine(qgisProjectsRootPath, key);
+
+                var currentQgisProjectDirectoryInfo = new System.IO.DirectoryInfo(projectPath);
+
+                var restoreQgisProjectDirectoryInfo = new System.IO.DirectoryInfo(projectPath);
+
+                currentQgisProjectDirectoryInfo.MoveTo(System.IO.Path.Combine(qgisProjectsRootPath, $"{key}_backup"));
+
+                try
+                {
+                    using (var memoryStream = new System.IO.MemoryStream())
+                    {
+                        model.MapArchive.CopyTo(memoryStream);
+
+                        using (var uploadZipArchive = new ZipArchive(memoryStream, ZipArchiveMode.Read, false, System.Text.CodePagesEncodingProvider.Instance.GetEncoding(System.Globalization.CultureInfo.CurrentCulture.TextInfo.OEMCodePage)))
+                        {
+                            uploadZipArchive.ExtractToDirectory(qgisProjectsRootPath, true);
+                        }
+
+                        if (!restoreQgisProjectDirectoryInfo.Exists)
+                        {
+                            throw new Framework.Guama.Core.Presentation.Web.Frontend.InvalidModelException("MapArchive", "Estructura del empaqutado incorrecta!!!");
+                        }
+
+                        if (!System.IO.File.Exists(System.IO.Path.Combine(restoreQgisProjectDirectoryInfo.FullName, string.Format("{0}.qgz", key))))
+                        {
+                            throw new Framework.Guama.Core.Presentation.Web.Frontend.InvalidModelException("MapArchive", "Archivo de proyecto no encontrado!!!");
+                        }
+
+                        using (var httpClient = new System.Net.Http.HttpClient())
+                        {
+                            var uri = string.Format("{0}?MAP={1}/{2}.qgz&SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities", configuration["QGIS:ServerBaseUri"], restoreQgisProjectDirectoryInfo.FullName.Replace("\\", "/"), key);
+
+                            var httpResponseMessage = await httpClient.GetAsync(uri);
+
+                            if (httpResponseMessage.IsSuccessStatusCode)
+                            {
+                                using (var contentStream = await httpResponseMessage.Content.ReadAsStreamAsync())
+                                {
+                                    var projDescriptorXmlDocument = new System.Xml.XmlDocument();
+
+                                    projDescriptorXmlDocument.Load(contentStream);
+
+                                    var globalLayerNode = projDescriptorXmlDocument.ChildNodes[1].ChildNodes[1].ChildNodes[3];
+
+                                    var globalLayerNodeChildNodesCount = globalLayerNode.ChildNodes.Count;
+
+                                    foreach (var layer in entity.Layers)
+                                    {
+                                        layer.Enabled = false;
+                                    }
+
+                                    for (int i = 0; i < globalLayerNodeChildNodesCount; i++)
+                                    {
+                                        var globalLayerNodeChild = globalLayerNode.ChildNodes[i];
+
+                                        switch (globalLayerNodeChild.Name)
+                                        {
+                                            case "Title":
+                                                entity.Name = globalLayerNodeChild.InnerText;
+
+                                                break;
+
+                                            case "CRS":
+                                                var crsValue = globalLayerNodeChild.InnerText;
+
+                                                if (crsValue.StartsWith("CRS:"))
+                                                {
+                                                    entity.CRS = crsValue;
+                                                }
+                                                else
+                                                {
+                                                    entity.EPSG = crsValue;
+                                                }
+
+                                                break;
+
+                                            case "EX_GeographicBoundingBox":
+                                                entity.WestBoundLongitude = decimal.Parse(globalLayerNodeChild.ChildNodes[0].InnerText.Replace(".", ","));
+                                                entity.EastBoundLatitude = decimal.Parse(globalLayerNodeChild.ChildNodes[1].InnerText.Replace(".", ","));
+                                                entity.SouthBoundLatitude = decimal.Parse(globalLayerNodeChild.ChildNodes[2].InnerText.Replace(".", ","));
+                                                entity.NorthBoundLatitude = decimal.Parse(globalLayerNodeChild.ChildNodes[3].InnerText.Replace(".", ","));
+
+                                                break;
+
+                                            case "Layer":
+                                                var childs = FindSubLayers(globalLayerNodeChild);
+
+                                                if (childs.Count > 0)
+                                                {
+                                                    foreach (var item in childs)
+                                                    {
+                                                        var layer = entity.Layers.SingleOrDefault(_entity => _entity.Name == item.Value.Name);
+
+                                                        if (layer != null)
+                                                        {
+                                                            layer.Title = item.Value.Title;
+                                                            layer.Enabled = true;
+                                                            layer.CRS = item.Value.CRS;
+                                                            layer.EPSG = item.Value.EPSG;
+
+                                                            continue;
+                                                        }
+
+                                                        entity.Layers.Add(item.Value);
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    var layerName = globalLayerNodeChild.ChildNodes[0].InnerText;
+
+                                                    var layer = entity.Layers.SingleOrDefault(_entity => _entity.Name == layerName);
+
+                                                    if (layer != null)
+                                                    {
+                                                        layer.Title = globalLayerNodeChild.ChildNodes[1].InnerText;
+                                                        layer.Enabled = true;
+                                                        layer.CRS = globalLayerNodeChild.ChildNodes[2].InnerText;
+                                                        layer.EPSG = globalLayerNodeChild.ChildNodes[3].InnerText;
+                                                    }
+                                                    else
+                                                    {
+                                                        layer = new Layer
+                                                        {
+                                                            Name = globalLayerNodeChild.ChildNodes[0].InnerText,
+                                                            Title = globalLayerNodeChild.ChildNodes[1].InnerText,
+                                                            Enabled = true,
+                                                            Priority = 1,
+                                                            PresentationStrategy = Camaguey.Persistence.Enumerations.LayerPresentationStrategy.WMS,
+                                                            CRS = globalLayerNodeChild.ChildNodes[2].InnerText,
+                                                            EPSG = globalLayerNodeChild.ChildNodes[3].InnerText,
+                                                        };
+
+                                                        entity.Layers.Add(layer);
+                                                    }
+                                                }
+
+                                                break;
+                                        }
+                                    }
+
+                                    if (string.IsNullOrEmpty(entity.Name)) entity.Name = entity.Id;
+
+                                    Repository.Update(entity, User.Identity.Name, true);
+                                }
+                            }
+                            else
+                            {
+                                throw new Framework.Guama.Core.Presentation.Web.Frontend.InvalidModelException("MapArchive", string.Format("Archivo de proyecto no interpretable por el servidor de QGIS. Código del error: {0}!!!", httpResponseMessage.StatusCode));
+                            }
+                        }
+                    }
+
+                    try
+                    {
+                        if (currentQgisProjectDirectoryInfo.Exists)
+                        {
+                            currentQgisProjectDirectoryInfo.Delete(true);
+                        }
+                    }
+                    catch { }
+
+                    SetDefaultNotification(NotificationType.Success, GetCreationSuccessMessage());
+
+                    return RedirectToAction("Edit", new { key });
+                }
+                catch (Framework.Guama.Core.Presentation.Web.Frontend.InvalidModelException e)
+                {
+                    string message = $"Problemas cargando archivo de proyecto QGIS : {e.ErrorMessage}";
+
+                    logger.LogError(e, message);
+
+                    SetDefaultNotification(NotificationType.Danger, message);
+
+                    ModelState.AddModelError(e.ModelKey, e.ErrorMessage);
+
+                    if (restoreQgisProjectDirectoryInfo.Exists)
+                    {
+                        restoreQgisProjectDirectoryInfo.Delete(true);
+                    }
+
+                    currentQgisProjectDirectoryInfo.MoveTo(projectPath);
+                }
+                catch (System.Exception e)
+                {
+                    logger.LogError(e, "Excepción no esperada cargando archivo de proyect QGIS!!!");
+
+                    SetDefaultNotification(NotificationType.Danger, "Error no esperado cargando archivo de proyect QGIS!!!");
+
+                    if (restoreQgisProjectDirectoryInfo.Exists)
+                    {
+                        restoreQgisProjectDirectoryInfo.Delete(true);
+                    }
+
+                    currentQgisProjectDirectoryInfo.MoveTo(projectPath);
+                }
+            }
+            else
+            {
+                SetDefaultNotification(NotificationType.Danger, GetInvalidMessage());
+            }
+
+            return RedirectToAction("Edit", new { key });
         }
 
         protected override void PreEdit(Map entity, MapInputViewModel model)
