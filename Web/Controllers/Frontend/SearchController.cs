@@ -1,86 +1,155 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using MOROPO.CIMAC.Atlas.Camaguey.Persistence.Entities;
 using MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View;
 using MOROPO.Framework.Guama.Core.Persistence.Repositories;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Frontend
-{
-    public class SearchController : Framework.Guama.Core.Presentation.Web.Common.Controllers.BaseWebController
-    {
-        private readonly IEntityRepository<Section, System.Guid> sectionRepository;
-        private readonly IEntityRepository<Epigraph, System.Guid> epigraphRepository;
-        private readonly IEntityRepository<Theme, System.Guid> themeRepository;
+namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Frontend;
 
-        public SearchController(IEntityRepository<Theme, System.Guid> themeRepository, IEntityRepository<Epigraph, System.Guid> epigraphRepository, IEntityRepository<Section, System.Guid> sectionRepository, Microsoft.Extensions.Localization.IStringLocalizer<SearchController> localizer, ILogger<SearchController> logger)
-            : base(localizer, logger)
+public class SearchController : Framework.Guama.Core.Presentation.Web.Common.Controllers.BaseWebController
+{
+    private readonly IQueryEntityRepository<Section, System.Guid> sectionRepository;
+    private readonly IQueryEntityRepository<Epigraph, System.Guid> epigraphRepository;
+    private readonly IQueryEntityRepository<Theme, System.Guid> themeRepository;
+
+    public SearchController(IQueryEntityRepository<Theme, System.Guid> themeRepository, IQueryEntityRepository<Epigraph, System.Guid> epigraphRepository, IQueryEntityRepository<Section, System.Guid> sectionRepository, Microsoft.Extensions.Localization.IStringLocalizer<SearchController> localizer, ILogger<SearchController> logger)
+        : base(localizer, logger)
+    {
+        this.sectionRepository = sectionRepository;
+        this.epigraphRepository = epigraphRepository;
+        this.themeRepository = themeRepository;
+    }
+
+    [Microsoft.AspNetCore.Mvc.HttpPost]
+    public Microsoft.AspNetCore.Mvc.ActionResult<Models.View.Frontend.SearchResultViewModel> Result(string key, Enumerations.InformationResourceKind? informationResourceKind)
+    {
+        if (string.IsNullOrEmpty(key) || string.IsNullOrWhiteSpace(key))
         {
-            this.sectionRepository = sectionRepository;
-            this.epigraphRepository = epigraphRepository;
-            this.themeRepository = themeRepository;
+            SetDefaultNotification(Framework.Guama.Core.Presentation.Models.View.NotificationType.Warning, "Realizar Búsqueda", "Es obligatorio especificar el parámetro de búsqueda para obtener resultados.", null);
+
+            return RedirectToAction("Index", "Home");
         }
 
-        [Microsoft.AspNetCore.Mvc.HttpPost]
-        public Microsoft.AspNetCore.Mvc.ActionResult<Models.View.Frontend.SearchResultViewModel> Result(string key, Enumerations.InformationResourceKind? informationResourceKind)
+        var model = new Models.View.Frontend.SearchResultViewModel(key, informationResourceKind);
+
+        var imageModels = new List<ImageDisplayViewModel>();
+        var videoModels = new List<VideoDisplayViewModel>();
+        var documentModels = new List<DocumentDisplayViewModel>();
+
+        if (informationResourceKind == null || informationResourceKind.Value == Enumerations.InformationResourceKind.Section)
         {
-            if (string.IsNullOrEmpty(key) || string.IsNullOrWhiteSpace(key))
+            var sectionEntities = sectionRepository.GetAll().ToArray();
+
+            model.Sections = sectionEntities.Where(entity => entity.Name.Contains(key, System.StringComparison.OrdinalIgnoreCase) || entity.Description.Contains(key, System.StringComparison.OrdinalIgnoreCase)).ToArray().Select(entity =>
             {
-                SetDefaultNotification(Framework.Guama.Core.Presentation.Models.View.NotificationType.Warning, "Realizar Búsqueda", "Es obligatorio especificar el parámetro de búsqueda para obtener resultados.", null);
+                var _model = new SectionDisplayViewModel();
 
-                return RedirectToAction("Index", "Home");
-            }
+                _model.Import(entity);
 
-            var model = new Models.View.Frontend.SearchResultViewModel(key, informationResourceKind);
+                return _model;
+            }).ToArray();
+        }
 
-            var imageModels = new List<ImageDisplayViewModel>();
-            var videoModels = new List<VideoDisplayViewModel>();
-            var documentModels = new List<DocumentDisplayViewModel>();
+        var epigraphEntities = epigraphRepository.GetAll().ToArray();
 
-            if (informationResourceKind == null || informationResourceKind.Value == Enumerations.InformationResourceKind.Section)
+        var epigraphModels = new List<EpigraphDisplayViewModel>();
+
+        var mapModels = new List<MapDisplayViewModel>();
+
+        foreach (var entity in epigraphEntities)
+        {
+            if (informationResourceKind == null || informationResourceKind.Value == Enumerations.InformationResourceKind.Epigraph)
             {
-                var sectionEntities = sectionRepository.GetAll().ToArray();
-
-                model.Sections = sectionEntities.Where(entity => entity.Name.Contains(key, System.StringComparison.OrdinalIgnoreCase) || entity.Description.Contains(key, System.StringComparison.OrdinalIgnoreCase)).ToArray().Select(entity =>
+                if (entity.Name.Contains(key, System.StringComparison.OrdinalIgnoreCase) || entity.Description.Contains(key, System.StringComparison.OrdinalIgnoreCase))
                 {
-                    var _model = new SectionDisplayViewModel();
+                    var _model = new EpigraphDisplayViewModel();
 
                     _model.Import(entity);
 
-                    return _model;
-                }).ToArray();
+                    epigraphModels.Add(_model);
+                }
             }
 
-            var epigraphEntities = epigraphRepository.GetAll().ToArray();
-
-            var epigraphModels = new List<EpigraphDisplayViewModel>();
-
-            var mapModels = new List<MapDisplayViewModel>();
-
-            foreach (var entity in epigraphEntities)
+            if (informationResourceKind == null || informationResourceKind.Value == Enumerations.InformationResourceKind.Image)
             {
-                if (informationResourceKind == null || informationResourceKind.Value == Enumerations.InformationResourceKind.Epigraph)
+                foreach (var bridge in entity.ImageBridges)
                 {
-                    if (entity.Name.Contains(key, System.StringComparison.OrdinalIgnoreCase) || entity.Description.Contains(key, System.StringComparison.OrdinalIgnoreCase))
+                    if (!string.IsNullOrEmpty(bridge.Stern.About) && bridge.Stern.About.Contains(key, System.StringComparison.OrdinalIgnoreCase))
                     {
-                        var _model = new EpigraphDisplayViewModel();
+                        var __model = new ImageDisplayViewModel();
 
-                        _model.Import(entity);
+                        __model.Import(bridge.Stern);
 
-                        epigraphModels.Add(_model);
+                        imageModels.Add(__model);
+                    }
+                }
+            }
+
+            if (informationResourceKind == null || informationResourceKind.Value == Enumerations.InformationResourceKind.Video)
+            {
+                foreach (var bridge in entity.VideoBridges)
+                {
+                    if (!string.IsNullOrEmpty(bridge.Stern.About) && bridge.Stern.About.Contains(key, System.StringComparison.OrdinalIgnoreCase))
+                    {
+                        var __model = new VideoDisplayViewModel();
+
+                        __model.Import(bridge.Stern);
+
+                        videoModels.Add(__model);
+                    }
+                }
+            }
+
+            if (informationResourceKind == null || informationResourceKind.Value == Enumerations.InformationResourceKind.Document)
+            {
+                foreach (var bridge in entity.DocumentBridges)
+                {
+                    if (!string.IsNullOrEmpty(bridge.Stern.Description) && bridge.Stern.Description.Contains(key, System.StringComparison.OrdinalIgnoreCase))
+                    {
+                        var __model = new DocumentDisplayViewModel();
+
+                        __model.Import(bridge.Stern);
+
+                        documentModels.Add(__model);
+                    }
+                }
+            }
+
+            var themeEntities = themeRepository.FindBy(_entity => _entity.EpigraphId == entity.Id).ToArray();
+
+            var mapEnties = new List<Map>();
+
+            foreach (var theme in themeEntities)
+            {
+                mapEnties.AddRange(theme.MapBridges.Select(bridge => bridge.Stern).ToArray());
+            }
+
+            foreach (var _entity in mapEnties)
+            {
+                if (informationResourceKind == null || informationResourceKind.Value == Enumerations.InformationResourceKind.Map)
+                {
+                    if (_entity.Name.Contains(key, System.StringComparison.OrdinalIgnoreCase) || (!string.IsNullOrEmpty(_entity.Description) && _entity.Description.Contains(key, System.StringComparison.OrdinalIgnoreCase)))
+                    {
+                        var _model = new MapDisplayViewModel();
+
+                        _model.Import(_entity);
+
+                        _model.EphigraphId = entity.Id;
+
+                        mapModels.Add(_model);
                     }
                 }
 
                 if (informationResourceKind == null || informationResourceKind.Value == Enumerations.InformationResourceKind.Image)
                 {
-                    foreach (var bridge in entity.ImageBridges)
+                    foreach (var __entity in _entity.Images)
                     {
-                        if (!string.IsNullOrEmpty(bridge.Stern.About) && bridge.Stern.About.Contains(key, System.StringComparison.OrdinalIgnoreCase))
+                        if (!string.IsNullOrEmpty(__entity.Image.About) && __entity.Image.About.Contains(key, System.StringComparison.OrdinalIgnoreCase))
                         {
                             var __model = new ImageDisplayViewModel();
 
-                            __model.Import(bridge.Stern);
+                            __model.Import(__entity.Image);
 
                             imageModels.Add(__model);
                         }
@@ -89,13 +158,13 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Frontend
 
                 if (informationResourceKind == null || informationResourceKind.Value == Enumerations.InformationResourceKind.Video)
                 {
-                    foreach (var bridge in entity.VideoBridges)
+                    foreach (var __entity in _entity.Videos)
                     {
-                        if (!string.IsNullOrEmpty(bridge.Stern.About) && bridge.Stern.About.Contains(key, System.StringComparison.OrdinalIgnoreCase))
+                        if (!string.IsNullOrEmpty(__entity.Video.About) && __entity.Video.About.Contains(key, System.StringComparison.OrdinalIgnoreCase))
                         {
                             var __model = new VideoDisplayViewModel();
 
-                            __model.Import(bridge.Stern);
+                            __model.Import(__entity.Video);
 
                             videoModels.Add(__model);
                         }
@@ -104,102 +173,31 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Frontend
 
                 if (informationResourceKind == null || informationResourceKind.Value == Enumerations.InformationResourceKind.Document)
                 {
-                    foreach (var bridge in entity.DocumentBridges)
+                    foreach (var __entity in _entity.Documents)
                     {
-                        if (!string.IsNullOrEmpty(bridge.Stern.Description) && bridge.Stern.Description.Contains(key, System.StringComparison.OrdinalIgnoreCase))
+                        if (!string.IsNullOrEmpty(__entity.Document.Description) && __entity.Document.Description.Contains(key, System.StringComparison.OrdinalIgnoreCase))
                         {
                             var __model = new DocumentDisplayViewModel();
 
-                            __model.Import(bridge.Stern);
+                            __model.Import(__entity.Document);
 
                             documentModels.Add(__model);
                         }
                     }
                 }
-
-                var themeEntities = themeRepository.FindBy(_entity => _entity.EpigraphId == entity.Id).ToArray();
-
-                var mapEnties = new List<Map>();
-
-                foreach (var theme in themeEntities)
-                {
-                    mapEnties.AddRange(theme.MapBridges.Select(bridge => bridge.Stern).ToArray());
-                }
-
-                foreach (var _entity in mapEnties)
-                {
-                    if (informationResourceKind == null || informationResourceKind.Value == Enumerations.InformationResourceKind.Map)
-                    {
-                        if (_entity.Name.Contains(key, System.StringComparison.OrdinalIgnoreCase) || (!string.IsNullOrEmpty(_entity.Description) && _entity.Description.Contains(key, System.StringComparison.OrdinalIgnoreCase)))
-                        {
-                            var _model = new MapDisplayViewModel();
-
-                            _model.Import(_entity);
-
-                            _model.EphigraphId = entity.Id;
-
-                            mapModels.Add(_model);
-                        }
-                    }
-
-                    if (informationResourceKind == null || informationResourceKind.Value == Enumerations.InformationResourceKind.Image)
-                    {
-                        foreach (var __entity in _entity.Images)
-                        {
-                            if (!string.IsNullOrEmpty(__entity.Image.About) && __entity.Image.About.Contains(key, System.StringComparison.OrdinalIgnoreCase))
-                            {
-                                var __model = new ImageDisplayViewModel();
-
-                                __model.Import(__entity.Image);
-
-                                imageModels.Add(__model);
-                            }
-                        }
-                    }
-
-                    if (informationResourceKind == null || informationResourceKind.Value == Enumerations.InformationResourceKind.Video)
-                    {
-                        foreach (var __entity in _entity.Videos)
-                        {
-                            if (!string.IsNullOrEmpty(__entity.Video.About) && __entity.Video.About.Contains(key, System.StringComparison.OrdinalIgnoreCase))
-                            {
-                                var __model = new VideoDisplayViewModel();
-
-                                __model.Import(__entity.Video);
-
-                                videoModels.Add(__model);
-                            }
-                        }
-                    }
-
-                    if (informationResourceKind == null || informationResourceKind.Value == Enumerations.InformationResourceKind.Document)
-                    {
-                        foreach (var __entity in _entity.Documents)
-                        {
-                            if (!string.IsNullOrEmpty(__entity.Document.Description) && __entity.Document.Description.Contains(key, System.StringComparison.OrdinalIgnoreCase))
-                            {
-                                var __model = new DocumentDisplayViewModel();
-
-                                __model.Import(__entity.Document);
-
-                                documentModels.Add(__model);
-                            }
-                        }
-                    }
-                }
             }
-
-            if (epigraphModels.Any()) model.Epigraphs = epigraphModels.ToArray();            
-
-            if (mapModels.Any()) model.Maps = mapModels.ToArray();
-
-            if (imageModels.Any()) model.Images = imageModels.ToArray();
-
-            if (videoModels.Any()) model.Videos = videoModels.ToArray();
-
-            if (documentModels.Any()) model.Documents = documentModels.ToArray();
-
-            return View(model);
         }
+
+        if (epigraphModels.Count != 0) model.Epigraphs = [.. epigraphModels];
+
+        if (mapModels.Count != 0) model.Maps = [.. mapModels];
+
+        if (imageModels.Count != 0) model.Images = [.. imageModels];
+
+        if (videoModels.Count != 0) model.Videos = [.. videoModels];
+
+        if (documentModels.Count != 0) model.Documents = [.. documentModels];
+
+        return View(model);
     }
 }

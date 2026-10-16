@@ -15,208 +15,224 @@ using MOROPO.Framework.Guama.Security.Personal.Presentation.Web.Backend.Extensio
 using Serilog;
 using System.Linq;
 
-namespace MOROPO.CIMAC.Atlas.Camaguey.Web
+namespace MOROPO.CIMAC.Atlas.Camaguey.Web;
+
+public class Startup
 {
-    public class Startup
+    private readonly IConfiguration configuration;
+    private readonly IWebHostEnvironment env;
+
+    public Startup(IConfiguration configuration, IWebHostEnvironment env)
     {
-        private readonly IConfiguration configuration;
-        private readonly IWebHostEnvironment env;
+        Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(configuration).CreateLogger();
 
-        public Startup(IConfiguration configuration, IWebHostEnvironment env)
+        this.configuration = configuration;
+        this.env = env;
+    }
+
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services.Configure<Framework.Guama.Media.Presentation.Web.Common.Options.RelativeMediaFileManagementOptions>(configuration.GetSection("FileManagement"));
+
+        services.AddDbContext<Persistence.ORM.EF.ApplicationDbContext>(options => options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
+
+        services.AddScoped<DbContext, Persistence.ORM.EF.ApplicationDbContext>();
+
+        services.PerformCoreWebSecurityCommonFrontendServiceRegistration();
+        services.PerformSecurityPersonalWebBackendServiceRegistration();
+        services.PerformMediaWebCommonRelativePathFileManagementServiceRegistration();
+
+        services.AddScoped<IQueryEntityRepository<Framework.Guama.Core.Persistence.ORM.EF.Entities.Trace, long>, Framework.Guama.Core.Persistence.ORM.EF.Repositories.QueryTraceRepository>();
+        services.AddScoped<ICommandEntityRepository<Framework.Guama.Core.Persistence.ORM.EF.Entities.Trace, long>, Framework.Guama.Core.Persistence.ORM.EF.Repositories.CommandTraceRepository>();
+        services.AddScoped<IQueryEntityRepository<KeyWord, System.Guid>, Persistence.ORM.EF.Repositories.QueryKeyWordRepository>();
+        services.AddScoped<IQueryEntityRepository<Map, string>, Persistence.ORM.EF.Repositories.QueryMapRepository>();
+        services.AddScoped<IQueryEntityRepository<Section, System.Guid>, Persistence.ORM.EF.Repositories.QuerySectionRepository>();
+        services.AddScoped<IQueryEntityRepository<Epigraph, System.Guid>, Persistence.ORM.EF.Repositories.QueryEpigraphRepository>();
+        services.AddScoped<IQueryEntityRepository<Author, System.Guid>, Persistence.ORM.EF.Repositories.QueryAuthorRepository>();
+        services.AddScoped<IQueryEntityRepository<Institution, System.Guid>, Persistence.ORM.EF.Repositories.QueryInstitutionRepository>();
+        services.AddScoped<IQueryEntityRepository<Layer, System.Guid>, Persistence.ORM.EF.Repositories.QueryLayerRepository>();
+        services.AddScoped<IQueryEntityRepository<RichTextBlock, Camaguey.Persistence.Enumerations.RichTextBlockKind>, Persistence.ORM.EF.Repositories.QueryRichTextBlockRepository>();
+        services.AddScoped<IQueryEntityRepository<Theme, System.Guid>, Persistence.ORM.EF.Repositories.QueryThemeRepository>();
+        services.AddScoped<IQueryEntityRepository<MapMetadataEntry, long>, Persistence.ORM.EF.Repositories.QueryMapMetadataEntryRepository>();
+        services.AddScoped<IQueryEntityRepository<MapImage, System.Guid>, Persistence.ORM.EF.Repositories.QueryMapImageRepository>();
+        services.AddScoped<IQueryEntityRepository<MapImageMetadataEntry, long>, Persistence.ORM.EF.Repositories.QueryMapImageMetadataEntryRepository>();
+        services.AddScoped<IQueryEntityRepository<MapVideo, System.Guid>, Persistence.ORM.EF.Repositories.QueryMapVideoRepository>();
+        services.AddScoped<IQueryEntityRepository<MapVideoMetadataEntry, long>, Persistence.ORM.EF.Repositories.QueryMapVideoMetadataEntryRepository>();
+        services.AddScoped<IQueryEntityRepository<MapDocument, System.Guid>, Persistence.ORM.EF.Repositories.QueryMapDocumentRepository>();
+        services.AddScoped<IQueryEntityRepository<MapDocumentMetadataEntry, long>, Persistence.ORM.EF.Repositories.QueryMapDocumentMetadataEntryRepository>();
+        services.AddScoped<ICommandEntityRepository<KeyWord, System.Guid>, Persistence.ORM.EF.Repositories.CommandKeyWordRepository>();
+        services.AddScoped<ICommandEntityRepository<Map, string>, Persistence.ORM.EF.Repositories.CommandMapRepository>();
+        services.AddScoped<ICommandEntityRepository<Section, System.Guid>, Persistence.ORM.EF.Repositories.CommandSectionRepository>();
+        services.AddScoped<ICommandEntityRepository<Epigraph, System.Guid>, Persistence.ORM.EF.Repositories.CommandEpigraphRepository>();
+        services.AddScoped<ICommandEntityRepository<Author, System.Guid>, Persistence.ORM.EF.Repositories.CommandAuthorRepository>();
+        services.AddScoped<ICommandEntityRepository<Institution, System.Guid>, Persistence.ORM.EF.Repositories.CommandInstitutionRepository>();
+        services.AddScoped<ICommandEntityRepository<Layer, System.Guid>, Persistence.ORM.EF.Repositories.CommandLayerRepository>();
+        services.AddScoped<ICommandEntityRepository<RichTextBlock, Camaguey.Persistence.Enumerations.RichTextBlockKind>, Persistence.ORM.EF.Repositories.CommandRichTextBlockRepository>();
+        services.AddScoped<ICommandEntityRepository<Theme, System.Guid>, Persistence.ORM.EF.Repositories.CommandThemeRepository>();
+        services.AddScoped<ICommandEntityRepository<MapMetadataEntry, long>, Persistence.ORM.EF.Repositories.CommandMapMetadataEntryRepository>();
+        services.AddScoped<ICommandEntityRepository<MapImage, System.Guid>, Persistence.ORM.EF.Repositories.CommandMapImageRepository>();
+        services.AddScoped<ICommandEntityRepository<MapImageMetadataEntry, long>, Persistence.ORM.EF.Repositories.CommandMapImageMetadataEntryRepository>();
+        services.AddScoped<ICommandEntityRepository<MapVideo, System.Guid>, Persistence.ORM.EF.Repositories.CommandMapVideoRepository>();
+        services.AddScoped<ICommandEntityRepository<MapVideoMetadataEntry, long>, Persistence.ORM.EF.Repositories.CommandMapVideoMetadataEntryRepository>();
+        services.AddScoped<ICommandEntityRepository<MapDocument, System.Guid>, Persistence.ORM.EF.Repositories.CommandMapDocumentRepository>();
+        services.AddScoped<ICommandEntityRepository<MapDocumentMetadataEntry, long>, Persistence.ORM.EF.Repositories.CommandMapDocumentMetadataEntryRepository>();
+
+        services.AddSingleton<Framework.Guama.Core.Persistence.ORM.EF.Providers.Facade.IDbSchemaConfigurationProviderFacade, Persistence.ORM.EF.Providers.DbSchemaConfigurationProvider>();
+
+        services.AddSingleton<Framework.Guama.Core.Persistence.ORM.EF.Helpers.Facade.IDataInitializationHelper, Helpers.DataInitializationHelper>();
+
+        services.AddHttpContextAccessor();
+
+        services.AddAuthentication(config =>
         {
-            Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(configuration).CreateLogger();
-
-            this.configuration = configuration;
-            this.env = env;
-        }
-
-        public void ConfigureServices(IServiceCollection services)
+            config.DefaultScheme = Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme;
+        })
+        .AddCookie(config =>
         {
-            services.Configure<Framework.Guama.Media.Presentation.Web.Common.Options.RelativeMediaFileManagementOptions>(configuration.GetSection("FileManagement"));
+            config.AccessDeniedPath = new PathString("/error/403");
+            config.LoginPath = new PathString("/security/account/login");
+            config.ExpireTimeSpan = System.TimeSpan.FromMinutes(5);
+            config.SlidingExpiration = true;
+        });
 
-            services.AddDbContext<Persistence.ORM.EF.ApplicationDbContext>(options => options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
+        #region Security concreter dependencies configuration
+        services.AddSingleton<Framework.Guama.Core.Presentation.Web.Security.Helpers.Facade.ILicenseValidationHelperFacade, Helpers.WillcardLicenseValidationHelper>();
 
-            services.AddScoped<DbContext, Persistence.ORM.EF.ApplicationDbContext>();
+        services.AddTransient<Framework.Guama.Core.Presentation.Web.Security.Models.View.Contrat.IUserProfileViewModel, Models.View.UserProfileViewModel>();
 
-            services.PerformCoreWebSecurityCommonFrontendServiceRegistration();
-            services.PerformSecurityPersonalWebBackendServiceRegistration();
-            services.PerformMediaWebCommonRelativePathFileManagementServiceRegistration();
+        services.AddSingleton<Framework.Guama.Core.Presentation.Web.Common.ModelBinding.Contract.IConcretModelBindHelper, Helpers.ConcretModelBindHelper>();
 
-            services.AddScoped<IEntityRepository<Framework.Guama.Core.Persistence.ORM.EF.Entities.Trace, long>, Framework.Guama.Core.Persistence.ORM.EF.Repositories.TraceRepository>();
-            services.AddScoped<IEntityRepository<KeyWord, System.Guid>, Persistence.ORM.EF.Repositories.KeyWordRepository>();
-            services.AddScoped<IEntityRepository<Map, string>, Persistence.ORM.EF.Repositories.MapRepository>();
-            services.AddScoped<IEntityRepository<Section, System.Guid>, Persistence.ORM.EF.Repositories.SectionRepository>();
-            services.AddScoped<IEntityRepository<Epigraph, System.Guid>, Persistence.ORM.EF.Repositories.EpigraphRepository>();
-            services.AddScoped<IEntityRepository<Author, System.Guid>, Persistence.ORM.EF.Repositories.AuthorRepository>();
-            services.AddScoped<IEntityRepository<Institution, System.Guid>, Persistence.ORM.EF.Repositories.InstitutionRepository>();
-            services.AddScoped<IEntityRepository<Layer, System.Guid>, Persistence.ORM.EF.Repositories.LayerRepository>();
-            services.AddScoped<IEntityRepository<RichTextBlock, Camaguey.Persistence.Enumerations.RichTextBlockKind>, Persistence.ORM.EF.Repositories.RichTextBlockRepository>();
-            services.AddScoped<IEntityRepository<Theme, System.Guid>, Persistence.ORM.EF.Repositories.ThemeRepository>();
-            services.AddScoped<IEntityRepository<MapMetadataEntry, long>, Persistence.ORM.EF.Repositories.MapMetadataEntryRepository>();
-            services.AddScoped<IEntityRepository<MapImage, System.Guid>, Persistence.ORM.EF.Repositories.MapImageRepository>();
-            services.AddScoped<IEntityRepository<MapImageMetadataEntry, long>, Persistence.ORM.EF.Repositories.MapImageMetadataEntryRepository>();
-            services.AddScoped<IEntityRepository<MapVideo, System.Guid>, Persistence.ORM.EF.Repositories.MapVideoRepository>();
-            services.AddScoped<IEntityRepository<MapVideoMetadataEntry, long>, Persistence.ORM.EF.Repositories.MapVideoMetadataEntryRepository>();
-            services.AddScoped<IEntityRepository<MapDocument, System.Guid>, Persistence.ORM.EF.Repositories.MapDocumentRepository>();
-            services.AddScoped<IEntityRepository<MapDocumentMetadataEntry, long>, Persistence.ORM.EF.Repositories.MapDocumentMetadataEntryRepository>();
+        services.AddScoped<Framework.Guama.Core.Presentation.Web.Security.Managers.Facade.IUserProfileManagerFacade, Managers.UserProfileManager>();
+        #endregion
 
-            services.AddSingleton<Framework.Guama.Core.Persistence.ORM.EF.Providers.Facade.IDbSchemaConfigurationProviderFacade, Persistence.ORM.EF.Providers.DbSchemaConfigurationProvider>();
+        #region Globalization configuration
+        var defaultCulture = new System.Globalization.CultureInfo("es");
 
-            services.AddSingleton<Framework.Guama.Core.Persistence.ORM.EF.Helpers.Facade.IDataInitializationHelper, Helpers.DataInitializationHelper>();
+        services.AddLocalization(options => options.ResourcesPath = "Resources");
 
-            services.AddHttpContextAccessor();
-
-            services.AddAuthentication(config =>
-            {
-                config.DefaultScheme = Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme;
-            })
-            .AddCookie(config =>
-            {
-                config.AccessDeniedPath = new PathString("/error/403");
-                config.LoginPath = new PathString("/security/account/login");
-                config.ExpireTimeSpan = System.TimeSpan.FromMinutes(5);
-                config.SlidingExpiration = true;
-            });
-
-            #region Security concreter dependencies configuration
-            services.AddSingleton<Framework.Guama.Core.Presentation.Web.Security.Helpers.Facade.ILicenseValidationHelperFacade, Helpers.WillcardLicenseValidationHelper>();
-
-            services.AddTransient<Framework.Guama.Core.Presentation.Web.Security.Models.View.Contrat.IUserProfileViewModel, Models.View.UserProfileViewModel>();
-
-            services.AddSingleton<Framework.Guama.Core.Presentation.Web.Common.ModelBinding.Contract.IConcretModelBindHelper, Helpers.ConcretModelBindHelper>();
-
-            services.AddScoped<Framework.Guama.Core.Presentation.Web.Security.Managers.Facade.IUserProfileManagerFacade, Managers.UserProfileManager>();
-            #endregion
-
-            #region Globalization configuration
-            var defaultCulture = new System.Globalization.CultureInfo("es");
-
-            services.AddLocalization(options => options.ResourcesPath = "Resources");
-
-            services.Configure<RequestLocalizationOptions>(options =>
-            {
-                options.DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture(defaultCulture);
-                options.SupportedCultures = new[] { defaultCulture };
-                options.SupportedUICultures = new[] { defaultCulture };
-
-                options.RequestCultureProviders = new[] { new Framework.Guama.Core.Presentation.Web.Common.Localization.UrlRequestCultureProvider() };
-            });
-
-            services.AddSingleton<Helpers.GlobalViewLocalizationHelper>();
-            #endregion
-
-            services.Configure<Microsoft.AspNetCore.Routing.RouteOptions>(options => options.LowercaseUrls = true);
-
-            services.Configure<Microsoft.AspNetCore.Http.Features.FormOptions>(options => options.MultipartBodyLengthLimit = 209715200);
-
-            services.AddResponseCaching();
-            services.AddMemoryCache();
-            services.AddSession();
-
-            services.AddControllersWithViews()
-            .AddViewLocalization(Microsoft.AspNetCore.Mvc.Razor.LanguageViewLocationExpanderFormat.Suffix)
-            .AddDataAnnotationsLocalization(options =>
-                options.DataAnnotationLocalizerProvider = (type, factory) =>
-                {
-                    return factory.Create(typeof(SharedResources));
-                }
-            );
-
-            services.AddCors();
-
-            services.AddDataProtection().PersistKeysToFileSystem(new System.IO.DirectoryInfo(System.IO.Path.Combine(env.ContentRootPath, "dpkeys")));
-
-            services.AddSingleton<Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataProvider, Microsoft.AspNetCore.Mvc.ViewFeatures.CookieTempDataProvider>();
-        }
-
-        public void Configure(IApplicationBuilder app, Microsoft.Extensions.Options.IOptions<RequestLocalizationOptions> requestLocalizationOptions, Microsoft.Extensions.Logging.ILoggerFactory loggerFactory, DbContext dbContext)
+        services.Configure<RequestLocalizationOptions>(options =>
         {
-            loggerFactory.AddSerilog(Log.Logger);
+            options.DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture(defaultCulture);
+            options.SupportedCultures = new[] { defaultCulture };
+            options.SupportedUICultures = new[] { defaultCulture };
 
-            app.UseRequestLocalization(requestLocalizationOptions.Value);
+            options.RequestCultureProviders = new[] { new Framework.Guama.Core.Presentation.Web.Common.Localization.UrlRequestCultureProvider() };
+        });
 
-            if (env.IsDevelopment())
+        services.AddSingleton<Helpers.GlobalViewLocalizationHelper>();
+        #endregion
+
+        services.Configure<Microsoft.AspNetCore.Routing.RouteOptions>(options => options.LowercaseUrls = true);
+
+        services.Configure<Microsoft.AspNetCore.Http.Features.FormOptions>(options => options.MultipartBodyLengthLimit = 209715200);
+
+        services.AddResponseCaching();
+        services.AddMemoryCache();
+        services.AddSession();
+
+        services.AddControllersWithViews()
+        .AddViewLocalization(Microsoft.AspNetCore.Mvc.Razor.LanguageViewLocationExpanderFormat.Suffix)
+        .AddDataAnnotationsLocalization(options =>
+            options.DataAnnotationLocalizerProvider = (type, factory) =>
             {
-                app.UseDeveloperExceptionPage();
+                return factory.Create(typeof(SharedResources));
             }
-            else if (env.IsStaging())
+        );
+
+        services.AddCors();
+
+        services.AddDataProtection().PersistKeysToFileSystem(new System.IO.DirectoryInfo(System.IO.Path.Combine(env.ContentRootPath, "dpkeys")));
+
+        services.AddSingleton<Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataProvider, Microsoft.AspNetCore.Mvc.ViewFeatures.CookieTempDataProvider>();
+    }
+
+    public void Configure(IApplicationBuilder app, Microsoft.Extensions.Options.IOptions<RequestLocalizationOptions> requestLocalizationOptions, Microsoft.Extensions.Logging.ILoggerFactory loggerFactory, DbContext dbContext)
+    {
+        loggerFactory.AddSerilog(Log.Logger);
+
+        app.UseRequestLocalization(requestLocalizationOptions.Value);
+
+        if (env.IsDevelopment())
+        {
+            app.UseDeveloperExceptionPage();
+        }
+        else if (env.IsStaging())
+        {
+            dbContext.Database.Migrate();
+
+            var dataInitializationHelpers = app.ApplicationServices.GetServices<Framework.Guama.Core.Persistence.ORM.EF.Helpers.Facade.IDataInitializationHelper>();
+
+            using (var serviceScope = app.ApplicationServices.CreateScope())
             {
-                dbContext.Database.Migrate();
+                var scopedDbContext = serviceScope.ServiceProvider.GetService<DbContext>();
 
-                var dataInitializationHelpers = app.ApplicationServices.GetServices<Framework.Guama.Core.Persistence.ORM.EF.Helpers.Facade.IDataInitializationHelper>();
-
-                using (var serviceScope = app.ApplicationServices.CreateScope())
+                foreach (var dataInitializationHelper in dataInitializationHelpers)
                 {
-                    var scopedDbContext = serviceScope.ServiceProvider.GetService<DbContext>();
+                    dataInitializationHelper.InitialiseData(scopedDbContext);
+                }
+            }
 
-                    foreach (var dataInitializationHelper in dataInitializationHelpers)
+            if (!(dbContext as Persistence.ORM.EF.ApplicationDbContext).Users.Any())
+            {
+                var userId = configuration["DefaultUser:Id"];
+
+                var defaultUser = new Framework.Guama.Security.Personal.Persistence.Entities.User
+                {
+                    Id = userId,
+                    Password = configuration["DefaultUser:Password"].ToHashedPassword(),
+                    Enabled = true,
+                    HasFullAccess = true,
+                    PasswordChangeRequired = true,
+                    Identity = new Framework.Guama.Identity.Persistence.Entities.PersonIdentity
                     {
-                        dataInitializationHelper.InitialiseData(scopedDbContext);
+                        Name = userId,
+                        Sex = Framework.Guama.Identity.Persistence.Enumerations.Sex.Unknown
                     }
-                }
+                };
 
-                if (!(dbContext as Persistence.ORM.EF.ApplicationDbContext).Users.Any())
-                {
-                    var userId = configuration["DefaultUser:Id"];
+                defaultUser.Signature = Framework.Guama.Security.Personal.Persistence.ORM.EF.Helpers.Integrity.UserIntegrityHelper.GetSignature(defaultUser);
 
-                    var defaultUser = new Framework.Guama.Security.Personal.Persistence.Entities.User
-                    {
-                        Id = userId,
-                        Password = configuration["DefaultUser:Password"].ToHashedPassword(),
-                        Enabled = true,
-                        HasFullAccess = true,
-                        PasswordChangeRequired = true,
-                        Identity = new Framework.Guama.Identity.Persistence.Entities.PersonIdentity
-                        {
-                            Name = userId,
-                            Sex = Framework.Guama.Identity.Persistence.Enumerations.Sex.Unknown
-                        }
-                    };
+                dbContext.Set<Framework.Guama.Security.Personal.Persistence.Entities.User>().Add(defaultUser);
 
-                    defaultUser.Signature = Framework.Guama.Security.Personal.Persistence.ORM.EF.Helpers.Integrity.UserIntegrityHelper.GetSignature(defaultUser);
-
-                    dbContext.Set<Framework.Guama.Security.Personal.Persistence.Entities.User>().Add(defaultUser);
-
-                    (dbContext as Framework.Guama.Core.Persistence.ORM.EF.Context.Contract.AbstractTraceableDbContext).SaveChanges("system");
-                }
+                (dbContext as Framework.Guama.Core.Persistence.ORM.EF.Context.Contract.AbstractTraceableDbContext).SaveChanges("system");
             }
-            else
-            {
-                app.UseExceptionHandler("/error/exception");
-
-                app.UseHsts();
-            }
-
-            app.UseStatusCodePagesWithReExecute("/error/{0}");
-
-            var atStartUpRoles = dbContext.Set<Framework.Guama.Core.Security.Common.Persistence.Entities.Role>().Include(e => e.PermissionBridges).ThenInclude(b => b.Stern).ToArray();
-
-            var roleMemoryManager = app.ApplicationServices.GetService<Framework.Guama.Core.Presentation.Web.Security.Managers.Facade.IRoleMemoryManagerFacade>();
-
-            foreach (var item in atStartUpRoles)
-            {
-                roleMemoryManager.RememberRole(item);
-            }
-
-            app.UseStaticFiles();
-            app.UseRouting();
-            app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
-            app.UseAuthentication();
-            app.UseAuthorization();
-            app.UseSession();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllerRoute(
-                    name: "areaRoute",
-                    pattern: "{area:exists}/{controller}/{action}",
-                    defaults: new { action = "Index" });
-
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller}/{action}/{id?}",
-                    defaults: new { controller = "Home", action = "Index" });
-            });
         }
+        else
+        {
+            app.UseExceptionHandler("/error/exception");
+
+            app.UseHsts();
+        }
+
+        app.UseStatusCodePagesWithReExecute("/error/{0}");
+
+        var atStartUpRoles = dbContext.Set<Framework.Guama.Core.Security.Common.Persistence.Entities.Role>().Include(e => e.PermissionBridges).ThenInclude(b => b.Stern).ToArray();
+
+        var roleMemoryManager = app.ApplicationServices.GetService<Framework.Guama.Core.Presentation.Web.Security.Managers.Facade.IRoleMemoryManagerFacade>();
+
+        foreach (var item in atStartUpRoles)
+        {
+            roleMemoryManager.RememberRole(item);
+        }
+
+        app.UseStaticFiles();
+        app.UseRouting();
+        app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+        app.UseAuthentication();
+        app.UseAuthorization();
+        app.UseSession();
+
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllerRoute(
+                name: "areaRoute",
+                pattern: "{area:exists}/{controller}/{action}",
+                defaults: new { action = "Index" });
+
+            endpoints.MapControllerRoute(
+                name: "default",
+                pattern: "{controller}/{action}/{id?}",
+                defaults: new { controller = "Home", action = "Index" });
+        });
     }
 }

@@ -1,0 +1,18 @@
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Persistence.ORM.EF.Repositories;
+
+public class QueryMapVideoRepository : Framework.Guama.Core.Persistence.ORM.EF.Repositories.Contract.AbstractQueryEntityRepository<Camaguey.Persistence.Entities.MapVideo, System.Guid>
+{
+    public QueryMapVideoRepository(Microsoft.EntityFrameworkCore.DbContext dbContext) : base(dbContext)
+    {
+    }
+
+    protected override System.Linq.IQueryable<Camaguey.Persistence.Entities.MapVideo> GetQueryableDbSet()
+    {
+        return base.GetQueryableDbSet()
+            .AsSplitQuery()
+            .Include(entity => entity.Video)
+            .Include(entity => entity.MetadataEntries);
+    }
+}

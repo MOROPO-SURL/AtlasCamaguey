@@ -2,9 +2,9 @@
 
 namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Persistence.ORM.EF.Repositories;
 
-	public class ThemeRepository : Framework.Guama.Core.Persistence.ORM.EF.Repositories.Contract.AbstractEntityRepository<Camaguey.Persistence.Entities.Theme, System.Guid>
+public class QueryThemeRepository : Framework.Guama.Core.Persistence.ORM.EF.Repositories.Contract.AbstractQueryEntityRepository<Camaguey.Persistence.Entities.Theme, System.Guid>
 {
-    public ThemeRepository(DbContext dbContext) : base(dbContext)
+    public QueryThemeRepository(DbContext dbContext) : base(dbContext)
     {
     }
 

@@ -2,9 +2,9 @@
 
 namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Persistence.ORM.EF.Repositories;
 
-public class AuthorRepository : Framework.Guama.Core.Persistence.ORM.EF.Repositories.Contract.AbstractEntityRepository<Camaguey.Persistence.Entities.Author, System.Guid>
+public class QueryAuthorRepository : Framework.Guama.Core.Persistence.ORM.EF.Repositories.Contract.AbstractQueryEntityRepository<Camaguey.Persistence.Entities.Author, System.Guid>
 {
-    public AuthorRepository(DbContext dbContext) : base(dbContext)
+    public QueryAuthorRepository(DbContext dbContext) : base(dbContext)
     {
     }
 

@@ -9,167 +9,173 @@ using MOROPO.Framework.Guama.Core.Presentation.Web.Security.Attributes;
 using MOROPO.Framework.Guama.Media.Persistence.Entities;
 using MOROPO.Framework.Guama.Media.Presentation.Web.Common.Managers.Facade;
 
-namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
+namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas;
+
+[Microsoft.AspNetCore.Authorization.Authorize]
+[RequirePermissions(Framework.Guama.Core.Security.Presentation.Constants.Permissions.ShellManager)]
+[Area("atlas")]
+public class SectionsController : Framework.Guama.Core.Presentation.Web.Backend.Controllers.Contract.AbstractEntityManagementController<Section, System.Guid, SectionInputViewModel, SectionDisplayViewModel>
 {
-    [Microsoft.AspNetCore.Authorization.Authorize]
-    [RequirePermissions(Framework.Guama.Core.Security.Presentation.Constants.Permissions.ShellManager)]
-    [Area("atlas")]
-    public class SectionsController : Framework.Guama.Core.Presentation.Web.Backend.Controllers.Contract.AbstractEntityManagementController<Section, System.Guid, SectionInputViewModel, SectionDisplayViewModel>
+    private readonly ICommandEntityRepository<Image, System.Guid> commandImageRepository;
+    private readonly IImageFileManagerFacade imageFileManager;
+
+    public SectionsController(
+        IImageFileManagerFacade imageFileManager, 
+        ICommandEntityRepository<Image, System.Guid> commandImageRepository, 
+        ICommandEntityRepository<Section, System.Guid> commandRepository, 
+        IQueryEntityRepository<Section, System.Guid> queryRepository,
+        IStringLocalizer<SectionsController> localizer, 
+        ILogger<SectionsController> logger) 
+        : base(commandRepository, queryRepository, localizer, logger)
     {
-        private readonly IEntityRepository<Image, System.Guid> imageRepository;
-        private readonly IImageFileManagerFacade imageFileManager;
+        this.commandImageRepository = commandImageRepository;
+        this.imageFileManager = imageFileManager;
+    }
 
-        public SectionsController(IImageFileManagerFacade imageFileManager, IEntityRepository<Image, System.Guid> imageRepository, IEntityRepository<Section, System.Guid> repository, IStringLocalizer<SectionsController> localizer, ILogger<SectionsController> logger) : base(repository, localizer, logger)
-        {
-            this.imageRepository = imageRepository;
-            this.imageFileManager = imageFileManager;
-        }
+    [RequirePermissions(Constants.Permission.SectionViewer)]
+    public IActionResult Index()
+    {
+        return View();
+    }
 
-        [RequirePermissions(Constants.Permission.SectionViewer)]
-        public IActionResult Index()
-        {
-            return View();
-        }
+    protected override System.Func<Section, object> GetOrderSelector()
+    {
+        return entity => entity.Name;
+    }
 
-        protected override System.Func<Section, object> GetOrderSelector()
-        {
-            return entity => entity.Name;
-        }
+    [RequirePermissions(Constants.Permission.SectionCreator)]
+    public override IActionResult Create()
+    {
+        return base.Create();
+    }
 
-        [RequirePermissions(Constants.Permission.SectionCreator)]
-        public override IActionResult Create()
+    [RequirePermissions(Constants.Permission.SectionCreator)]
+    public override IActionResult Create(SectionInputViewModel model)
+    {
+        if (Request.Form.Files.Count > 0)
         {
-            return base.Create();
-        }
+            var formFile = Request.Form.Files[0];
 
-        [RequirePermissions(Constants.Permission.SectionCreator)]
-        public override IActionResult Create(SectionInputViewModel model)
-        {
-            if (Request.Form.Files.Count > 0)
+            if (formFile.Length > 0)
             {
-                var formFile = Request.Form.Files[0];
+                ModelState.ClearValidationState("ImageFile");
 
-                if (formFile.Length > 0)
-                {
-                    ModelState.ClearValidationState("ImageFile");
+                model.ImageFile = formFile;
 
-                    model.ImageFile = formFile;
+                var updateModelTask = TryUpdateModelAsync(model);
 
-                    var updateModelTask = TryUpdateModelAsync(model);
-
-                    updateModelTask.Wait();
-                }
-            }
-
-            return base.Create(model);
-        }
-
-        [RequirePermissions(Constants.Permission.SectionEditor)]
-        public override IActionResult Edit(System.Guid key)
-        {
-            return base.Edit(key);
-        }
-
-        [RequirePermissions(Constants.Permission.SectionEditor)]
-        public override IActionResult Edit(SectionInputViewModel model)
-        {
-            ModelState.ClearValidationState("ImageFile");
-            ModelState.MarkFieldValid("ImageFile");
-
-            if (Request.Form.Files.Count > 0)
-            {
-                var formFile = Request.Form.Files[0];
-
-                if (formFile.Length > 0)
-                {
-                    model.ImageFile = formFile;
-
-                    var updateModelTask = TryUpdateModelAsync(model);
-
-                    updateModelTask.Wait();
-                }
-            }
-
-            return base.Edit(model);
-        }
-
-        [RequirePermissions(Constants.Permission.SectionRemover)]
-        public override IActionResult Delete(System.Guid key)
-        {
-            return base.Delete(key);
-        }
-
-        [RequirePermissions(Constants.Permission.SectionRemover)]
-        public override IActionResult Delete(SectionDisplayViewModel displayModel)
-        {
-            return base.Delete(displayModel);
-        }
-
-        protected override void PreCreate(Section entity, SectionInputViewModel model)
-        {
-            base.PreCreate(entity, model);
-
-            if (model.ImageFile == null) return;
-
-            using (var memoryStream = new System.IO.MemoryStream())
-            {
-                model.ImageFile.CopyTo(memoryStream);
-
-                var image = new Image { ContentType = model.ImageFile.ContentType, Length = model.ImageFile.Length, About = "Section " + entity.Id };
-
-                imageFileManager.SaveImageFileContent(image.Id, memoryStream.ToArray(), model.ImageFile.ContentType);
-
-                entity.Image = image;
+                updateModelTask.Wait();
             }
         }
 
-        protected override void PreEdit(Section entity, SectionInputViewModel model)
+        return base.Create(model);
+    }
+
+    [RequirePermissions(Constants.Permission.SectionEditor)]
+    public override IActionResult Edit(System.Guid key)
+    {
+        return base.Edit(key);
+    }
+
+    [RequirePermissions(Constants.Permission.SectionEditor)]
+    public override IActionResult Edit(SectionInputViewModel model)
+    {
+        ModelState.ClearValidationState("ImageFile");
+        ModelState.MarkFieldValid("ImageFile");
+
+        if (Request.Form.Files.Count > 0)
         {
-            base.PreEdit(entity, model);
+            var formFile = Request.Form.Files[0];
 
-            if (model.ImageFile == null)
+            if (formFile.Length > 0)
             {
-                if (model.ResetImage && entity.Image != null)
-                {
-                    imageFileManager.DeleteImageFile(entity.Image);
+                model.ImageFile = formFile;
 
-                    imageRepository.Delete(entity.Image, User.Identity.Name);
-                }
+                var updateModelTask = TryUpdateModelAsync(model);
 
-                return;
-            }
-
-            var deprecatedImage = entity.Image;
-
-            using (var memoryStream = new System.IO.MemoryStream())
-            {
-                model.ImageFile.CopyTo(memoryStream);
-
-                var image = imageRepository.Add(new Image { ContentType = model.ImageFile.ContentType, Length = model.ImageFile.Length, About = "Collaborator Persons " + entity.Id }, User.Identity.Name);
-
-                imageFileManager.SaveImageFileContent(image.Id, memoryStream.ToArray(), model.ImageFile.ContentType);
-                
-                entity.ImageId = image.Id;
-                entity.Image = image;
-            }
-
-            if (deprecatedImage != null)
-            {
-                imageFileManager.DeleteImageFile(deprecatedImage);
-
-                imageRepository.Delete(deprecatedImage, User.Identity.Name);
+                updateModelTask.Wait();
             }
         }
 
-        protected override void PostDelete(Section entity)
+        return base.Edit(model);
+    }
+
+    [RequirePermissions(Constants.Permission.SectionRemover)]
+    public override IActionResult Delete(System.Guid key)
+    {
+        return base.Delete(key);
+    }
+
+    [RequirePermissions(Constants.Permission.SectionRemover)]
+    public override IActionResult Delete(SectionDisplayViewModel displayModel)
+    {
+        return base.Delete(displayModel);
+    }
+
+    protected override void PreCreate(Section entity, SectionInputViewModel model)
+    {
+        base.PreCreate(entity, model);
+
+        if (model.ImageFile == null) return;
+
+        using (var memoryStream = new System.IO.MemoryStream())
         {
-            base.PostDelete(entity);
+            model.ImageFile.CopyTo(memoryStream);
 
-            if (entity.Image == null) return;
+            var image = new Image { ContentType = model.ImageFile.ContentType, Length = model.ImageFile.Length, About = "Section " + entity.Id };
 
-            imageRepository.Delete(entity.Image, User.Identity.Name);
+            imageFileManager.SaveImageFileContent(image.Id, memoryStream.ToArray(), model.ImageFile.ContentType);
 
-            imageFileManager.DeleteImageFile(entity.Image);
+            entity.Image = image;
         }
+    }
+
+    protected override void PreEdit(Section entity, SectionInputViewModel model)
+    {
+        base.PreEdit(entity, model);
+
+        if (model.ImageFile == null)
+        {
+            if (model.ResetImage && entity.Image != null)
+            {
+                imageFileManager.DeleteImageFile(entity.Image);
+
+                commandImageRepository.Delete(entity.Image, User.Identity.Name);
+            }
+
+            return;
+        }
+
+        var deprecatedImage = entity.Image;
+
+        using (var memoryStream = new System.IO.MemoryStream())
+        {
+            model.ImageFile.CopyTo(memoryStream);
+
+            var image = commandImageRepository.Add(new Image { ContentType = model.ImageFile.ContentType, Length = model.ImageFile.Length, About = "Collaborator Persons " + entity.Id }, User.Identity.Name);
+
+            imageFileManager.SaveImageFileContent(image.Id, memoryStream.ToArray(), model.ImageFile.ContentType);
+            
+            entity.ImageId = image.Id;
+            entity.Image = image;
+        }
+
+        if (deprecatedImage != null)
+        {
+            imageFileManager.DeleteImageFile(deprecatedImage);
+
+            commandImageRepository.Delete(deprecatedImage, User.Identity.Name);
+        }
+    }
+
+    protected override void PostDelete(Section entity)
+    {
+        base.PostDelete(entity);
+
+        if (entity.Image == null) return;
+
+        commandImageRepository.Delete(entity.Image, User.Identity.Name);
+
+        imageFileManager.DeleteImageFile(entity.Image);
     }
 }

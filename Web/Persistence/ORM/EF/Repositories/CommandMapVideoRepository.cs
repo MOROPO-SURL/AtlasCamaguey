@@ -2,9 +2,9 @@
 
 namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Persistence.ORM.EF.Repositories;
 
-public class MapVideoRepository : Framework.Guama.Core.Persistence.ORM.EF.Repositories.Contract.AbstractEntityRepository<Camaguey.Persistence.Entities.MapVideo, System.Guid>
+public class CommandMapVideoRepository : Framework.Guama.Core.Persistence.ORM.EF.Repositories.Contract.AbstractCommandEntityRepository<Camaguey.Persistence.Entities.MapVideo, System.Guid>
 {
-    public MapVideoRepository(Microsoft.EntityFrameworkCore.DbContext dbContext) : base(dbContext)
+    public CommandMapVideoRepository(Microsoft.EntityFrameworkCore.DbContext dbContext) : base(dbContext)
     {
     }
 
@@ -12,7 +12,6 @@ public class MapVideoRepository : Framework.Guama.Core.Persistence.ORM.EF.Reposi
     {
         return base.GetQueryableDbSet()
             .AsSplitQuery()
-            .Include(entity => entity.Video)
             .Include(entity => entity.MetadataEntries);
     }
 }

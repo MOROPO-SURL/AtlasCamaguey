@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using MOROPO.CIMAC.Atlas.Camaguey.Persistence.Entities;
-using MOROPO.CIMAC.Atlas.Camaguey.Web.Constants;
 using MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View;
 using MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend;
 using MOROPO.CIMAC.Atlas.Camaguey.Web.Models.View.Backend.Input;
@@ -23,31 +22,58 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
     [Area("atlas")]
     public class MapsController : Framework.Guama.Core.Presentation.Web.Backend.Controllers.Contract.AbstractEntityManagementController<Map, string, MapInputViewModel, MapDisplayViewModel>
     {
-        private readonly IEntityRepository<Image, System.Guid> imageRepository;
-        private readonly IEntityRepository<Document, System.Guid> documentRepository;
-        private readonly IEntityRepository<Video, System.Guid> videoRepository;
-        private readonly IEntityRepository<KeyWord, System.Guid> keyWordRepository;
-        private readonly IEntityRepository<Author, System.Guid> authorRepository;
-        private readonly IEntityRepository<Layer, System.Guid> layerRepository;
-        private readonly IEntityRepository<MapImage, System.Guid> mapImageRepository;
-        private readonly IEntityRepository<MapVideo, System.Guid> mapVideoRepository;
-        private readonly IEntityRepository<MapDocument, System.Guid> mapDocumentRepository;
+        private readonly ICommandEntityRepository<Image, System.Guid> commandImageRepository;
+        private readonly ICommandEntityRepository<Document, System.Guid> commandDocumentRepository;
+        private readonly ICommandEntityRepository<Video, System.Guid> commandVideoRepository;
+        private readonly IQueryEntityRepository<KeyWord, System.Guid> queryKeyWordRepository;
+        private readonly IQueryEntityRepository<Author, System.Guid> queryAuthorRepository;
+        private readonly ICommandEntityRepository<Layer, System.Guid> commandLayerRepository;
+        private readonly ICommandEntityRepository<MapImage, System.Guid> commandMapImageRepository;
+        private readonly IQueryEntityRepository<MapImage, System.Guid> queryMapImageRepository;
+        private readonly ICommandEntityRepository<MapVideo, System.Guid> commandMapVideoRepository;
+        private readonly IQueryEntityRepository<MapVideo, System.Guid> queryMapVideoRepository;
+        private readonly ICommandEntityRepository<MapDocument, System.Guid> commandMapDocumentRepository;
+        private readonly IQueryEntityRepository<MapDocument, System.Guid> queryMapDocumentRepository;
         private readonly IImageFileManagerFacade imageFileManager;
         private readonly IDocumentFileManagerFacade documentFileManager;
         private readonly IVideoFileManagerFacade videoFileManager;
         private readonly Microsoft.Extensions.Configuration.IConfiguration configuration;
 
-        public MapsController(Microsoft.Extensions.Configuration.IConfiguration configuration, IVideoFileManagerFacade videoFileManager, IDocumentFileManagerFacade documentFileManager, IImageFileManagerFacade imageFileManager, IEntityRepository<MapDocument, System.Guid> mapDocumentRepository, IEntityRepository<MapVideo, System.Guid> mapVideoRepository, IEntityRepository<MapImage, System.Guid> mapImageRepository, IEntityRepository<Layer, System.Guid> layerRepository, IEntityRepository<Author, System.Guid> authorRepository, IEntityRepository<KeyWord, System.Guid> keyWordRepository, IEntityRepository<Video, System.Guid> videoRepository, IEntityRepository<Document, System.Guid> documentRepository, IEntityRepository<Image, System.Guid> imageRepository, IEntityRepository<Map, string> repository, IStringLocalizer<MapsController> localizer, ILogger<MapsController> logger) : base(repository, localizer, logger)
+        public MapsController(
+            Microsoft.Extensions.Configuration.IConfiguration configuration, 
+            IVideoFileManagerFacade videoFileManager, 
+            IDocumentFileManagerFacade documentFileManager, 
+            IImageFileManagerFacade imageFileManager, 
+            IQueryEntityRepository<MapDocument, System.Guid> queryMapDocumentRepository, 
+            ICommandEntityRepository<MapDocument, System.Guid> commandMapDocumentRepository, 
+            IQueryEntityRepository<MapVideo, System.Guid> queryMapVideoRepository, 
+            ICommandEntityRepository<MapVideo, System.Guid> commandMapVideoRepository, 
+            IQueryEntityRepository<MapImage, System.Guid> queryMapImageRepository, 
+            ICommandEntityRepository<MapImage, System.Guid> commandMapImageRepository, 
+            ICommandEntityRepository<Layer, System.Guid> commandLayerRepository, 
+            IQueryEntityRepository<Author, System.Guid> queryAuthorRepository, 
+            IQueryEntityRepository<KeyWord, System.Guid> queryKeyWordRepository, 
+            ICommandEntityRepository<Video, System.Guid> commandVideoRepository, 
+            ICommandEntityRepository<Document, System.Guid> commandDocumentRepository, 
+            ICommandEntityRepository<Image, System.Guid> commandImageRepository, 
+            ICommandEntityRepository<Map, string> commandRepository, 
+            IQueryEntityRepository<Map, string> queryRepository, 
+            IStringLocalizer<MapsController> localizer, 
+            ILogger<MapsController> logger) 
+            : base(commandRepository, queryRepository, localizer, logger)
         {
-            this.imageRepository = imageRepository;
-            this.documentRepository = documentRepository;
-            this.videoRepository = videoRepository;
-            this.keyWordRepository = keyWordRepository;
-            this.authorRepository = authorRepository;
-            this.layerRepository = layerRepository;
-            this.mapImageRepository = mapImageRepository;
-            this.mapVideoRepository = mapVideoRepository;
-            this.mapDocumentRepository = mapDocumentRepository;
+            this.commandImageRepository = commandImageRepository;
+            this.commandDocumentRepository = commandDocumentRepository;
+            this.commandVideoRepository = commandVideoRepository;
+            this.queryKeyWordRepository = queryKeyWordRepository;
+            this.queryAuthorRepository = queryAuthorRepository;
+            this.commandLayerRepository = commandLayerRepository;
+            this.commandMapImageRepository = commandMapImageRepository;
+            this.queryMapImageRepository = queryMapImageRepository;
+            this.commandMapVideoRepository = commandMapVideoRepository;
+            this.queryMapVideoRepository = queryMapVideoRepository;
+            this.commandMapDocumentRepository = commandMapDocumentRepository;
+            this.queryMapDocumentRepository = queryMapDocumentRepository;
             this.imageFileManager = imageFileManager;
             this.documentFileManager = documentFileManager;
             this.videoFileManager = videoFileManager;
@@ -168,89 +194,88 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
 
                             if (httpResponseMessage.IsSuccessStatusCode)
                             {
-                                using (var contentStream = await httpResponseMessage.Content.ReadAsStreamAsync())
+                                using var contentStream = await httpResponseMessage.Content.ReadAsStreamAsync();
+
+                                var projDescriptorXmlDocument = new System.Xml.XmlDocument();
+
+                                projDescriptorXmlDocument.Load(contentStream);
+
+                                var globalLayerNode = projDescriptorXmlDocument.ChildNodes[1].ChildNodes[1].ChildNodes[3];
+
+                                var map = new Map
                                 {
-                                    var projDescriptorXmlDocument = new System.Xml.XmlDocument();
+                                    Id = mapId,
+                                    Scale = 10000
+                                };
 
-                                    projDescriptorXmlDocument.Load(contentStream);
+                                var globalLayerNodeChildNodesCount = globalLayerNode.ChildNodes.Count;
 
-                                    var globalLayerNode = projDescriptorXmlDocument.ChildNodes[1].ChildNodes[1].ChildNodes[3];
+                                for (int i = 0; i < globalLayerNodeChildNodesCount; i++)
+                                {
+                                    var globalLayerNodeChild = globalLayerNode.ChildNodes[i];
 
-                                    var map = new Map
+                                    switch (globalLayerNodeChild.Name)
                                     {
-                                        Id = mapId,
-                                        Scale = 10000
-                                    };
+                                        case "Title":
+                                            map.Name = globalLayerNodeChild.InnerText;
 
-                                    var globalLayerNodeChildNodesCount = globalLayerNode.ChildNodes.Count;
+                                            break;
 
-                                    for (int i = 0; i < globalLayerNodeChildNodesCount; i++)
-                                    {
-                                        var globalLayerNodeChild = globalLayerNode.ChildNodes[i];
+                                        case "CRS":
+                                            var crsValue = globalLayerNodeChild.InnerText;
 
-                                        switch (globalLayerNodeChild.Name)
-                                        {
-                                            case "Title":
-                                                map.Name = globalLayerNodeChild.InnerText;
+                                            if (crsValue.StartsWith("CRS:"))
+                                            {
+                                                map.CRS = crsValue;
+                                            }
+                                            else
+                                            {
+                                                map.EPSG = crsValue;
+                                            }
 
-                                                break;
+                                            break;
 
-                                            case "CRS":
-                                                var crsValue = globalLayerNodeChild.InnerText;
+                                        case "EX_GeographicBoundingBox":
+                                            map.WestBoundLongitude = decimal.Parse(globalLayerNodeChild.ChildNodes[0].InnerText.Replace(".", ","));
+                                            map.EastBoundLatitude = decimal.Parse(globalLayerNodeChild.ChildNodes[1].InnerText.Replace(".", ","));
+                                            map.SouthBoundLatitude = decimal.Parse(globalLayerNodeChild.ChildNodes[2].InnerText.Replace(".", ","));
+                                            map.NorthBoundLatitude = decimal.Parse(globalLayerNodeChild.ChildNodes[3].InnerText.Replace(".", ","));
 
-                                                if (crsValue.StartsWith("CRS:"))
+                                            break;
+
+                                        case "Layer":
+                                            var childs = FindSubLayers(globalLayerNodeChild);
+
+                                            if (childs.Count > 0)
+                                            {
+                                                foreach (var item in childs)
                                                 {
-                                                    map.CRS = crsValue;
+                                                    map.Layers.Add(item.Value);
                                                 }
-                                                else
+                                            }
+                                            else
+                                            {
+                                                var layer = new Layer
                                                 {
-                                                    map.EPSG = crsValue;
-                                                }
+                                                    Name = globalLayerNodeChild.ChildNodes[0].InnerText,
+                                                    Title = globalLayerNodeChild.ChildNodes[1].InnerText,
+                                                    Enabled = true,
+                                                    Priority = 1,
+                                                    PresentationStrategy = Camaguey.Persistence.Enumerations.LayerPresentationStrategy.WMS,
+                                                    CRS = globalLayerNodeChild.ChildNodes[2].InnerText,
+                                                    EPSG = globalLayerNodeChild.ChildNodes[3].InnerText,
+                                                };
 
-                                                break;
+                                                map.Layers.Add(layer);
+                                            }
 
-                                            case "EX_GeographicBoundingBox":
-                                                map.WestBoundLongitude = decimal.Parse(globalLayerNodeChild.ChildNodes[0].InnerText.Replace(".", ","));
-                                                map.EastBoundLatitude = decimal.Parse(globalLayerNodeChild.ChildNodes[1].InnerText.Replace(".", ","));
-                                                map.SouthBoundLatitude = decimal.Parse(globalLayerNodeChild.ChildNodes[2].InnerText.Replace(".", ","));
-                                                map.NorthBoundLatitude = decimal.Parse(globalLayerNodeChild.ChildNodes[3].InnerText.Replace(".", ","));
-
-                                                break;
-
-                                            case "Layer":
-                                                var childs = FindSubLayers(globalLayerNodeChild);
-
-                                                if (childs.Count > 0)
-                                                {
-                                                    foreach (var item in childs)
-                                                    {
-                                                        map.Layers.Add(item.Value);
-                                                    }
-                                                }
-                                                else
-                                                {
-                                                    var layer = new Layer
-                                                    {
-                                                        Name = globalLayerNodeChild.ChildNodes[0].InnerText,
-                                                        Title = globalLayerNodeChild.ChildNodes[1].InnerText,
-                                                        Enabled = true,
-                                                        Priority = 1,
-                                                        PresentationStrategy = Camaguey.Persistence.Enumerations.LayerPresentationStrategy.WMS,
-                                                        CRS = globalLayerNodeChild.ChildNodes[2].InnerText,
-                                                        EPSG = globalLayerNodeChild.ChildNodes[3].InnerText,
-                                                    };
-
-                                                    map.Layers.Add(layer);
-                                                }
-
-                                                break;
-                                        }                                        
+                                            break;
                                     }
-
-                                    if (string.IsNullOrEmpty(map.Name)) map.Name = map.Id;
-
-                                    Repository.Add(map, User.Identity.Name, true);
                                 }
+
+                                if (string.IsNullOrEmpty(map.Name)) map.Name = map.Id;
+
+                                commandRepository.Add(map, User.Identity.Name, true);
                             }
                             else
                             {
@@ -302,7 +327,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         [HttpPost]
         [Route("[action]/{key}")]
         [ValidateAntiForgeryToken]
-        [RequirePermissions(Permission.MapEditor)]
+        [RequirePermissions(Constants.Permission.MapEditor)]
         public async System.Threading.Tasks.Task<IActionResult> ReplaceAsync(string key, MapUploadViewModel model)
         {
             if (ModelState.IsValid)
@@ -316,7 +341,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
                     return RedirectToAction("Edit", new { key });
                 }
 
-                Map entity = Repository.Get(key);
+                Map entity = commandRepository.Get(key);
 
                 var qgisProjectsRootPath = configuration["QGIS:ProjectsPath"];
 
@@ -357,114 +382,113 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
 
                             if (httpResponseMessage.IsSuccessStatusCode)
                             {
-                                using (var contentStream = await httpResponseMessage.Content.ReadAsStreamAsync())
+                                using var contentStream = await httpResponseMessage.Content.ReadAsStreamAsync();
+
+                                var projDescriptorXmlDocument = new System.Xml.XmlDocument();
+
+                                projDescriptorXmlDocument.Load(contentStream);
+
+                                var globalLayerNode = projDescriptorXmlDocument.ChildNodes[1].ChildNodes[1].ChildNodes[3];
+
+                                var globalLayerNodeChildNodesCount = globalLayerNode.ChildNodes.Count;
+
+                                foreach (var layer in entity.Layers)
                                 {
-                                    var projDescriptorXmlDocument = new System.Xml.XmlDocument();
+                                    layer.Enabled = false;
+                                }
 
-                                    projDescriptorXmlDocument.Load(contentStream);
+                                for (int i = 0; i < globalLayerNodeChildNodesCount; i++)
+                                {
+                                    var globalLayerNodeChild = globalLayerNode.ChildNodes[i];
 
-                                    var globalLayerNode = projDescriptorXmlDocument.ChildNodes[1].ChildNodes[1].ChildNodes[3];
-
-                                    var globalLayerNodeChildNodesCount = globalLayerNode.ChildNodes.Count;
-
-                                    foreach (var layer in entity.Layers)
+                                    switch (globalLayerNodeChild.Name)
                                     {
-                                        layer.Enabled = false;
-                                    }
+                                        case "Title":
+                                            entity.Name = globalLayerNodeChild.InnerText;
 
-                                    for (int i = 0; i < globalLayerNodeChildNodesCount; i++)
-                                    {
-                                        var globalLayerNodeChild = globalLayerNode.ChildNodes[i];
+                                            break;
 
-                                        switch (globalLayerNodeChild.Name)
-                                        {
-                                            case "Title":
-                                                entity.Name = globalLayerNodeChild.InnerText;
+                                        case "CRS":
+                                            var crsValue = globalLayerNodeChild.InnerText;
 
-                                                break;
+                                            if (crsValue.StartsWith("CRS:"))
+                                            {
+                                                entity.CRS = crsValue;
+                                            }
+                                            else
+                                            {
+                                                entity.EPSG = crsValue;
+                                            }
 
-                                            case "CRS":
-                                                var crsValue = globalLayerNodeChild.InnerText;
+                                            break;
 
-                                                if (crsValue.StartsWith("CRS:"))
+                                        case "EX_GeographicBoundingBox":
+                                            entity.WestBoundLongitude = decimal.Parse(globalLayerNodeChild.ChildNodes[0].InnerText.Replace(".", ","));
+                                            entity.EastBoundLatitude = decimal.Parse(globalLayerNodeChild.ChildNodes[1].InnerText.Replace(".", ","));
+                                            entity.SouthBoundLatitude = decimal.Parse(globalLayerNodeChild.ChildNodes[2].InnerText.Replace(".", ","));
+                                            entity.NorthBoundLatitude = decimal.Parse(globalLayerNodeChild.ChildNodes[3].InnerText.Replace(".", ","));
+
+                                            break;
+
+                                        case "Layer":
+                                            var childs = FindSubLayers(globalLayerNodeChild);
+
+                                            if (childs.Count > 0)
+                                            {
+                                                foreach (var item in childs)
                                                 {
-                                                    entity.CRS = crsValue;
-                                                }
-                                                else
-                                                {
-                                                    entity.EPSG = crsValue;
-                                                }
-
-                                                break;
-
-                                            case "EX_GeographicBoundingBox":
-                                                entity.WestBoundLongitude = decimal.Parse(globalLayerNodeChild.ChildNodes[0].InnerText.Replace(".", ","));
-                                                entity.EastBoundLatitude = decimal.Parse(globalLayerNodeChild.ChildNodes[1].InnerText.Replace(".", ","));
-                                                entity.SouthBoundLatitude = decimal.Parse(globalLayerNodeChild.ChildNodes[2].InnerText.Replace(".", ","));
-                                                entity.NorthBoundLatitude = decimal.Parse(globalLayerNodeChild.ChildNodes[3].InnerText.Replace(".", ","));
-
-                                                break;
-
-                                            case "Layer":
-                                                var childs = FindSubLayers(globalLayerNodeChild);
-
-                                                if (childs.Count > 0)
-                                                {
-                                                    foreach (var item in childs)
-                                                    {
-                                                        var layer = entity.Layers.SingleOrDefault(_entity => _entity.Name == item.Value.Name);
-
-                                                        if (layer != null)
-                                                        {
-                                                            layer.Title = item.Value.Title;
-                                                            layer.Enabled = true;
-                                                            layer.CRS = item.Value.CRS;
-                                                            layer.EPSG = item.Value.EPSG;
-
-                                                            continue;
-                                                        }
-
-                                                        entity.Layers.Add(item.Value);
-                                                    }
-                                                }
-                                                else
-                                                {
-                                                    var layerName = globalLayerNodeChild.ChildNodes[0].InnerText;
-
-                                                    var layer = entity.Layers.SingleOrDefault(_entity => _entity.Name == layerName);
+                                                    var layer = entity.Layers.SingleOrDefault(_entity => _entity.Name == item.Value.Name);
 
                                                     if (layer != null)
                                                     {
-                                                        layer.Title = globalLayerNodeChild.ChildNodes[1].InnerText;
+                                                        layer.Title = item.Value.Title;
                                                         layer.Enabled = true;
-                                                        layer.CRS = globalLayerNodeChild.ChildNodes[2].InnerText;
-                                                        layer.EPSG = globalLayerNodeChild.ChildNodes[3].InnerText;
-                                                    }
-                                                    else
-                                                    {
-                                                        layer = new Layer
-                                                        {
-                                                            Name = globalLayerNodeChild.ChildNodes[0].InnerText,
-                                                            Title = globalLayerNodeChild.ChildNodes[1].InnerText,
-                                                            Enabled = true,
-                                                            Priority = 1,
-                                                            PresentationStrategy = Camaguey.Persistence.Enumerations.LayerPresentationStrategy.WMS,
-                                                            CRS = globalLayerNodeChild.ChildNodes[2].InnerText,
-                                                            EPSG = globalLayerNodeChild.ChildNodes[3].InnerText,
-                                                        };
+                                                        layer.CRS = item.Value.CRS;
+                                                        layer.EPSG = item.Value.EPSG;
 
-                                                        entity.Layers.Add(layer);
+                                                        continue;
                                                     }
+
+                                                    entity.Layers.Add(item.Value);
                                                 }
+                                            }
+                                            else
+                                            {
+                                                var layerName = globalLayerNodeChild.ChildNodes[0].InnerText;
 
-                                                break;
-                                        }
+                                                var layer = entity.Layers.SingleOrDefault(_entity => _entity.Name == layerName);
+
+                                                if (layer != null)
+                                                {
+                                                    layer.Title = globalLayerNodeChild.ChildNodes[1].InnerText;
+                                                    layer.Enabled = true;
+                                                    layer.CRS = globalLayerNodeChild.ChildNodes[2].InnerText;
+                                                    layer.EPSG = globalLayerNodeChild.ChildNodes[3].InnerText;
+                                                }
+                                                else
+                                                {
+                                                    layer = new Layer
+                                                    {
+                                                        Name = globalLayerNodeChild.ChildNodes[0].InnerText,
+                                                        Title = globalLayerNodeChild.ChildNodes[1].InnerText,
+                                                        Enabled = true,
+                                                        Priority = 1,
+                                                        PresentationStrategy = Camaguey.Persistence.Enumerations.LayerPresentationStrategy.WMS,
+                                                        CRS = globalLayerNodeChild.ChildNodes[2].InnerText,
+                                                        EPSG = globalLayerNodeChild.ChildNodes[3].InnerText,
+                                                    };
+
+                                                    entity.Layers.Add(layer);
+                                                }
+                                            }
+
+                                            break;
                                     }
-
-                                    if (string.IsNullOrEmpty(entity.Name)) entity.Name = entity.Id;
-
-                                    Repository.Update(entity, User.Identity.Name, true);
                                 }
+
+                                if (string.IsNullOrEmpty(entity.Name)) entity.Name = entity.Id;
+
+                                commandRepository.Update(entity, User.Identity.Name, true);
                             }
                             else
                             {
@@ -557,7 +581,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
                 {
                     imageFileManager.DeleteImageFile(entity.Image);
 
-                    imageRepository.Delete(entity.Image, User.Identity.Name);
+                    commandImageRepository.Delete(entity.Image, User.Identity.Name);
                 }
 
                 return;
@@ -569,7 +593,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
             {
                 model.ImageFile.CopyTo(memoryStream);
 
-                var image = imageRepository.Add(new Image { ContentType = model.ImageFile.ContentType, Length = model.ImageFile.Length, About = "Map " + entity.Id }, User.Identity.Name);
+                var image = commandImageRepository.Add(new Image { ContentType = model.ImageFile.ContentType, Length = model.ImageFile.Length, About = "Map " + entity.Id }, User.Identity.Name);
 
                 imageFileManager.SaveImageFileContent(image.Id, memoryStream.ToArray(), model.ImageFile.ContentType);
 
@@ -581,7 +605,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
             {
                 imageFileManager.DeleteImageFile(deprecatedImage);
 
-                imageRepository.Delete(deprecatedImage, User.Identity.Name);
+                commandImageRepository.Delete(deprecatedImage, User.Identity.Name);
             }
         }
 
@@ -591,7 +615,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
 
             if (entity.Image == null) return;
 
-            imageRepository.Delete(entity.Image, User.Identity.Name);
+            commandImageRepository.Delete(entity.Image, User.Identity.Name);
 
             imageFileManager.DeleteImageFile(entity.Image);
         }
@@ -603,7 +627,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         [RequirePermissions(Constants.Permission.MapEditor)]
         public ActionResult EditLayers(string key)
         {
-            var entity = Repository.Get(key);
+            var entity = queryRepository.Get(key);
 
             var model = new Models.View.Backend.Management.MapLayersManagementViewModel
             {
@@ -633,7 +657,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
             {
                 try
                 {
-                    var entity = Repository.Get(key);
+                    var entity = commandRepository.Get(key);
 
                     try
                     {
@@ -646,7 +670,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
                         _entity.PointToPresentationJSBlock = pointToPresentationJSBlock;
                         _entity.InteractivePresentantionJSBlock = interactivePresentantionJSBlock;
 
-                        layerRepository.Update(_entity, User.Identity.Name);
+                        commandLayerRepository.Update(_entity, User.Identity.Name);
 
                         SetDefaultNotification(NotificationType.Success, GetEditionSuccessMessage());
 
@@ -681,7 +705,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         [RequirePermissions(Constants.Permission.MapEditor)]
         public ActionResult EditAuthors(string key)
         {
-            var entity = Repository.Get(key);
+            var entity = queryRepository.Get(key);
 
             var releatedMaps = entity.AuthorBridges.Select(bridge => bridge.Stern).ToArray();
 
@@ -696,7 +720,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
 
                     return result;
                 }).ToArray(),
-                AvailableAuthorSelectListItems = authorRepository.GetAll().ToArray().Except(releatedMaps).Select(entity => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
+                AvailableAuthorSelectListItems = queryAuthorRepository.GetAll().ToArray().Except(releatedMaps).Select(entity => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
                 {
                     Value = entity.Id.ToString(),
                     Text = entity.Identity.LastName == null ? entity.Identity.Name : string.Format("{0} {1}", entity.Identity.Name, entity.Identity.LastName)
@@ -716,7 +740,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         {
             try
             {
-                var entity = Repository.Get(key);
+                var entity = commandRepository.Get(key);
 
                 if (authorId != default)
                 {
@@ -728,7 +752,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
                             SternId = authorId
                         });
 
-                        Repository.Update(entity, User.Identity.Name);
+                        commandRepository.Update(entity, User.Identity.Name);
 
                         SetDefaultNotification(NotificationType.Success, GetCreationSuccessMessage());
 
@@ -762,13 +786,13 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         {
             try
             {
-                var entity = Repository.Get(key);
+                var entity = commandRepository.Get(key);
 
                 var bridge = entity.AuthorBridges.First(b => b.SternId == authorId);
 
                 entity.AuthorBridges.Remove(bridge);
 
-                Repository.Update(entity, User.Identity.Name);
+                commandRepository.Update(entity, User.Identity.Name);
 
                 SetDefaultNotification(NotificationType.Success, GetDeletionSuccessMessage());
 
@@ -801,7 +825,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         [RequirePermissions(Constants.Permission.MapEditor)]
         public ActionResult EditKeyWords(string key)
         {
-            var entity = Repository.Get(key);
+            var entity = queryRepository.Get(key);
 
             var releatedKeyWords = entity.KeyWordBridges.Select(bridge => bridge.Stern).ToArray();
 
@@ -816,7 +840,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
 
                     return result;
                 }).ToArray(),
-                AvailableKeyWordSelectListItems = keyWordRepository.GetAll().ToArray().Except(releatedKeyWords).Select(entity => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
+                AvailableKeyWordSelectListItems = queryKeyWordRepository.GetAll().ToArray().Except(releatedKeyWords).Select(entity => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
                 {
                     Value = entity.Id.ToString(),
                     Text = entity.Name
@@ -836,7 +860,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         {
             try
             {
-                var entity = Repository.Get(key);
+                var entity = commandRepository.Get(key);
 
                 if (keyWordId != default)
                 {
@@ -848,7 +872,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
                             SternId = keyWordId
                         });
 
-                        Repository.Update(entity, User.Identity.Name);
+                        commandRepository.Update(entity, User.Identity.Name);
 
                         SetDefaultNotification(NotificationType.Success, GetCreationSuccessMessage());
 
@@ -882,13 +906,13 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         {
             try
             {
-                var entity = Repository.Get(key);
+                var entity = commandRepository.Get(key);
 
                 var bridge = entity.KeyWordBridges.First(b => b.SternId == keyWordId);
 
                 entity.KeyWordBridges.Remove(bridge);
 
-                Repository.Update(entity, User.Identity.Name);
+                commandRepository.Update(entity, User.Identity.Name);
 
                 SetDefaultNotification(NotificationType.Success, GetDeletionSuccessMessage());
 
@@ -921,7 +945,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         [RequirePermissions(Constants.Permission.MapEditor)]
         public ActionResult EditGraphs(string key)
         {
-            var entity = Repository.Get(key);
+            var entity = queryRepository.Get(key);
 
             var model = new Models.View.Backend.Management.MapGraphsManagementViewModel
             {
@@ -949,7 +973,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         {
             try
             {
-                var entity = Repository.Get(key);
+                var entity = queryRepository.Get(key);
 
                 ModelState.ClearValidationState("File");
 
@@ -972,7 +996,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
 
                             var image = new Image { ContentType = model.File.ContentType, Length = model.File.Length, About = model.Description };
 
-                            imageRepository.Add(image, User.Identity.Name, false);
+                            commandImageRepository.Add(image, User.Identity.Name, false);
 
                             imageFileManager.SaveImageFileContent(image.Id, memoryStream.ToArray(), model.File.ContentType);
 
@@ -1003,7 +1027,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
                                 };
                             }
 
-                            mapImageRepository.Add(_entity, User.Identity.Name);
+                            commandMapImageRepository.Add(_entity, User.Identity.Name);
                         }
 
                         SetDefaultNotification(NotificationType.Success, GetCreationSuccessMessage());
@@ -1038,13 +1062,13 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         {
             try
             {
-                var entity = Repository.Get(key);
+                var entity = queryRepository.Get(key);
 
                 var _entity = entity.Images.First(__entity => __entity.ImageId == imageId && __entity.ImageKind == Camaguey.Persistence.Enumerations.MapImageKind.Chart);
 
                 var deprecatedImage = _entity.Image;
 
-                imageRepository.Delete(_entity.Image, User.Identity.Name);
+                commandImageRepository.Delete(_entity.Image, User.Identity.Name);
 
                 try
                 {
@@ -1096,7 +1120,9 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
                 {
                     try
                     {
-                        var entity = mapImageRepository.FindOneBy(_entity => _entity.ImageId == model.Id && _entity.MapId == key && _entity.ImageKind == Camaguey.Persistence.Enumerations.MapImageKind.Chart);
+                        var entity = queryMapImageRepository.FindOneBy(_entity => _entity.ImageId == model.Id && _entity.MapId == key && _entity.ImageKind == Camaguey.Persistence.Enumerations.MapImageKind.Chart);
+
+                        entity = commandMapImageRepository.Get(entity.Id);
 
                         entity.Image.About = model.Description;
 
@@ -1123,7 +1149,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
                             };
                         }
 
-                        mapImageRepository.Update(entity, User.Identity.Name);
+                        commandMapImageRepository.Update(entity, User.Identity.Name);
 
                         SetDefaultNotification(NotificationType.Success, GetEditionSuccessMessage());
 
@@ -1158,7 +1184,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         [RequirePermissions(Constants.Permission.MapEditor)]
         public ActionResult EditPictures(string key)
         {
-            var entity = Repository.Get(key);
+            var entity = queryRepository.Get(key);
 
             var model = new Models.View.Backend.Management.MapPicturesManagementViewModel
             {
@@ -1186,7 +1212,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         {
             try
             {
-                var entity = Repository.Get(key);
+                var entity = queryRepository.Get(key);
 
                 ModelState.ClearValidationState("File");
 
@@ -1209,7 +1235,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
 
                             var image = new Image { ContentType = model.File.ContentType, Length = model.File.Length, About = model.Description };
 
-                            imageRepository.Add(image, User.Identity.Name, false);
+                            commandImageRepository.Add(image, User.Identity.Name, false);
 
                             imageFileManager.SaveImageFileContent(image.Id, memoryStream.ToArray(), model.File.ContentType);
 
@@ -1240,7 +1266,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
                                 };
                             }
 
-                            mapImageRepository.Add(_entity, User.Identity.Name);
+                            commandMapImageRepository.Add(_entity, User.Identity.Name);
                         }
 
                         SetDefaultNotification(NotificationType.Success, GetCreationSuccessMessage());
@@ -1275,13 +1301,13 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         {
             try
             {
-                var entity = Repository.Get(key);
+                var entity = queryRepository.Get(key);
 
                 var _entity = entity.Images.First(__entity => __entity.ImageId == imageId && __entity.ImageKind == Camaguey.Persistence.Enumerations.MapImageKind.Picture);
 
                 var deprecatedImage = _entity.Image;
 
-                imageRepository.Delete(_entity.Image, User.Identity.Name);
+                commandImageRepository.Delete(_entity.Image, User.Identity.Name);
 
                 try
                 {
@@ -1333,7 +1359,9 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
                 {
                     try
                     {
-                        var entity = mapImageRepository.FindOneBy(_entity => _entity.ImageId == model.Id && _entity.MapId == key && _entity.ImageKind == Camaguey.Persistence.Enumerations.MapImageKind.Picture);
+                        var entity = queryMapImageRepository.FindOneBy(_entity => _entity.ImageId == model.Id && _entity.MapId == key && _entity.ImageKind == Camaguey.Persistence.Enumerations.MapImageKind.Picture);
+
+                        entity = commandMapImageRepository.Get(entity.Id);
 
                         entity.Image.About = model.Description;
 
@@ -1360,7 +1388,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
                             };
                         }
 
-                        mapImageRepository.Update(entity, User.Identity.Name);
+                        commandMapImageRepository.Update(entity, User.Identity.Name);
 
                         SetDefaultNotification(NotificationType.Success, GetEditionSuccessMessage());
 
@@ -1395,7 +1423,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         [RequirePermissions(Constants.Permission.MapEditor)]
         public ActionResult EditVideos(string key)
         {
-            var entity = Repository.Get(key);
+            var entity = queryRepository.Get(key);
 
             var model = new Models.View.Backend.Management.MapVideosManagementViewModel
             {
@@ -1423,7 +1451,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         {
             try
             {
-                var entity = Repository.Get(key);
+                var entity = queryRepository.Get(key);
 
                 ModelState.ClearValidationState("File");
 
@@ -1458,7 +1486,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
                         {
                             model.File.CopyTo(memoryStream);
 
-                            videoRepository.Add(video, User.Identity.Name, false);
+                            commandVideoRepository.Add(video, User.Identity.Name, false);
 
                             videoFileManager.SaveVideoFileContent(video.Id, memoryStream.ToArray(), video.Extension);
 
@@ -1488,7 +1516,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
                                 };
                             }
 
-                            mapVideoRepository.Add(_entity, User.Identity.Name);
+                            commandMapVideoRepository.Add(_entity, User.Identity.Name);
                         }
 
                         SetDefaultNotification(NotificationType.Success, GetCreationSuccessMessage());
@@ -1529,13 +1557,13 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         {
             try
             {
-                var entity = Repository.Get(key);
+                var entity = queryRepository.Get(key);
 
                 var _entity = entity.Videos.First(b => b.VideoId == videoId);
 
                 var deprecatedVideo = _entity.Video;
 
-                videoRepository.Delete(_entity.Video, User.Identity.Name);
+                commandVideoRepository.Delete(_entity.Video, User.Identity.Name);
 
                 try
                 {
@@ -1587,7 +1615,9 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
                 {
                     try
                     {
-                        var entity = mapVideoRepository.FindOneBy(_entity => _entity.VideoId == model.Id && _entity.MapId == key);
+                        var entity = queryMapVideoRepository.FindOneBy(_entity => _entity.VideoId == model.Id && _entity.MapId == key);
+
+                        entity = commandMapVideoRepository.Get(entity.Id);
 
                         entity.Video.About = model.Description;
 
@@ -1614,7 +1644,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
                             };
                         }
 
-                        mapVideoRepository.Update(entity, User.Identity.Name);
+                        commandMapVideoRepository.Update(entity, User.Identity.Name);
 
                         SetDefaultNotification(NotificationType.Success, GetEditionSuccessMessage());
 
@@ -1649,7 +1679,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         [RequirePermissions(Constants.Permission.MapEditor)]
         public ActionResult EditDocuments(string key)
         {
-            var entity = Repository.Get(key);
+            var entity = queryRepository.Get(key);
 
             var model = new Models.View.Backend.Management.MapDocumentsManagementViewModel
             {
@@ -1677,7 +1707,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         {
             try
             {
-                var entity = Repository.Get(key);
+                var entity = queryRepository.Get(key);
 
                 ModelState.ClearValidationState("File");
 
@@ -1706,7 +1736,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
                                 Length = model.File.Length
                             };
 
-                            documentRepository.Add(document, User.Identity.Name, false);
+                            commandDocumentRepository.Add(document, User.Identity.Name, false);
 
                             documentFileManager.SaveDocumentFileContent(document.Id, memoryStream.ToArray(), document.ContentType);
 
@@ -1737,7 +1767,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
                                 };
                             }
 
-                            mapDocumentRepository.Add(_entity, User.Identity.Name);
+                            commandMapDocumentRepository.Add(_entity, User.Identity.Name);
                         }
 
                         SetDefaultNotification(NotificationType.Success, GetCreationSuccessMessage());
@@ -1772,13 +1802,13 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         {
             try
             {
-                var entity = Repository.Get(key);
+                var entity = queryRepository.Get(key);
 
                 var _entity = entity.Documents.First(b => b.DocumentId == documentId);
 
                 var deprecatedDocument = _entity.Document;
 
-                documentRepository.Delete(_entity.Document, User.Identity.Name);
+                commandDocumentRepository.Delete(_entity.Document, User.Identity.Name);
 
                 try
                 {
@@ -1830,7 +1860,9 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
                 {
                     try
                     {
-                        var entity = mapDocumentRepository.FindOneBy(_entity => _entity.DocumentId == model.Id && _entity.MapId == key);
+                        var entity = queryMapDocumentRepository.FindOneBy(_entity => _entity.DocumentId == model.Id && _entity.MapId == key);
+
+                        entity = commandMapDocumentRepository.Get(entity.Id);
 
                         entity.Document.Name = model.Name;
                         entity.Document.Description = model.Description;
@@ -1858,7 +1890,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
                             };
                         }
 
-                        mapDocumentRepository.Update(entity, User.Identity.Name);
+                        commandMapDocumentRepository.Update(entity, User.Identity.Name);
 
                         SetDefaultNotification(NotificationType.Success, GetEditionSuccessMessage());
 
@@ -1886,7 +1918,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
 
         #endregion
 
-        private List<KeyValuePair<System.Xml.XmlNode, Layer>> FindSubLayers(System.Xml.XmlNode layerGroupNode)
+        private static List<KeyValuePair<System.Xml.XmlNode, Layer>> FindSubLayers(System.Xml.XmlNode layerGroupNode)
         {
             var result = new List<KeyValuePair<System.Xml.XmlNode, Layer>>();
 

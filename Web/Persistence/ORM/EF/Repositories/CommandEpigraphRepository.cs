@@ -2,9 +2,9 @@
 
 namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Persistence.ORM.EF.Repositories;
 
-public class EpigraphRepository : Framework.Guama.Core.Persistence.ORM.EF.Repositories.Contract.AbstractEntityRepository<Camaguey.Persistence.Entities.Epigraph, System.Guid>
+public class CommandEpigraphRepository : Framework.Guama.Core.Persistence.ORM.EF.Repositories.Contract.AbstractCommandEntityRepository<Camaguey.Persistence.Entities.Epigraph, System.Guid>
 {
-    public EpigraphRepository(DbContext dbContext) : base(dbContext)
+    public CommandEpigraphRepository(DbContext dbContext) : base(dbContext)
     {
     }
 
@@ -12,8 +12,6 @@ public class EpigraphRepository : Framework.Guama.Core.Persistence.ORM.EF.Reposi
     {
         return base.GetQueryableDbSet()
             .AsSplitQuery()
-            .Include(entity => entity.Image)
-            .Include(entity => entity.Section)
             .Include(entity => entity.KeyWordBridges).ThenInclude(bridge => bridge.Stern)
             .Include(entity => entity.ImageBridges).ThenInclude(bridge => bridge.Stern)
             .Include(entity => entity.VideoBridges).ThenInclude(bridge => bridge.Stern)

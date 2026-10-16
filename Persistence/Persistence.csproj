@@ -13,7 +13,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="GuamaFramework.Identity.Persistence" Version="6.0.1" />
+	  <PackageReference Include="GuamaFramework.Identity.Persistence" Version="6.1.0.2" />
 	</ItemGroup>
 
 </Project>

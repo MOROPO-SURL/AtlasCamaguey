@@ -2,9 +2,9 @@
 
 namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Persistence.ORM.EF.Repositories;
 
-public class MapRepository : Framework.Guama.Core.Persistence.ORM.EF.Repositories.Contract.AbstractEntityRepository<Camaguey.Persistence.Entities.Map, string>
+public class QueryMapRepository : Framework.Guama.Core.Persistence.ORM.EF.Repositories.Contract.AbstractQueryEntityRepository<Camaguey.Persistence.Entities.Map, string>
 {
-    public MapRepository(DbContext dbContext) : base(dbContext)
+    public QueryMapRepository(DbContext dbContext) : base(dbContext)
     {
     }
 

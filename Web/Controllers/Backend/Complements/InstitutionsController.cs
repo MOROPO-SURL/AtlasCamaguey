@@ -10,162 +10,161 @@ using MOROPO.Framework.Guama.Identity.Persistence.Entities;
 using MOROPO.Framework.Guama.Media.Persistence.Entities;
 using MOROPO.Framework.Guama.Media.Presentation.Web.Common.Managers.Facade;
 
-namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Complements
+namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Complements;
+
+[Microsoft.AspNetCore.Authorization.Authorize]
+[RequirePermissions(Framework.Guama.Core.Security.Presentation.Constants.Permissions.ShellManager)]
+[Area("complements")]
+public class InstitutionsController : Framework.Guama.Core.Presentation.Web.Backend.Controllers.Contract.AbstractEntityManagementController<Institution, System.Guid, InstitutionInputViewModel, InstitutionDisplayViewModel>
 {
-    [Microsoft.AspNetCore.Authorization.Authorize]
-    [RequirePermissions(Framework.Guama.Core.Security.Presentation.Constants.Permissions.ShellManager)]
-    [Area("complements")]
-    public class InstitutionsController : Framework.Guama.Core.Presentation.Web.Backend.Controllers.Contract.AbstractEntityManagementController<Institution, System.Guid, InstitutionInputViewModel, InstitutionDisplayViewModel>
+    private readonly IImageFileManagerFacade imageFileManager;
+    private readonly ICommandEntityRepository<Image, System.Guid> imageCommandRepository;
+    private readonly ICommandEntityRepository<OrganizationIdentity, System.Guid> identityCommandRepository;
+
+    public InstitutionsController(
+        ICommandEntityRepository<Institution, System.Guid> commandEntityRepository,
+        IQueryEntityRepository<Institution, System.Guid> queryEntityRepository,
+        IStringLocalizer<InstitutionsController> localizer,
+        ILogger<InstitutionsController> logger,
+        IImageFileManagerFacade imageFileManagerFacade,
+        ICommandEntityRepository<Image, System.Guid> imageCommandRepository,
+        ICommandEntityRepository<OrganizationIdentity, System.Guid> identityCommandRepository) 
+        : base(commandEntityRepository, queryEntityRepository, localizer, logger)
     {
-        private readonly IImageFileManagerFacade imageFileManager;
-        private readonly IEntityRepository<Image, System.Guid> imageRepository;
-        private readonly IEntityRepository<OrganizationIdentity, System.Guid> identityRepository;
+        imageFileManager = imageFileManagerFacade;
+        this.imageCommandRepository = imageCommandRepository;
+        this.identityCommandRepository = identityCommandRepository;
+    }
 
-        public InstitutionsController(IEntityRepository<Institution, System.Guid> repository,
-            IStringLocalizer<InstitutionsController> localizer,
-            ILogger<InstitutionsController> logger,
-            IImageFileManagerFacade imageFileManagerFacade,
-            IEntityRepository<Image, System.Guid> imageRepository,
-            IEntityRepository<OrganizationIdentity, System.Guid> identityRepository
-            ) : base(repository, localizer, logger)
+    [RequirePermissions(Constants.Permission.InstitutionViewer)]
+    public IActionResult Index() => View();
+
+    protected override System.Func<Institution, object> GetOrderSelector()
+    {
+        return entity => entity.Identity.Name;
+    }
+
+
+    [RequirePermissions(Constants.Permission.InstitutionCreator)]
+    public override IActionResult Create() => base.Create();
+
+
+    [RequirePermissions(Constants.Permission.InstitutionCreator)]
+    public override IActionResult Create(InstitutionInputViewModel inputViewModel)
+    {
+        if (Request.Form.Files.Count > 0)
         {
-            imageFileManager = imageFileManagerFacade;
-            this.imageRepository = imageRepository;
-            this.identityRepository = identityRepository;
-        }
+            var formFile = Request.Form.Files[0];
 
-        [RequirePermissions(Constants.Permission.InstitutionViewer)]
-        public IActionResult Index() => View();
-
-        protected override System.Func<Institution, object> GetOrderSelector()
-        {
-            return entity => entity.Identity.Name;
-        }
-
-
-        [RequirePermissions(Constants.Permission.InstitutionCreator)]
-        public override IActionResult Create() => base.Create();
-
-
-        [RequirePermissions(Constants.Permission.InstitutionCreator)]
-        public override IActionResult Create(InstitutionInputViewModel inputViewModel)
-        {
-            if (Request.Form.Files.Count > 0)
+            if (formFile.Length > 0)
             {
-                var formFile = Request.Form.Files[0];
+                ModelState.ClearValidationState("ImageFile");
 
-                if (formFile.Length > 0)
-                {
-                    ModelState.ClearValidationState("ImageFile");
+                inputViewModel.ImageFile = formFile;
 
-                    inputViewModel.ImageFile = formFile;
+                var updateModelTask = TryUpdateModelAsync(inputViewModel);
 
-                    var updateModelTask = TryUpdateModelAsync(inputViewModel);
-
-                    updateModelTask.Wait();
-                }
-            }
-
-            return base.Create(inputViewModel);
-        }
-
-        [RequirePermissions(Constants.Permission.InstitutionEditor)]
-        public override IActionResult Edit(System.Guid key) => base.Edit(key);
-
-        [RequirePermissions(Constants.Permission.InstitutionEditor)]
-        public override IActionResult Edit(InstitutionInputViewModel inputViewModel)
-        {
-            ModelState.ClearValidationState("ImageFile");
-            ModelState.MarkFieldValid("ImageFile");
-
-            if (Request.Form.Files.Count > 0)
-            {
-                var formFile = Request.Form.Files[0];
-
-                if (formFile.Length > 0)
-                {
-                    inputViewModel.ImageFile = formFile;
-
-                    var updateModelTask = TryUpdateModelAsync(inputViewModel);
-
-                    updateModelTask.Wait();
-
-                }
-            }
-            return base.Edit(inputViewModel);
-        }
-
-
-        [RequirePermissions(Constants.Permission.InstitutionRemover)]
-        public override IActionResult Delete(System.Guid key) => base.Delete(key);
-
-        [RequirePermissions(Constants.Permission.InstitutionRemover)]
-        public override IActionResult Delete(InstitutionDisplayViewModel displayViewModel) => base.Delete(displayViewModel);
-
-        protected override void PreCreate(Institution entity, InstitutionInputViewModel model)
-        {
-            base.PreCreate(entity, model);
-
-            if (model.ImageFile == null) return;
-
-            using (var memoryStream = new System.IO.MemoryStream())
-            {
-                model.ImageFile.CopyTo(memoryStream);
-
-                var image = new Image { ContentType = model.ImageFile.ContentType, Length = model.ImageFile.Length, About = "Institution " + entity.Id };
-
-                imageFileManager.SaveImageFileContent(image.Id, memoryStream.ToArray(), model.ImageFile.ContentType);
-
-                entity.Identity.Image = image;
+                updateModelTask.Wait();
             }
         }
 
-        protected override void PreEdit(Institution entity, InstitutionInputViewModel model)
+        return base.Create(inputViewModel);
+    }
+
+    [RequirePermissions(Constants.Permission.InstitutionEditor)]
+    public override IActionResult Edit(System.Guid key) => base.Edit(key);
+
+    [RequirePermissions(Constants.Permission.InstitutionEditor)]
+    public override IActionResult Edit(InstitutionInputViewModel inputViewModel)
+    {
+        ModelState.ClearValidationState("ImageFile");
+        ModelState.MarkFieldValid("ImageFile");
+
+        if (Request.Form.Files.Count > 0)
         {
-            base.PreEdit(entity, model);
+            var formFile = Request.Form.Files[0];
 
-            if (model.ImageFile == null)
+            if (formFile.Length > 0)
             {
-                if (model.ResetImage && entity.Identity.Image != null)
-                {
-                    imageFileManager.DeleteImageFile(entity.Identity.Image);
-                    imageRepository.Delete(entity.Identity.Image, User.Identity.Name);
-                }
-                return;
-            }
+                inputViewModel.ImageFile = formFile;
 
-            if (entity.Identity.Image != null)
+                var updateModelTask = TryUpdateModelAsync(inputViewModel);
+
+                updateModelTask.Wait();
+
+            }
+        }
+        return base.Edit(inputViewModel);
+    }
+
+
+    [RequirePermissions(Constants.Permission.InstitutionRemover)]
+    public override IActionResult Delete(System.Guid key) => base.Delete(key);
+
+    [RequirePermissions(Constants.Permission.InstitutionRemover)]
+    public override IActionResult Delete(InstitutionDisplayViewModel displayViewModel) => base.Delete(displayViewModel);
+
+    protected override void PreCreate(Institution entity, InstitutionInputViewModel model)
+    {
+        base.PreCreate(entity, model);
+
+        if (model.ImageFile == null) return;
+
+        using var memoryStream = new System.IO.MemoryStream();
+
+        model.ImageFile.CopyTo(memoryStream);
+
+        var image = new Image { ContentType = model.ImageFile.ContentType, Length = model.ImageFile.Length, About = "Institution " + entity.Id };
+
+        imageFileManager.SaveImageFileContent(image.Id, memoryStream.ToArray(), model.ImageFile.ContentType);
+
+        entity.Identity.Image = image;
+    }
+
+    protected override void PreEdit(Institution entity, InstitutionInputViewModel model)
+    {
+        base.PreEdit(entity, model);
+
+        if (model.ImageFile == null)
+        {
+            if (model.ResetImage && entity.Identity.Image != null)
             {
                 imageFileManager.DeleteImageFile(entity.Identity.Image);
-
-                imageRepository.Delete(entity.Identity.Image, User.Identity.Name);
+                imageCommandRepository.Delete(entity.Identity.Image, User.Identity.Name);
             }
-
-            using (var memoryStream = new System.IO.MemoryStream())
-            {
-                model.ImageFile.CopyTo(memoryStream);
-
-                var image = new Image { ContentType = model.ImageFile.ContentType, Length = model.ImageFile.Length, About = "Institution " + entity.Id };
-
-                imageFileManager.SaveImageFileContent(image.Id, memoryStream.ToArray(), model.ImageFile.ContentType);
-
-                entity.Identity.Image = image;
-
-                imageRepository.Add(image, User.Identity.Name);
-            }
+            return;
         }
 
-        protected override void PostDelete(Institution entity)
+        if (entity.Identity.Image != null)
         {
-            base.PostDelete(entity);
-
-            identityRepository.Delete(entity.Identity, User.Identity.Name);
-
-            if (entity.Identity.Image == null) return;
-
-            imageRepository.Delete(entity.Identity.Image, User.Identity.Name);
-
             imageFileManager.DeleteImageFile(entity.Identity.Image);
+
+            imageCommandRepository.Delete(entity.Identity.Image, User.Identity.Name);
         }
+
+        using var memoryStream = new System.IO.MemoryStream();
+
+        model.ImageFile.CopyTo(memoryStream);
+
+        var image = new Image { ContentType = model.ImageFile.ContentType, Length = model.ImageFile.Length, About = "Institution " + entity.Id };
+
+        imageFileManager.SaveImageFileContent(image.Id, memoryStream.ToArray(), model.ImageFile.ContentType);
+
+        entity.Identity.Image = image;
+
+        imageCommandRepository.Add(image, User.Identity.Name);
+    }
+
+    protected override void PostDelete(Institution entity)
+    {
+        base.PostDelete(entity);
+
+        identityCommandRepository.Delete(entity.Identity, User.Identity.Name);
+
+        if (entity.Identity.Image == null) return;
+
+        imageCommandRepository.Delete(entity.Identity.Image, User.Identity.Name);
+
+        imageFileManager.DeleteImageFile(entity.Identity.Image);
     }
 }

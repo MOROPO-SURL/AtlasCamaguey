@@ -4,9 +4,9 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Frontend
 {
     public class AboutController : Microsoft.AspNetCore.Mvc.Controller
     {
-        private readonly IEntityRepository<Camaguey.Persistence.Entities.RichTextBlock, Camaguey.Persistence.Enumerations.RichTextBlockKind> richTextBlockRepository;
+        private readonly IQueryEntityRepository<Camaguey.Persistence.Entities.RichTextBlock, Camaguey.Persistence.Enumerations.RichTextBlockKind> richTextBlockRepository;
 
-        public AboutController(IEntityRepository<Camaguey.Persistence.Entities.RichTextBlock, Camaguey.Persistence.Enumerations.RichTextBlockKind> richTextBlockRepository)
+        public AboutController(IQueryEntityRepository<Camaguey.Persistence.Entities.RichTextBlock, Camaguey.Persistence.Enumerations.RichTextBlockKind> richTextBlockRepository)
         {
             this.richTextBlockRepository = richTextBlockRepository;
         }

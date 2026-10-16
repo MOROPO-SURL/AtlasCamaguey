@@ -18,22 +18,38 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
     [Area("atlas")]
     public class EpigraphsController : Framework.Guama.Core.Presentation.Web.Backend.Controllers.Contract.AbstractEntityManagementController<Epigraph, System.Guid, EpigraphInputViewModel, EpigraphDisplayViewModel>
     {
-        private readonly IEntityRepository<Section, System.Guid> sectionRepository;
-        private readonly IEntityRepository<Image, System.Guid> imageRepository;
-        private readonly IEntityRepository<Document, System.Guid> documentRepository;
-        private readonly IEntityRepository<Video, System.Guid> videoRepository;
-        private readonly IEntityRepository<KeyWord, System.Guid> keyWordRepository;
+        private readonly IQueryEntityRepository<Section, System.Guid> querySectionRepository;
+        private readonly ICommandEntityRepository<Image, System.Guid> commandImageRepository;
+        private readonly ICommandEntityRepository<Document, System.Guid> commandDocumentRepository;
+        private readonly ICommandEntityRepository<Video, System.Guid> commandVideoRepository;
+        private readonly ICommandEntityRepository<KeyWord, System.Guid> commandKeyWordRepository;
+        private readonly IQueryEntityRepository<KeyWord, System.Guid> queryKeyWordRepository;
         private readonly IImageFileManagerFacade imageFileManager;
         private readonly IDocumentFileManagerFacade documentFileManager;
         private readonly IVideoFileManagerFacade videoFileManager;
 
-        public EpigraphsController(IVideoFileManagerFacade videoFileManager, IDocumentFileManagerFacade documentFileManager, IImageFileManagerFacade imageFileManager, IEntityRepository<KeyWord, System.Guid> keyWordRepository, IEntityRepository<Video, System.Guid> videoRepository, IEntityRepository<Document, System.Guid> documentRepository, IEntityRepository<Image, System.Guid> imageRepository, IEntityRepository<Section, System.Guid> sectionRepository, IEntityRepository<Epigraph, System.Guid> repository, IStringLocalizer<EpigraphsController> localizer, ILogger<EpigraphsController> logger) : base(repository, localizer, logger)
+        public EpigraphsController(
+            IVideoFileManagerFacade videoFileManager, 
+            IDocumentFileManagerFacade documentFileManager, 
+            IImageFileManagerFacade imageFileManager, 
+            IQueryEntityRepository<KeyWord, System.Guid> queryKeyWordRepository, 
+            ICommandEntityRepository<KeyWord, System.Guid> commandKeyWordRepository, 
+            ICommandEntityRepository<Video, System.Guid> commandVideoRepository, 
+            ICommandEntityRepository<Document, System.Guid> commandDocumentRepository,
+            ICommandEntityRepository<Image, System.Guid> commandImageRepository, 
+            IQueryEntityRepository<Section, System.Guid> querySectionRepository, 
+            ICommandEntityRepository<Epigraph, System.Guid> commandRepository, 
+            IQueryEntityRepository<Epigraph, System.Guid> queryRepository,
+            IStringLocalizer<EpigraphsController> localizer, 
+            ILogger<EpigraphsController> logger) 
+            : base(commandRepository, queryRepository, localizer, logger)
         {
-            this.sectionRepository = sectionRepository;
-            this.imageRepository = imageRepository;
-            this.documentRepository = documentRepository;
-            this.videoRepository = videoRepository;
-            this.keyWordRepository = keyWordRepository;
+            this.querySectionRepository = querySectionRepository;
+            this.commandImageRepository = commandImageRepository;
+            this.commandDocumentRepository = commandDocumentRepository;
+            this.commandVideoRepository = commandVideoRepository;
+            this.commandKeyWordRepository = commandKeyWordRepository;
+            this.queryKeyWordRepository = queryKeyWordRepository;
             this.imageFileManager = imageFileManager;
             this.documentFileManager = documentFileManager;
             this.videoFileManager = videoFileManager;
@@ -123,21 +139,20 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         {
             base.PreCreate(entity, model);
 
-            entity.Section = sectionRepository.Get(model.SectionId.Value);
+            entity.Section = null;
             entity.SectionId = entity.Section.Id;
 
             if (model.ImageFile == null) return;
 
-            using (var memoryStream = new System.IO.MemoryStream())
-            {
-                model.ImageFile.CopyTo(memoryStream);
+            using var memoryStream = new System.IO.MemoryStream();
 
-                var image = new Image { ContentType = model.ImageFile.ContentType, Length = model.ImageFile.Length, About = "Section " + entity.Id };
+            model.ImageFile.CopyTo(memoryStream);
 
-                imageFileManager.SaveImageFileContent(image.Id, memoryStream.ToArray(), model.ImageFile.ContentType);
+            var image = new Image { ContentType = model.ImageFile.ContentType, Length = model.ImageFile.Length, About = "Section " + entity.Id };
 
-                entity.Image = image;
-            }
+            imageFileManager.SaveImageFileContent(image.Id, memoryStream.ToArray(), model.ImageFile.ContentType);
+
+            entity.Image = image;
         }
 
         protected override void PreEdit(Epigraph entity, EpigraphInputViewModel model)
@@ -146,7 +161,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
 
             if (entity.SectionId != model.SectionId)
             {
-                entity.Section = sectionRepository.Get(model.SectionId.Value);
+                entity.Section = null;
                 entity.SectionId = entity.Section.Id;
             }
 
@@ -156,7 +171,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
                 {
                     imageFileManager.DeleteImageFile(entity.Image);
 
-                    imageRepository.Delete(entity.Image, User.Identity.Name);
+                    commandImageRepository.Delete(entity.Image, User.Identity.Name);
                 }
 
                 return;
@@ -168,7 +183,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
             {
                 model.ImageFile.CopyTo(memoryStream);
 
-                var image = imageRepository.Add(new Image { ContentType = model.ImageFile.ContentType, Length = model.ImageFile.Length, About = "Epigraph " + entity.Id }, User.Identity.Name);
+                var image = commandImageRepository.Add(new Image { ContentType = model.ImageFile.ContentType, Length = model.ImageFile.Length, About = "Epigraph " + entity.Id }, User.Identity.Name);
 
                 imageFileManager.SaveImageFileContent(image.Id, memoryStream.ToArray(), model.ImageFile.ContentType);
 
@@ -180,7 +195,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
             {
                 imageFileManager.DeleteImageFile(deprecatedImage);
 
-                imageRepository.Delete(deprecatedImage, User.Identity.Name);
+                commandImageRepository.Delete(deprecatedImage, User.Identity.Name);
             }
         }
 
@@ -190,7 +205,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
 
             if (entity.Image == null) return;
 
-            imageRepository.Delete(entity.Image, User.Identity.Name);
+            commandImageRepository.Delete(entity.Image, User.Identity.Name);
 
             imageFileManager.DeleteImageFile(entity.Image);
         }
@@ -225,7 +240,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
 
         private void Populate(EpigraphInputViewModel model)
         {
-            model.SectionSelectListItems = sectionRepository.GetAll().OrderBy(entity => entity.Name).Select(entity =>new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
+            model.SectionSelectListItems = querySectionRepository.GetAll().OrderBy(entity => entity.Name).Select(entity =>new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
             {
                 Value = entity.Id.ToString(),
                 Text = entity.Name
@@ -239,7 +254,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         [RequirePermissions(Constants.Permission.EpigraphEditor)]
         public ActionResult EditKeyWords(System.Guid key)
         {
-            var entity = Repository.Get(key);
+            var entity = queryRepository.Get(key);
 
             var releatedKeyWords = entity.KeyWordBridges.Select(bridge => bridge.Stern).ToArray();
 
@@ -254,7 +269,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
 
                     return result;
                 }).ToArray(),
-                AvailableKeyWordSelectListItems = keyWordRepository.GetAll().ToArray().Except(releatedKeyWords).Select(entity => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
+                AvailableKeyWordSelectListItems = queryKeyWordRepository.GetAll().ToArray().Except(releatedKeyWords).Select(entity => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
                 {
                     Value = entity.Id.ToString(),
                     Text = entity.Name
@@ -274,7 +289,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         {
             try
             {
-                var entity = Repository.Get(key);
+                var entity = commandRepository.Get(key);
 
                 if (keyWordId != default)
                 {
@@ -286,7 +301,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
                             SternId = keyWordId
                         });
 
-                        Repository.Update(entity, User.Identity.Name);
+                        commandRepository.Update(entity, User.Identity.Name);
 
                         SetDefaultNotification(NotificationType.Success, GetCreationSuccessMessage());
 
@@ -320,13 +335,13 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         {
             try
             {
-                var entity = Repository.Get(key);
+                var entity = commandRepository.Get(key);
 
                 var bridge = entity.KeyWordBridges.First(b => b.SternId == keyWordId);
 
                 entity.KeyWordBridges.Remove(bridge);
 
-                Repository.Update(entity, User.Identity.Name);
+                commandRepository.Update(entity, User.Identity.Name);
 
                 SetDefaultNotification(NotificationType.Success, GetDeletionSuccessMessage());
 
@@ -359,7 +374,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         [RequirePermissions(Constants.Permission.EpigraphEditor)]
         public ActionResult EditImages(System.Guid key)
         {
-            var entity = Repository.Get(key);
+            var entity = queryRepository.Get(key);
 
             var model = new Models.View.Backend.Management.EpigraphImagesManagementViewModel
             {
@@ -389,7 +404,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
             {
                 var imageFile = Request.Form.Files[0];
 
-                var entity = Repository.Get(key);
+                var entity = commandRepository.Get(key);
 
                 // TODO Validate imageFile
 
@@ -403,7 +418,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
 
                             var image = new Image { ContentType = imageFile.ContentType, Length = imageFile.Length, About = "Epigraph Compl. " + entity.Id };
 
-                            imageRepository.Add(image, User.Identity.Name, false);
+                            commandImageRepository.Add(image, User.Identity.Name, false);
 
                             imageFileManager.SaveImageFileContent(image.Id, memoryStream.ToArray(), imageFile.ContentType);
 
@@ -414,7 +429,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
                             });
                         }
 
-                        Repository.Update(entity, User.Identity.Name);
+                        commandRepository.Update(entity, User.Identity.Name);
 
                         SetDefaultNotification(NotificationType.Success, GetCreationSuccessMessage());
 
@@ -448,15 +463,15 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         {
             try
             {
-                var entity = Repository.Get(key);
+                var entity = commandRepository.Get(key);
 
                 var bridge = entity.ImageBridges.First(b => b.SternId == imageId);
 
                 entity.ImageBridges.Remove(bridge);
 
-                Repository.Update(entity, User.Identity.Name);
+                commandRepository.Update(entity, User.Identity.Name);
 
-                imageRepository.Delete(bridge.Stern, User.Identity.Name);
+                commandImageRepository.Delete(bridge.Stern, User.Identity.Name);
 
                 imageFileManager.DeleteImageFile(bridge.Stern);
 
@@ -491,7 +506,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         [RequirePermissions(Constants.Permission.EpigraphEditor)]
         public ActionResult EditVideos(System.Guid key)
         {
-            var entity = Repository.Get(key);
+            var entity = queryRepository.Get(key);
 
             var model = new Models.View.Backend.Management.EpigraphVideosManagementViewModel
             {
@@ -521,7 +536,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
             {
                 var videoFile = Request.Form.Files[0];
 
-                var entity = Repository.Get(key);
+                var entity = commandRepository.Get(key);
 
                 // TODO Validate videoFile & ...
 
@@ -547,7 +562,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
                         {
                             videoFile.CopyTo(memoryStream);
 
-                            videoRepository.Add(video, User.Identity.Name, false);
+                            commandVideoRepository.Add(video, User.Identity.Name, false);
 
                             videoFileManager.SaveVideoFileContent(video.Id, memoryStream.ToArray(), video.Extension);
 
@@ -558,7 +573,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
                             });
                         }
 
-                        Repository.Update(entity, User.Identity.Name);
+                        commandRepository.Update(entity, User.Identity.Name);
 
                         SetDefaultNotification(NotificationType.Success, GetCreationSuccessMessage());
 
@@ -598,15 +613,15 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         {
             try
             {
-                var entity = Repository.Get(key);
+                var entity = commandRepository.Get(key);
 
                 var bridge = entity.VideoBridges.First(b => b.SternId == videoId);
 
                 entity.VideoBridges.Remove(bridge);
 
-                Repository.Update(entity, User.Identity.Name);
+                commandRepository.Update(entity, User.Identity.Name);
 
-                videoRepository.Delete(bridge.Stern, User.Identity.Name);
+                commandVideoRepository.Delete(bridge.Stern, User.Identity.Name);
 
                 videoFileManager.DeleteVideoFile(bridge.SternId, bridge.Stern.Extension);
 
@@ -640,13 +655,13 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         {
             try
             {
-                var entity = Repository.Get(key);
+                var entity = commandRepository.Get(key);
 
                 var bridge = entity.VideoBridges.First(b => b.SternId == videoId);
 
                 bridge.Stern.About = about;
 
-                Repository.Update(entity, User.Identity.Name);
+                commandRepository.Update(entity, User.Identity.Name);
 
                 SetDefaultNotification(NotificationType.Success, GetEditionSuccessMessage());
 
@@ -671,7 +686,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         [RequirePermissions(Constants.Permission.EpigraphEditor)]
         public ActionResult EditDocuments(System.Guid key)
         {
-            var entity = Repository.Get(key);
+            var entity = queryRepository.Get(key);
 
             var model = new Models.View.Backend.Management.EpigraphDocumentsManagementViewModel
             {
@@ -699,7 +714,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         {
             try
             {
-                var entity = Repository.Get(key);
+                var entity = commandRepository.Get(key);
 
                 ModelState.ClearValidationState("File");
 
@@ -723,7 +738,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
                                 Length = model.File.Length
                             };
 
-                            documentRepository.Add(document, User.Identity.Name, false);
+                            commandDocumentRepository.Add(document, User.Identity.Name, false);
 
                             entity.DocumentBridges.Add(new EpigraphDocumentBridge
                             {
@@ -733,7 +748,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
 
                             documentFileManager.SaveDocumentFileContent(document.Id, memoryStream.ToArray(), document.ContentType);
 
-                            Repository.Update(entity, User.Identity.Name);
+                            commandRepository.Update(entity, User.Identity.Name);
                         }
 
                         SetDefaultNotification(NotificationType.Success, GetCreationSuccessMessage());
@@ -768,13 +783,13 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
         {
             try
             {
-                var entity = Repository.Get(key);
+                var entity = commandRepository.Get(key);
 
                 var bridge = entity.DocumentBridges.First(b => b.SternId == documentId);
 
                 entity.DocumentBridges.Remove(bridge);
 
-                Repository.Update(entity, User.Identity.Name);
+                commandRepository.Update(entity, User.Identity.Name);
 
                 try
                 {
@@ -817,7 +832,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
             {
                 try
                 {
-                    var entity = Repository.Get(key);
+                    var entity = commandRepository.Get(key);
 
                     try
                     {
@@ -826,7 +841,7 @@ namespace MOROPO.CIMAC.Atlas.Camaguey.Web.Controllers.Backend.Atlas
                         bridge.Stern.Name = modelInput.Name;
                         bridge.Stern.Description = modelInput.Description;
 
-                        Repository.Update(entity, User.Identity.Name);
+                        commandRepository.Update(entity, User.Identity.Name);
 
                         SetDefaultNotification(NotificationType.Success, GetEditionSuccessMessage());
 
